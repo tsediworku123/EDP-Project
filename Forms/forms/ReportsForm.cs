@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using ClinicAppointmentSystem.Models;
@@ -12,6 +13,8 @@ namespace ClinicAppointmentSystem
         {
             InitializeComponent();
             LoadReports();
+            DrawBarChart();
+            DrawPieChart();
         }
 
         private void LoadReports()
@@ -23,10 +26,10 @@ namespace ClinicAppointmentSystem
             int todayPending = DataManager.Appointments.Count(a => a.AppointmentDate.Date == DateTime.Today && a.Status == "Pending");
             int todayCancelled = DataManager.Appointments.Count(a => a.AppointmentDate.Date == DateTime.Today && a.Status == "Cancelled");
 
-            lblTodayTotal.Text = todayAppointments.ToString();
-            lblTodayCompleted.Text = todayCompleted.ToString();
-            lblTodayPending.Text = todayPending.ToString();
-            lblTodayCancelled.Text = todayCancelled.ToString();
+            lblDailyAppointments.Text = todayAppointments.ToString();
+            lblDailyCompleted.Text = todayCompleted.ToString();
+            lblDailyPending.Text = todayPending.ToString();
+            lblDailyCancelled.Text = todayCancelled.ToString();
 
             // Monthly Report
             DateTime firstDay = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
@@ -38,10 +41,11 @@ namespace ClinicAppointmentSystem
             int monthlyPending = DataManager.Appointments.Count(a => a.AppointmentDate.Date >= firstDay && a.AppointmentDate.Date <= lastDay && a.Status == "Pending");
             int monthlyCancelled = DataManager.Appointments.Count(a => a.AppointmentDate.Date >= firstDay && a.AppointmentDate.Date <= lastDay && a.Status == "Cancelled");
 
-            lblMonthlyTotal.Text = monthlyAppointments.ToString();
+            lblMonthlyAppointments.Text = monthlyAppointments.ToString();
             lblMonthlyCompleted.Text = monthlyCompleted.ToString();
             lblMonthlyPending.Text = monthlyPending.ToString();
             lblMonthlyCancelled.Text = monthlyCancelled.ToString();
+            lblMonthName.Text = DateTime.Now.ToString("MMMM yyyy");
 
             // Patient Statistics
             int totalPatients = DataManager.Patients.Count;
@@ -79,9 +83,196 @@ namespace ClinicAppointmentSystem
             }
         }
 
+        private void DrawBarChart()
+        {
+            // Clear any existing controls in the chart panel
+            panelBarChart.Controls.Clear();
+
+            // Title
+            Label lblChartTitle = new Label();
+            lblChartTitle.Text = "Weekly Appointments";
+            lblChartTitle.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            lblChartTitle.ForeColor = Color.FromArgb(0, 105, 148);
+            lblChartTitle.Location = new Point(10, 10);
+            lblChartTitle.Size = new Size(200, 25);
+            panelBarChart.Controls.Add(lblChartTitle);
+
+            // Get real data from appointments
+            DateTime[] days = new DateTime[7];
+            int[] values = new int[7];
+
+            for (int i = 0; i < 7; i++)
+            {
+                days[i] = DateTime.Today.AddDays(-i);
+                values[6 - i] = DataManager.Appointments.Count(a => a.AppointmentDate.Date == days[i].Date);
+            }
+
+            int maxValue = values.Max();
+            if (maxValue == 0) maxValue = 1; // Prevent division by zero
+
+            int startX = 40;
+            int barWidth = 50;
+            int spacing = 15;
+            int baseY = panelBarChart.Height - 50;
+            int maxHeight = 150;
+
+            for (int i = 0; i < 7; i++)
+            {
+                int barHeight = (int)((double)values[i] / maxValue * maxHeight);
+                if (barHeight < 5 && values[i] > 0) barHeight = 15;
+
+                // Bar with gradient
+                Panel bar = new Panel();
+                bar.Location = new Point(startX + i * (barWidth + spacing), baseY - barHeight);
+                bar.Size = new Size(barWidth, barHeight);
+                bar.Tag = values[i];
+
+                // Add gradient to bar
+                bar.Paint += (s, e) => {
+                    using (LinearGradientBrush brush = new LinearGradientBrush(
+                        bar.ClientRectangle,
+                        Color.FromArgb(52, 152, 219),
+                        Color.FromArgb(41, 128, 185),
+                        LinearGradientMode.Vertical))
+                    {
+                        e.Graphics.FillRectangle(brush, bar.ClientRectangle);
+                    }
+                };
+
+                panelBarChart.Controls.Add(bar);
+
+                // Day label
+                Label lblDay = new Label();
+                lblDay.Text = days[i].ToString("ddd");
+                lblDay.Location = new Point(startX + i * (barWidth + spacing), baseY + 5);
+                lblDay.Size = new Size(barWidth, 20);
+                lblDay.TextAlign = ContentAlignment.MiddleCenter;
+                lblDay.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                panelBarChart.Controls.Add(lblDay);
+
+                // Value label on top of bar
+                if (values[i] > 0)
+                {
+                    Label lblValue = new Label();
+                    lblValue.Text = values[i].ToString();
+                    lblValue.Location = new Point(startX + i * (barWidth + spacing), baseY - barHeight - 20);
+                    lblValue.Size = new Size(barWidth, 20);
+                    lblValue.TextAlign = ContentAlignment.MiddleCenter;
+                    lblValue.ForeColor = Color.FromArgb(41, 128, 185);
+                    lblValue.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                    panelBarChart.Controls.Add(lblValue);
+                }
+            }
+
+            // Y-axis line
+            Panel yAxis = new Panel();
+            yAxis.Location = new Point(30, 30);
+            yAxis.Size = new Size(2, baseY - 30);
+            yAxis.BackColor = Color.FromArgb(100, 100, 100);
+            panelBarChart.Controls.Add(yAxis);
+
+            // X-axis line
+            Panel xAxis = new Panel();
+            xAxis.Location = new Point(30, baseY);
+            xAxis.Size = new Size(panelBarChart.Width - 50, 2);
+            xAxis.BackColor = Color.FromArgb(100, 100, 100);
+            panelBarChart.Controls.Add(xAxis);
+        }
+
+        private void DrawPieChart()
+        {
+            // Clear any existing controls in the pie chart panel
+            panelPieChart.Controls.Clear();
+
+            // Title
+            Label lblPieTitle = new Label();
+            lblPieTitle.Text = "Gender Distribution";
+            lblPieTitle.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            lblPieTitle.ForeColor = Color.FromArgb(0, 105, 148);
+            lblPieTitle.Location = new Point(10, 10);
+            lblPieTitle.Size = new Size(200, 25);
+            panelPieChart.Controls.Add(lblPieTitle);
+
+            int total = DataManager.Patients.Count;
+            if (total == 0) total = 1;
+
+            int male = DataManager.Patients.Count(p => p.Gender == "Male");
+            int female = DataManager.Patients.Count(p => p.Gender == "Female");
+
+            float maleAngle = (float)male / total * 360;
+
+            // Panel to draw the pie chart
+            Panel pieCanvas = new Panel();
+            pieCanvas.Location = new Point(20, 50);
+            pieCanvas.Size = new Size(150, 150);
+            pieCanvas.Paint += (s, e) => {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                Rectangle rect = new Rectangle(10, 10, 130, 130);
+
+                // Male slice
+                if (male > 0)
+                {
+                    using (SolidBrush maleBrush = new SolidBrush(Color.FromArgb(52, 152, 219)))
+                    {
+                        e.Graphics.FillPie(maleBrush, rect, 0, maleAngle);
+                    }
+                }
+
+                // Female slice
+                if (female > 0)
+                {
+                    using (SolidBrush femaleBrush = new SolidBrush(Color.FromArgb(155, 89, 182)))
+                    {
+                        e.Graphics.FillPie(femaleBrush, rect, maleAngle, 360 - maleAngle);
+                    }
+                }
+
+                // Border
+                using (Pen pen = new Pen(Color.White, 2))
+                {
+                    e.Graphics.DrawEllipse(pen, rect);
+                }
+            };
+            panelPieChart.Controls.Add(pieCanvas);
+
+            // Legend
+            int legendY = 50;
+
+            // Male legend
+            Panel maleLegend = new Panel();
+            maleLegend.BackColor = Color.FromArgb(52, 152, 219);
+            maleLegend.Location = new Point(190, legendY);
+            maleLegend.Size = new Size(20, 20);
+            panelPieChart.Controls.Add(maleLegend);
+
+            Label lblMaleLegend = new Label();
+            lblMaleLegend.Text = $"Male: {male} ({(float)male / total * 100:0.1}%)";
+            lblMaleLegend.Location = new Point(220, legendY);
+            lblMaleLegend.Size = new Size(150, 20);
+            lblMaleLegend.Font = new Font("Segoe UI", 10);
+            panelPieChart.Controls.Add(lblMaleLegend);
+            legendY += 30;
+
+            // Female legend
+            Panel femaleLegend = new Panel();
+            femaleLegend.BackColor = Color.FromArgb(155, 89, 182);
+            femaleLegend.Location = new Point(190, legendY);
+            femaleLegend.Size = new Size(20, 20);
+            panelPieChart.Controls.Add(femaleLegend);
+
+            Label lblFemaleLegend = new Label();
+            lblFemaleLegend.Text = $"Female: {female} ({(float)female / total * 100:0.1}%)";
+            lblFemaleLegend.Location = new Point(220, legendY);
+            lblFemaleLegend.Size = new Size(150, 20);
+            lblFemaleLegend.Font = new Font("Segoe UI", 10);
+            panelPieChart.Controls.Add(lblFemaleLegend);
+        }
+
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             LoadReports();
+            DrawBarChart();
+            DrawPieChart();
         }
 
         private void btnExportPDF_Click(object sender, EventArgs e)
