@@ -89,7 +89,6 @@
             // Form Properties
             this.Text = "Patient Dashboard";
             this.ClientSize = new System.Drawing.Size(1000, 650);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.BackColor = System.Drawing.Color.White;
 
@@ -100,7 +99,6 @@
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
             this.panelHeader.Size = new System.Drawing.Size(1000, 60);
-            this.panelHeader.TabIndex = 0;
 
             this.lblWelcome.AutoSize = true;
             this.lblWelcome.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
@@ -118,14 +116,11 @@
             this.panelWelcome.Location = new System.Drawing.Point(20, 80);
             this.panelWelcome.Name = "panelWelcome";
             this.panelWelcome.Size = new System.Drawing.Size(300, 100);
-            this.panelWelcome.TabIndex = 1;
 
             this.picPatientIcon.BackColor = System.Drawing.Color.FromArgb(0, 191, 255);
             this.picPatientIcon.Location = new System.Drawing.Point(20, 20);
             this.picPatientIcon.Name = "picPatientIcon";
             this.picPatientIcon.Size = new System.Drawing.Size(60, 60);
-            this.picPatientIcon.TabIndex = 0;
-            this.picPatientIcon.TabStop = false;
 
             this.lblPatientName.AutoSize = true;
             this.lblPatientName.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
@@ -143,20 +138,17 @@
             this.panelStats.Location = new System.Drawing.Point(340, 80);
             this.panelStats.Name = "panelStats";
             this.panelStats.Size = new System.Drawing.Size(640, 100);
-            this.panelStats.TabIndex = 2;
 
             // cardNotifications
             this.cardNotifications.BackColor = System.Drawing.Color.White;
             this.cardNotifications.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardNotifications.Location = new System.Drawing.Point(0, 0);
-            this.cardNotifications.Name = "cardNotifications";
             this.cardNotifications.Size = new System.Drawing.Size(200, 100);
 
             this.lblNotificationsTitle.Text = "Notifications";
             this.lblNotificationsTitle.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblNotificationsTitle.ForeColor = System.Drawing.Color.Gray;
             this.lblNotificationsTitle.Location = new System.Drawing.Point(10, 15);
-            this.lblNotificationsTitle.Name = "lblNotificationsTitle";
             this.lblNotificationsTitle.Size = new System.Drawing.Size(180, 20);
             this.cardNotifications.Controls.Add(this.lblNotificationsTitle);
 
@@ -164,7 +156,6 @@
             this.lblNotifications.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.lblNotifications.ForeColor = System.Drawing.Color.FromArgb(0, 191, 255);
             this.lblNotifications.Location = new System.Drawing.Point(80, 40);
-            this.lblNotifications.Name = "lblNotifications";
             this.lblNotifications.Size = new System.Drawing.Size(50, 45);
             this.lblNotifications.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cardNotifications.Controls.Add(this.lblNotifications);
@@ -173,14 +164,12 @@
             this.cardAppointments.BackColor = System.Drawing.Color.White;
             this.cardAppointments.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardAppointments.Location = new System.Drawing.Point(220, 0);
-            this.cardAppointments.Name = "cardAppointments";
             this.cardAppointments.Size = new System.Drawing.Size(200, 100);
 
             this.lblAppointmentsTitle.Text = "Appointments";
             this.lblAppointmentsTitle.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblAppointmentsTitle.ForeColor = System.Drawing.Color.Gray;
             this.lblAppointmentsTitle.Location = new System.Drawing.Point(10, 15);
-            this.lblAppointmentsTitle.Name = "lblAppointmentsTitle";
             this.lblAppointmentsTitle.Size = new System.Drawing.Size(180, 20);
             this.cardAppointments.Controls.Add(this.lblAppointmentsTitle);
 
@@ -188,7 +177,6 @@
             this.lblTotalAppointments.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.lblTotalAppointments.ForeColor = System.Drawing.Color.FromArgb(46, 204, 113);
             this.lblTotalAppointments.Location = new System.Drawing.Point(80, 40);
-            this.lblTotalAppointments.Name = "lblTotalAppointments";
             this.lblTotalAppointments.Size = new System.Drawing.Size(50, 45);
             this.lblTotalAppointments.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cardAppointments.Controls.Add(this.lblTotalAppointments);
@@ -197,14 +185,12 @@
             this.cardRecords.BackColor = System.Drawing.Color.White;
             this.cardRecords.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardRecords.Location = new System.Drawing.Point(440, 0);
-            this.cardRecords.Name = "cardRecords";
             this.cardRecords.Size = new System.Drawing.Size(200, 100);
 
             this.lblRecordsTitle.Text = "Medical Records";
             this.lblRecordsTitle.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.lblRecordsTitle.ForeColor = System.Drawing.Color.Gray;
             this.lblRecordsTitle.Location = new System.Drawing.Point(10, 15);
-            this.lblRecordsTitle.Name = "lblRecordsTitle";
             this.lblRecordsTitle.Size = new System.Drawing.Size(180, 20);
             this.cardRecords.Controls.Add(this.lblRecordsTitle);
 
@@ -212,7 +198,6 @@
             this.lblMedicalRecords.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.lblMedicalRecords.ForeColor = System.Drawing.Color.FromArgb(155, 89, 182);
             this.lblMedicalRecords.Location = new System.Drawing.Point(80, 40);
-            this.lblMedicalRecords.Name = "lblMedicalRecords";
             this.lblMedicalRecords.Size = new System.Drawing.Size(50, 45);
             this.lblMedicalRecords.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cardRecords.Controls.Add(this.lblMedicalRecords);
@@ -223,16 +208,12 @@
             this.panelUpcoming.Controls.Add(this.lblUpcomingTitle);
             this.panelUpcoming.Controls.Add(this.lvUpcoming);
             this.panelUpcoming.Location = new System.Drawing.Point(20, 200);
-            this.panelUpcoming.Name = "panelUpcoming";
             this.panelUpcoming.Size = new System.Drawing.Size(460, 200);
-            this.panelUpcoming.TabIndex = 3;
 
             this.lblUpcomingTitle.AutoSize = true;
             this.lblUpcomingTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblUpcomingTitle.ForeColor = System.Drawing.Color.FromArgb(0, 105, 148);
             this.lblUpcomingTitle.Location = new System.Drawing.Point(15, 15);
-            this.lblUpcomingTitle.Name = "lblUpcomingTitle";
-            this.lblUpcomingTitle.Size = new System.Drawing.Size(180, 21);
             this.lblUpcomingTitle.Text = "Upcoming Appointments";
 
             this.lvUpcoming.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -243,9 +224,7 @@
             this.lvUpcoming.FullRowSelect = true;
             this.lvUpcoming.GridLines = true;
             this.lvUpcoming.Location = new System.Drawing.Point(20, 45);
-            this.lvUpcoming.Name = "lvUpcoming";
             this.lvUpcoming.Size = new System.Drawing.Size(420, 140);
-            this.lvUpcoming.TabIndex = 1;
             this.lvUpcoming.View = System.Windows.Forms.View.Details;
 
             this.colDate.Text = "Date";
@@ -266,9 +245,7 @@
             this.panelActions.Controls.Add(this.btnNotifications);
             this.panelActions.Controls.Add(this.btnFeedback);
             this.panelActions.Location = new System.Drawing.Point(500, 200);
-            this.panelActions.Name = "panelActions";
             this.panelActions.Size = new System.Drawing.Size(480, 200);
-            this.panelActions.TabIndex = 4;
 
             this.btnViewDoctors.BackColor = System.Drawing.Color.FromArgb(0, 191, 255);
             this.btnViewDoctors.FlatAppearance.BorderSize = 0;
@@ -276,7 +253,6 @@
             this.btnViewDoctors.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnViewDoctors.ForeColor = System.Drawing.Color.White;
             this.btnViewDoctors.Location = new System.Drawing.Point(20, 15);
-            this.btnViewDoctors.Name = "btnViewDoctors";
             this.btnViewDoctors.Size = new System.Drawing.Size(140, 40);
             this.btnViewDoctors.Text = "👨‍⚕️ View Doctors";
             this.btnViewDoctors.Click += new System.EventHandler(this.btnViewDoctors_Click);
@@ -287,9 +263,8 @@
             this.btnBookAppointment.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnBookAppointment.ForeColor = System.Drawing.Color.White;
             this.btnBookAppointment.Location = new System.Drawing.Point(170, 15);
-            this.btnBookAppointment.Name = "btnBookAppointment";
             this.btnBookAppointment.Size = new System.Drawing.Size(140, 40);
-            this.btnBookAppointment.Text = "📅 Book";
+            this.btnBookAppointment.Text = "📅 Book Appointment";
             this.btnBookAppointment.Click += new System.EventHandler(this.btnBookAppointment_Click);
 
             this.btnMyAppointments.BackColor = System.Drawing.Color.FromArgb(155, 89, 182);
@@ -298,7 +273,6 @@
             this.btnMyAppointments.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnMyAppointments.ForeColor = System.Drawing.Color.White;
             this.btnMyAppointments.Location = new System.Drawing.Point(320, 15);
-            this.btnMyAppointments.Name = "btnMyAppointments";
             this.btnMyAppointments.Size = new System.Drawing.Size(140, 40);
             this.btnMyAppointments.Text = "📋 My Appointments";
             this.btnMyAppointments.Click += new System.EventHandler(this.btnMyAppointments_Click);
@@ -309,7 +283,6 @@
             this.btnMedicalHistory.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnMedicalHistory.ForeColor = System.Drawing.Color.White;
             this.btnMedicalHistory.Location = new System.Drawing.Point(20, 65);
-            this.btnMedicalHistory.Name = "btnMedicalHistory";
             this.btnMedicalHistory.Size = new System.Drawing.Size(140, 40);
             this.btnMedicalHistory.Text = "📁 Medical History";
             this.btnMedicalHistory.Click += new System.EventHandler(this.btnMedicalHistory_Click);
@@ -320,7 +293,6 @@
             this.btnProfile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnProfile.ForeColor = System.Drawing.Color.White;
             this.btnProfile.Location = new System.Drawing.Point(170, 65);
-            this.btnProfile.Name = "btnProfile";
             this.btnProfile.Size = new System.Drawing.Size(140, 40);
             this.btnProfile.Text = "👤 My Profile";
             this.btnProfile.Click += new System.EventHandler(this.btnProfile_Click);
@@ -331,7 +303,6 @@
             this.btnNotifications.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnNotifications.ForeColor = System.Drawing.Color.White;
             this.btnNotifications.Location = new System.Drawing.Point(320, 65);
-            this.btnNotifications.Name = "btnNotifications";
             this.btnNotifications.Size = new System.Drawing.Size(140, 40);
             this.btnNotifications.Text = "🔔 Notifications";
             this.btnNotifications.Click += new System.EventHandler(this.btnNotifications_Click);
@@ -342,7 +313,6 @@
             this.btnFeedback.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnFeedback.ForeColor = System.Drawing.Color.White;
             this.btnFeedback.Location = new System.Drawing.Point(20, 115);
-            this.btnFeedback.Name = "btnFeedback";
             this.btnFeedback.Size = new System.Drawing.Size(440, 40);
             this.btnFeedback.Text = "⭐ Give Feedback";
             this.btnFeedback.Click += new System.EventHandler(this.btnFeedback_Click);

@@ -14,6 +14,7 @@ namespace ClinicAppointmentSystem
         public UserDashboard()
         {
             InitializeComponent();
+            this.WindowState = FormWindowState.Maximized;
             LoadPatientData();
             LoadDashboardData();
             StartAutoRefresh();
@@ -53,6 +54,7 @@ namespace ClinicAppointmentSystem
         {
             if (currentPatient == null) return;
 
+            // Upcoming Appointments
             var upcoming = DataManager.Appointments
                 .Where(a => a.PatientId == currentPatient.Id && a.AppointmentDate >= DateTime.Today && a.Status != "Cancelled")
                 .OrderBy(a => a.AppointmentDate)
@@ -79,14 +81,17 @@ namespace ClinicAppointmentSystem
                 lvUpcoming.Items.Add(item);
             }
 
+            // Notifications Count
             int unreadCount = DataManager.Notifications
                 .Where(n => n.PatientId == currentPatient.Id && !n.IsRead)
                 .Count();
             lblNotifications.Text = unreadCount.ToString();
 
+            // Appointments Count
             int totalAppts = DataManager.Appointments.Count(a => a.PatientId == currentPatient.Id);
             lblTotalAppointments.Text = totalAppts.ToString();
 
+            // Medical Records Count
             int recordsCount = DataManager.MedicalRecords.Count(m => m.PatientId == currentPatient.Id);
             lblMedicalRecords.Text = recordsCount.ToString();
         }
@@ -99,6 +104,7 @@ namespace ClinicAppointmentSystem
             refreshTimer.Start();
         }
 
+        // Navigation Methods - These open forms through MainContainer
         private void btnViewDoctors_Click(object sender, EventArgs e)
         {
             if (Program.MainForm != null)

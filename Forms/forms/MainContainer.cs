@@ -64,7 +64,7 @@ namespace ClinicAppointmentSystem
                 return;
             }
 
-            // FILE Menu
+            // ===== FILE MENU (common for both) =====
             ToolStripMenuItem fileMenu = new ToolStripMenuItem("File");
 
             ToolStripMenuItem dashboardItem = new ToolStripMenuItem("Dashboard");
@@ -82,32 +82,60 @@ namespace ClinicAppointmentSystem
             fileMenu.DropDownItems.Add(exitItem);
             menuStrip.Items.Add(fileMenu);
 
-            // HOME Menu
+            // ===== HOME MENU (common for both) =====
             ToolStripMenuItem homeMenuItem = new ToolStripMenuItem("Home");
             homeMenuItem.Click += (s, e) => ShowHomePage();
             menuStrip.Items.Add(homeMenuItem);
 
-            // DOCTORS Menu
-            ToolStripMenuItem doctorsItem = new ToolStripMenuItem("Doctors");
-            doctorsItem.Click += (s, e) => OpenForm(new DoctorsForm());
-            menuStrip.Items.Add(doctorsItem);
+            // ===== ROLE-SPECIFIC MENUS =====
+            if (userRole == "Admin")
+            {
+                // ADMIN MENUS
+                ToolStripMenuItem doctorsItem = new ToolStripMenuItem("Doctors");
+                doctorsItem.Click += (s, e) => OpenForm(new DoctorsForm());
+                menuStrip.Items.Add(doctorsItem);
 
-            // PATIENTS Menu
-            ToolStripMenuItem patientsItem = new ToolStripMenuItem("Patients");
-            patientsItem.Click += (s, e) => OpenForm(new PatientForm());
-            menuStrip.Items.Add(patientsItem);
+                ToolStripMenuItem patientsItem = new ToolStripMenuItem("Patients");
+                patientsItem.Click += (s, e) => OpenForm(new PatientForm());
+                menuStrip.Items.Add(patientsItem);
 
-            // APPOINTMENTS Menu
-            ToolStripMenuItem appointmentsItem = new ToolStripMenuItem("Appointments");
-            appointmentsItem.Click += (s, e) => OpenForm(new BookAppointmentForm());
-            menuStrip.Items.Add(appointmentsItem);
+                ToolStripMenuItem appointmentsItem = new ToolStripMenuItem("Appointments");
+                appointmentsItem.Click += (s, e) => OpenForm(new BookAppointmentForm());
+                menuStrip.Items.Add(appointmentsItem);
 
-            // REPORTS Menu
-            ToolStripMenuItem reportsItem = new ToolStripMenuItem("Reports");
-            reportsItem.Click += (s, e) => OpenForm(new ReportsForm());
-            menuStrip.Items.Add(reportsItem);
+                ToolStripMenuItem reportsItem = new ToolStripMenuItem("Reports");
+                reportsItem.Click += (s, e) => OpenForm(new ReportsForm());
+                menuStrip.Items.Add(reportsItem);
+            }
+            else
+            {
+                // PATIENT/USER MENUS - These are what patients should see
 
-            // LOGOUT Menu
+                // Appointments Menu (with dropdown)
+                ToolStripMenuItem appointmentsItem = new ToolStripMenuItem("Appointments");
+                appointmentsItem.DropDownItems.Add("Book Appointment", null, (s, e) => OpenForm(new BookAppointmentForm()));
+                appointmentsItem.DropDownItems.Add("My Appointments", null, (s, e) => OpenForm(new MyAppointmentsForm()));
+                menuStrip.Items.Add(appointmentsItem);
+
+                // Doctors Menu (view only)
+                ToolStripMenuItem doctorsItem = new ToolStripMenuItem("Doctors");
+                doctorsItem.Click += (s, e) => OpenForm(new ViewDoctorsForm());
+                menuStrip.Items.Add(doctorsItem);
+
+                // Medical Records Menu
+                ToolStripMenuItem medicalItem = new ToolStripMenuItem("Medical Records");
+                medicalItem.DropDownItems.Add("Medical History", null, (s, e) => OpenForm(new MedicalHistoryForm()));
+                medicalItem.DropDownItems.Add("My Profile", null, (s, e) => OpenForm(new UserProfileForm()));
+                menuStrip.Items.Add(medicalItem);
+
+                // Feedback Menu
+                ToolStripMenuItem feedbackItem = new ToolStripMenuItem("Feedback");
+                feedbackItem.DropDownItems.Add("Give Feedback", null, (s, e) => OpenForm(new GiveFeedbackForm()));
+                feedbackItem.DropDownItems.Add("Notifications", null, (s, e) => OpenForm(new NotificationsForm()));
+                menuStrip.Items.Add(feedbackItem);
+            }
+
+            // ===== LOGOUT MENU (common for both) =====
             ToolStripMenuItem logoutItem = new ToolStripMenuItem("Logout");
             logoutItem.Click += LogoutMenuItem_Click;
             menuStrip.Items.Add(logoutItem);
@@ -134,33 +162,19 @@ namespace ClinicAppointmentSystem
             isLoggedIn = true;
             userRole = role;
             userName = name;
-
-            // Update the menu first
             UpdateMenuForRole();
             UpdateStatusBar();
 
-            // Close any open forms
-            foreach (Form f in this.MdiChildren)
-            {
-                f.Close();
-            }
-
-            // Open the appropriate dashboard based on role
             if (role == "Admin")
             {
-                AdminDashboard adminDashboard = new AdminDashboard();
-                adminDashboard.MdiParent = this;
-                adminDashboard.WindowState = FormWindowState.Maximized;
-                adminDashboard.Show();
+                OpenForm(new AdminDashboard());
             }
             else
             {
-                UserDashboard userDashboard = new UserDashboard();
-                userDashboard.MdiParent = this;
-                userDashboard.WindowState = FormWindowState.Maximized;
-                userDashboard.Show();
+                OpenForm(new UserDashboard());
             }
         }
+
         private void LogoutMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Are you sure you want to logout?",
