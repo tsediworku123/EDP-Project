@@ -33,6 +33,8 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
+        private System.Windows.Forms.ComboBox cmbFilterSpecialization;
+        private System.Windows.Forms.Label lblFilter;
 
         protected override void Dispose(bool disposing)
         {
@@ -73,6 +75,8 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.cmbFilterSpecialization = new System.Windows.Forms.ComboBox();
+            this.lblFilter = new System.Windows.Forms.Label();
             this.panelHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoctors)).BeginInit();
             this.panelForm.SuspendLayout();
@@ -81,45 +85,54 @@
             // 
             // panelHeader
             // 
-            this.panelHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(191)))), ((int)(((byte)(255)))));
+            this.panelHeader.BackColor = System.Drawing.Color.White;
             this.panelHeader.Controls.Add(this.lblTitle);
-            this.panelHeader.Controls.Add(this.lblSubtitle);
+            this.panelHeader.Controls.Add(this.lblFilter);
+            this.panelHeader.Controls.Add(this.cmbFilterSpecialization);
             this.panelHeader.Controls.Add(this.txtSearch);
             this.panelHeader.Controls.Add(this.btnSearch);
             this.panelHeader.Controls.Add(this.btnClear);
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(1200, 80);
+            this.panelHeader.Size = new System.Drawing.Size(1040, 80);
             this.panelHeader.TabIndex = 0;
             // 
             // lblTitle
             // 
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(9, -8);
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(40)))), ((int)(((byte)(51)))));
+            this.lblTitle.Location = new System.Drawing.Point(20, 15);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(400, 63);
+            this.lblTitle.Size = new System.Drawing.Size(300, 50);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Doctor Management";
+            this.lblTitle.Text = "Doctors";
             // 
-            // lblSubtitle
+            // lblFilter
             // 
-            this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic);
-            this.lblSubtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(240)))), ((int)(((byte)(255)))));
-            this.lblSubtitle.Location = new System.Drawing.Point(20, 55);
-            this.lblSubtitle.Name = "lblSubtitle";
-            this.lblSubtitle.Size = new System.Drawing.Size(300, 25);
-            this.lblSubtitle.TabIndex = 1;
-            this.lblSubtitle.Text = "Total Doctors: 0";
+            this.lblFilter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblFilter.ForeColor = System.Drawing.Color.Gray;
+            this.lblFilter.Location = new System.Drawing.Point(350, 15);
+            this.lblFilter.Name = "lblFilter";
+            this.lblFilter.Size = new System.Drawing.Size(150, 20);
+            this.lblFilter.Text = "Filter by Specialization";
+            // 
+            // cmbFilterSpecialization
+            // 
+            this.cmbFilterSpecialization.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFilterSpecialization.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbFilterSpecialization.Location = new System.Drawing.Point(350, 35);
+            this.cmbFilterSpecialization.Name = "cmbFilterSpecialization";
+            this.cmbFilterSpecialization.Size = new System.Drawing.Size(200, 30);
+            this.cmbFilterSpecialization.SelectedIndexChanged += new System.EventHandler(this.cmbFilterSpecialization_SelectedIndexChanged);
             // 
             // txtSearch
             // 
-            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtSearch.Location = new System.Drawing.Point(800, 25);
+            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtSearch.Location = new System.Drawing.Point(580, 35);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(200, 37);
-            this.txtSearch.TabIndex = 2;
+            this.txtSearch.Size = new System.Drawing.Size(200, 30);
+            this.txtSearch.Text = "Search by name...";
             // 
             // btnSearch
             // 
@@ -154,13 +167,16 @@
             this.colSpecialization,
             this.colGender,
             this.colPhone});
-            this.dgvDoctors.Location = new System.Drawing.Point(20, 100);
-            this.dgvDoctors.Name = "dgvDoctors";
-            this.dgvDoctors.ReadOnly = true;
-            this.dgvDoctors.RowHeadersWidth = 62;
-            this.dgvDoctors.RowTemplate.Height = 35;
+            this.dgvDoctors.Location = new System.Drawing.Point(20, 95);
+            this.dgvDoctors.Size = new System.Drawing.Size(1000, 280);
+            this.dgvDoctors.BackgroundColor = System.Drawing.Color.White;
+            this.dgvDoctors.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvDoctors.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dgvDoctors.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dgvDoctors.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(244, 247, 252);
+            this.dgvDoctors.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.dgvDoctors.EnableHeadersVisualStyles = false;
             this.dgvDoctors.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDoctors.Size = new System.Drawing.Size(1160, 300);
             this.dgvDoctors.TabIndex = 1;
             this.dgvDoctors.SelectionChanged += new System.EventHandler(this.dgvDoctors_SelectionChanged);
             // 
@@ -205,24 +221,10 @@
             // 
             // panelForm
             // 
-            this.panelForm.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(255)))));
-            this.panelForm.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelForm.Controls.Add(this.lblFormTitle);
-            this.panelForm.Controls.Add(this.lblName);
-            this.panelForm.Controls.Add(this.txtName);
-            this.panelForm.Controls.Add(this.lblSpecialization);
-            this.panelForm.Controls.Add(this.txtSpecialization);
-            this.panelForm.Controls.Add(this.lblGender);
-            this.panelForm.Controls.Add(this.cmbGender);
-            this.panelForm.Controls.Add(this.lblPhone);
-            this.panelForm.Controls.Add(this.txtPhone);
-            this.panelForm.Controls.Add(this.btnAdd);
-            this.panelForm.Controls.Add(this.btnEdit);
-            this.panelForm.Controls.Add(this.btnSave);
-            this.panelForm.Controls.Add(this.btnDelete);
-            this.panelForm.Location = new System.Drawing.Point(20, 420);
-            this.panelForm.Name = "panelForm";
-            this.panelForm.Size = new System.Drawing.Size(1160, 230);
+            this.panelForm.BackColor = System.Drawing.Color.White;
+            this.panelForm.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.panelForm.Location = new System.Drawing.Point(20, 390);
+            this.panelForm.Size = new System.Drawing.Size(1000, 200);
             this.panelForm.TabIndex = 2;
             // 
             // lblFormTitle
@@ -378,18 +380,16 @@
             this.lblStatus.Size = new System.Drawing.Size(60, 25);
             this.lblStatus.Text = "Ready";
             // 
-            // DoctorsForm
-            // 
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(248)))), ((int)(((byte)(255)))));
-            this.ClientSize = new System.Drawing.Size(1200, 700);
+            // ========== DoctorsForm ==========
+            this.BackColor = System.Drawing.Color.FromArgb(244, 247, 252);
+            this.ClientSize = new System.Drawing.Size(1040, 610);
             this.Controls.Add(this.panelHeader);
             this.Controls.Add(this.dgvDoctors);
             this.Controls.Add(this.panelForm);
             this.Controls.Add(this.statusStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "DoctorsForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Manage Doctors";
+            this.Text = "Doctors";
             this.panelHeader.ResumeLayout(false);
             this.panelHeader.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoctors)).EndInit();

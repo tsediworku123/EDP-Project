@@ -14,7 +14,51 @@ namespace ClinicAppointmentSystem
         public DoctorsForm()
         {
             InitializeComponent();
+            LoadSpecializations();
             LoadDoctors();
+        }
+
+        private void LoadSpecializations()
+        {
+            cmbFilterSpecialization.Items.Clear();
+            cmbFilterSpecialization.Items.Add("All Specializations");
+            var distinctSpecs = DataManager.Doctors.Select(d => d.Specialization).Distinct().OrderBy(s => s).ToList();
+            foreach (var spec in distinctSpecs)
+            {
+                cmbFilterSpecialization.Items.Add(spec);
+            }
+            cmbFilterSpecialization.SelectedIndex = 0;
+        }
+
+        private void cmbFilterSpecialization_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void ApplyFilters()
+        {
+            string selectedSpec = cmbFilterSpecialization.SelectedItem?.ToString();
+            string searchTerm = txtSearch.Text.ToLower().Trim();
+            if (searchTerm == "search by name...") searchTerm = "";
+
+            var filtered = DataManager.Doctors.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(selectedSpec) && selectedSpec != "All Specializations")
+            {
+                filtered = filtered.Where(d => d.Specialization == selectedSpec);
+            }
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                filtered = filtered.Where(d => d.FullName.ToLower().Contains(searchTerm));
+            }
+
+            dgvDoctors.Rows.Clear();
+            foreach (var doctor in filtered)
+            {
+                dgvDoctors.Rows.Add(doctor.Id, doctor.FullName, doctor.Specialization, doctor.Gender, doctor.Phone);
+            }
+            UpdateStatus($"Showing {dgvDoctors.Rows.Count} doctors");
         }
 
         private void LoadDoctors()
@@ -169,27 +213,22 @@ namespace ClinicAppointmentSystem
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string term = txtSearch.Text.ToLower();
-            if (string.IsNullOrEmpty(term))
-            {
-                LoadDoctors();
-                return;
-            }
+            ApplyFilters();
+        }
 
-            dgvDoctors.Rows.Clear();
-            foreach (var d in DataManager.Doctors.Where(d =>
-                d.FullName.ToLower().Contains(term) ||
-                d.Specialization.ToLower().Contains(term)))
-            {
-                dgvDoctors.Rows.Add(d.Id, d.FullName, d.Specialization, d.Gender, d.Phone);
+        public void ExternalFilter(string term)
+        {
+            if (this.txtSearch != null) {
+                this.txtSearch.Text = term;
+                ApplyFilters();
             }
-            UpdateStatus($"Found {dgvDoctors.Rows.Count} matching doctors");
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            txtSearch.Text = "";
-            LoadDoctors();
+            txtSearch.Text = "Search by name...";
+            cmbFilterSpecialization.SelectedIndex = 0;
+            ApplyFilters();
             ClearFields();
         }
     }

@@ -18,19 +18,48 @@ namespace ClinicAppointmentSystem
 
         private void LoadPatients()
         {
-            lvPatients.Items.Clear();
-            foreach (var patient in DataManager.Patients)
-            {
-                ListViewItem item = new ListViewItem(patient.Id.ToString());
-                item.SubItems.Add(patient.FullName);
-                item.SubItems.Add(patient.Phone);
-                item.SubItems.Add(patient.DateOfBirth.ToShortDateString());
-                item.SubItems.Add(patient.Gender);
-                item.SubItems.Add(patient.Address);
-                item.Tag = patient;
-                lvPatients.Items.Add(item);
-            }
+            ApplyFilters();
             UpdateStatus($"Total Patients: {DataManager.Patients.Count}");
+        }
+
+        private void Filter_Changed(object sender, EventArgs e)
+        {
+            ApplyFilters();
+        }
+
+        private void ApplyFilters()
+        {
+            string genderFilter = cmbFilterGender.SelectedItem?.ToString();
+            string searchTerm = txtSearch.Text.Trim().ToLower();
+            if (searchTerm == "search by name...") searchTerm = "";
+
+            var filtered = DataManager.Patients.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(genderFilter) && genderFilter != "All")
+            {
+                filtered = filtered.Where(p => p.Gender == genderFilter);
+            }
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                filtered = filtered.Where(p => 
+                    p.FullName.ToLower().Contains(searchTerm) || 
+                    p.Phone.Contains(searchTerm)
+                );
+            }
+
+            dgvPatients.Rows.Clear();
+            foreach (var patient in filtered)
+            {
+                dgvPatients.Rows.Add(
+                    patient.Id,
+                    patient.FullName,
+                    patient.Phone,
+                    patient.DateOfBirth.ToShortDateString(),
+                    patient.Gender,
+                    patient.Address
+                );
+            }
         }
 
         private void UpdateStatus(string message)
@@ -52,21 +81,21 @@ namespace ClinicAppointmentSystem
             btnDelete.Enabled = false;
         }
 
-        private void lvPatients_SelectedIndexChanged(object sender, EventArgs e)
+        private void dgvPatients_SelectionChanged(object sender, EventArgs e)
         {
-            if (lvPatients.SelectedItems.Count > 0)
+            if (dgvPatients.SelectedRows.Count > 0)
             {
-                ListViewItem item = lvPatients.SelectedItems[0];
-                editingId = int.Parse(item.SubItems[0].Text);
-                txtFullName.Text = item.SubItems[1].Text;
-                txtPhone.Text = item.SubItems[2].Text;
-                dtpDOB.Value = DateTime.Parse(item.SubItems[3].Text);
+                var row = dgvPatients.SelectedRows[0];
+                editingId = int.Parse(row.Cells["colId"].Value.ToString());
+                txtFullName.Text = row.Cells["colFullName"].Value?.ToString();
+                txtPhone.Text = row.Cells["colPhone"].Value?.ToString();
+                dtpDOB.Value = DateTime.Parse(row.Cells["colDOB"].Value.ToString());
 
-                string gender = item.SubItems[4].Text;
+                string gender = row.Cells["colGender"].Value?.ToString();
                 rbtnMale.Checked = (gender == "Male");
                 rbtnFemale.Checked = (gender == "Female");
 
-                txtAddress.Text = item.SubItems[5].Text;
+                txtAddress.Text = row.Cells["colAddress"].Value?.ToString();
 
                 btnEdit.Enabled = true;
                 btnDelete.Enabled = true;
@@ -201,36 +230,23 @@ namespace ClinicAppointmentSystem
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string searchTerm = txtSearch.Text.Trim().ToLower();
+            ApplyFilters();
+        }
 
-            if (string.IsNullOrEmpty(searchTerm))
+        public void ExternalFilter(string term)
+        {
+            if (this.txtSearch != null)
             {
-                LoadPatients();
-                return;
+                this.txtSearch.Text = term;
+                ApplyFilters();
             }
-
-            lvPatients.Items.Clear();
-            foreach (var patient in DataManager.Patients)
-            {
-                if (patient.FullName.ToLower().Contains(searchTerm) ||
-                    patient.Phone.Contains(searchTerm))
-                {
-                    ListViewItem item = new ListViewItem(patient.Id.ToString());
-                    item.SubItems.Add(patient.FullName);
-                    item.SubItems.Add(patient.Phone);
-                    item.SubItems.Add(patient.DateOfBirth.ToShortDateString());
-                    item.SubItems.Add(patient.Gender);
-                    item.SubItems.Add(patient.Address);
-                    lvPatients.Items.Add(item);
-                }
-            }
-            UpdateStatus($"Found {lvPatients.Items.Count} matching patients");
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            txtSearch.Text = "";
-            LoadPatients();
+            txtSearch.Text = "Search by name...";
+            cmbFilterGender.SelectedIndex = 0;
+            ApplyFilters();
             ClearForm();
         }
     }

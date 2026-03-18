@@ -61,30 +61,20 @@
 
             // Form Properties
             this.Text = "My Appointments";
-            this.ClientSize = new System.Drawing.Size(900, 600);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.ClientSize = new System.Drawing.Size(1040, 610);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.BackColor = System.Drawing.Color.White;
+            this.BackColor = System.Drawing.Color.FromArgb(244, 247, 252);
 
             // panelHeader
-            this.panelHeader.BackColor = System.Drawing.Color.FromArgb(0, 191, 255);
-            this.panelHeader.Controls.Add(this.lblTitle);
-            this.panelHeader.Controls.Add(this.btnClose);
+            this.panelHeader.BackColor = System.Drawing.Color.White;
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelHeader.Location = new System.Drawing.Point(0, 0);
-            this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Size = new System.Drawing.Size(900, 60);
-            this.panelHeader.TabIndex = 0;
+            this.panelHeader.Height = 80;
 
-            // lblTitle
-            this.lblTitle.AutoSize = true;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblTitle.ForeColor = System.Drawing.Color.White;
+            this.lblTitle.Text = "Appointments";
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(28, 40, 51);
             this.lblTitle.Location = new System.Drawing.Point(20, 15);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(200, 32);
-            this.lblTitle.Text = "My Appointments";
-            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Size = new System.Drawing.Size(300, 50);
 
             // btnClose
             this.btnClose.FlatAppearance.BorderSize = 0;
@@ -100,121 +90,73 @@
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
 
             // panelFilter
-            this.panelFilter.BackColor = System.Drawing.Color.White;
-            this.panelFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelFilter.Controls.Add(this.lblFilter);
-            this.panelFilter.Controls.Add(this.cmbFilter);
-            this.panelFilter.Controls.Add(this.btnRefresh);
-            this.panelFilter.Location = new System.Drawing.Point(20, 80);
-            this.panelFilter.Name = "panelFilter";
-            this.panelFilter.Size = new System.Drawing.Size(860, 70);
-            this.panelFilter.TabIndex = 1;
+            this.panelFilter.BackColor = System.Drawing.Color.Transparent;
+            this.panelFilter.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.panelFilter.Location = new System.Drawing.Point(340, 15);
+            this.panelFilter.Size = new System.Drawing.Size(400, 55);
+            this.panelHeader.Controls.Add(this.panelFilter);
 
-            // lblFilter
-            this.lblFilter.AutoSize = true;
-            this.lblFilter.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblFilter.ForeColor = System.Drawing.Color.FromArgb(44, 62, 80);
-            this.lblFilter.Location = new System.Drawing.Point(20, 25);
-            this.lblFilter.Name = "lblFilter";
-            this.lblFilter.Size = new System.Drawing.Size(45, 20);
-            this.lblFilter.Text = "Filter:";
-            this.lblFilter.TabIndex = 0;
+            this.lblFilter.Text = "Status";
+            this.lblFilter.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblFilter.ForeColor = System.Drawing.Color.Gray;
+            this.lblFilter.Location = new System.Drawing.Point(0, 0);
 
-            // cmbFilter
-            this.cmbFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFilter.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cmbFilter.Items.Clear();
             this.cmbFilter.Items.AddRange(new object[] { "All", "Upcoming", "Past", "Cancelled" });
-            this.cmbFilter.Location = new System.Drawing.Point(80, 22);
-            this.cmbFilter.Name = "cmbFilter";
-            this.cmbFilter.Size = new System.Drawing.Size(150, 28);
-            this.cmbFilter.TabIndex = 1;
             this.cmbFilter.SelectedIndex = 0;
-            this.cmbFilter.SelectedIndexChanged += new System.EventHandler(this.cmbFilter_SelectedIndexChanged);
+            this.cmbFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFilter.Location = new System.Drawing.Point(0, 20);
+            this.cmbFilter.Size = new System.Drawing.Size(150, 30);
 
-            // btnRefresh
-            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(0, 191, 255);
-            this.btnRefresh.FlatAppearance.BorderSize = 0;
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefresh.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
-            this.btnRefresh.Location = new System.Drawing.Point(750, 15);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(90, 40);
-            this.btnRefresh.TabIndex = 2;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = false;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Location = new System.Drawing.Point(170, 18);
+            this.btnRefresh.Size = new System.Drawing.Size(120, 35);
+            this.btnRefresh.Text = "🔄 Refresh";
 
             // lvAppointments
             this.lvAppointments.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                this.colId,
-                this.colDoctor,
-                this.colDate,
-                this.colTime,
-                this.colReason,
-                this.colStatus
+                this.colId, this.colDoctor, this.colDate, this.colTime, this.colReason, this.colStatus
             });
+            this.lvAppointments.Location = new System.Drawing.Point(20, 100);
+            this.lvAppointments.Size = new System.Drawing.Size(1000, 420);
             this.lvAppointments.FullRowSelect = true;
-            this.lvAppointments.GridLines = true;
-            this.lvAppointments.Location = new System.Drawing.Point(20, 170);
-            this.lvAppointments.Name = "lvAppointments";
-            this.lvAppointments.Size = new System.Drawing.Size(860, 320);
-            this.lvAppointments.TabIndex = 2;
-            this.lvAppointments.UseCompatibleStateImageBehavior = false;
             this.lvAppointments.View = System.Windows.Forms.View.Details;
+            this.lvAppointments.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.lvAppointments.BackColor = System.Drawing.Color.White;
             this.lvAppointments.SelectedIndexChanged += new System.EventHandler(this.lvAppointments_SelectedIndexChanged);
 
-            // Column headers
-            this.colId.Text = "ID";
-            this.colId.Width = 40;
-            this.colDoctor.Text = "Doctor";
-            this.colDoctor.Width = 180;
-            this.colDate.Text = "Date";
-            this.colDate.Width = 120;
-            this.colTime.Text = "Time";
-            this.colTime.Width = 100;
-            this.colReason.Text = "Reason";
-            this.colReason.Width = 200;
-            this.colStatus.Text = "Status";
-            this.colStatus.Width = 100;
+            this.colId.Text = "ID"; this.colId.Width = 40;
+            this.colDoctor.Text = "Doctor"; this.colDoctor.Width = 200;
+            this.colDate.Text = "Date"; this.colDate.Width = 120;
+            this.colTime.Text = "Time"; this.colTime.Width = 100;
+            this.colReason.Text = "Reason"; this.colReason.Width = 300;
+            this.colStatus.Text = "Status"; this.colStatus.Width = 120;
 
             // btnCancel
             this.btnCancel.BackColor = System.Drawing.Color.FromArgb(231, 76, 60);
-            this.btnCancel.Enabled = false;
-            this.btnCancel.FlatAppearance.BorderSize = 0;
-            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Location = new System.Drawing.Point(20, 510);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(150, 45);
-            this.btnCancel.TabIndex = 3;
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancel.Location = new System.Drawing.Point(20, 535);
+            this.btnCancel.Size = new System.Drawing.Size(180, 40);
             this.btnCancel.Text = "Cancel Appointment";
-            this.btnCancel.UseVisualStyleBackColor = false;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 
-            // btnReschedule
             this.btnReschedule.BackColor = System.Drawing.Color.FromArgb(241, 196, 15);
-            this.btnReschedule.Enabled = false;
-            this.btnReschedule.FlatAppearance.BorderSize = 0;
-            this.btnReschedule.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnReschedule.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnReschedule.ForeColor = System.Drawing.Color.White;
-            this.btnReschedule.Location = new System.Drawing.Point(190, 510);
-            this.btnReschedule.Name = "btnReschedule";
-            this.btnReschedule.Size = new System.Drawing.Size(150, 45);
-            this.btnReschedule.TabIndex = 4;
+            this.btnReschedule.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReschedule.Location = new System.Drawing.Point(210, 535);
+            this.btnReschedule.Size = new System.Drawing.Size(150, 40);
             this.btnReschedule.Text = "Reschedule";
-            this.btnReschedule.UseVisualStyleBackColor = false;
             this.btnReschedule.Click += new System.EventHandler(this.btnReschedule_Click);
 
             // statusStrip
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.lblStatus
             });
-            this.statusStrip.Location = new System.Drawing.Point(0, 578);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(900, 22);
+            this.statusStrip.Location = new System.Drawing.Point(0, 588);
+            this.statusStrip.Size = new System.Drawing.Size(1040, 22);
             this.statusStrip.TabIndex = 5;
 
             this.lblStatus.Name = "lblStatus";

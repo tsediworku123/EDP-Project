@@ -15,7 +15,7 @@ namespace ClinicAppointmentSystem
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
             this.IsMdiContainer = true;
-            this.MainMenuStrip = menuStrip;
+            this.menuStrip.Visible = false; // Hide the menu strip as requested
             ShowHomePage();
         }
 

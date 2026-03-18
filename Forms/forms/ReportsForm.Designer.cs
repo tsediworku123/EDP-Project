@@ -136,59 +136,46 @@ namespace ClinicAppointmentSystem
 
             // ========== FORM PROPERTIES ==========
             this.Text = "Reports & Analytics";
-            this.ClientSize = new System.Drawing.Size(1300, 800);
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.ClientSize = new System.Drawing.Size(1040, 610);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.BackColor = System.Drawing.Color.FromArgb(240, 248, 255);
+            this.BackColor = System.Drawing.Color.FromArgb(244, 247, 252);
+            this.AutoScroll = true;
 
             // ========== HEADER PANEL ==========
-            this.panelHeader.BackColor = System.Drawing.Color.FromArgb(0, 191, 255);
+            this.panelHeader.BackColor = System.Drawing.Color.White;
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Height = 80;
-            this.panelHeader.TabIndex = 0;
 
-            this.lblTitle.Text = "Reports & Analytics";
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(20, 20);
-            this.lblTitle.Size = new System.Drawing.Size(400, 45);
-            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Text = "Reports";
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(28, 40, 51);
+            this.lblTitle.Location = new System.Drawing.Point(20, 15);
+            this.lblTitle.Size = new System.Drawing.Size(200, 50);
 
             this.datePicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.datePicker.Location = new System.Drawing.Point(800, 25);
-            this.datePicker.Size = new System.Drawing.Size(150, 27);
-            this.datePicker.Value = System.DateTime.Now;
-            this.datePicker.Name = "datePicker";
+            this.datePicker.Location = new System.Drawing.Point(400, 30);
+            this.datePicker.Size = new System.Drawing.Size(120, 27);
 
             this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
-            this.btnRefresh.Location = new System.Drawing.Point(970, 20);
-            this.btnRefresh.Size = new System.Drawing.Size(100, 40);
+            this.btnRefresh.Location = new System.Drawing.Point(540, 25);
+            this.btnRefresh.Size = new System.Drawing.Size(120, 35);
             this.btnRefresh.Text = "🔄 Refresh";
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.UseVisualStyleBackColor = false;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
 
-            this.btnExportPDF.BackColor = System.Drawing.Color.FromArgb(46, 204, 113);
+            this.btnExportPDF.BackColor = System.Drawing.Color.White;
             this.btnExportPDF.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportPDF.ForeColor = System.Drawing.Color.White;
-            this.btnExportPDF.Location = new System.Drawing.Point(1080, 20);
-            this.btnExportPDF.Size = new System.Drawing.Size(100, 40);
+            this.btnExportPDF.ForeColor = System.Drawing.Color.FromArgb(44, 62, 80);
+            this.btnExportPDF.Location = new System.Drawing.Point(750, 25);
+            this.btnExportPDF.Size = new System.Drawing.Size(120, 35);
             this.btnExportPDF.Text = "📄 Export PDF";
-            this.btnExportPDF.Name = "btnExportPDF";
-            this.btnExportPDF.UseVisualStyleBackColor = false;
-            this.btnExportPDF.Click += new System.EventHandler(this.btnExportPDF_Click);
 
-            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(155, 89, 182);
+            this.btnPrint.BackColor = System.Drawing.Color.White;
             this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPrint.ForeColor = System.Drawing.Color.White;
-            this.btnPrint.Location = new System.Drawing.Point(1190, 20);
-            this.btnPrint.Size = new System.Drawing.Size(90, 40);
+            this.btnPrint.ForeColor = System.Drawing.Color.FromArgb(44, 62, 80);
+            this.btnPrint.Location = new System.Drawing.Point(880, 25);
+            this.btnPrint.Size = new System.Drawing.Size(100, 35);
             this.btnPrint.Text = "🖨️ Print";
-            this.btnPrint.Name = "btnPrint";
-            this.btnPrint.UseVisualStyleBackColor = false;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
 
             this.panelHeader.Controls.Add(this.lblTitle);
             this.panelHeader.Controls.Add(this.datePicker);
@@ -196,11 +183,10 @@ namespace ClinicAppointmentSystem
             this.panelHeader.Controls.Add(this.btnExportPDF);
             this.panelHeader.Controls.Add(this.btnPrint);
 
-            // ========== DAILY REPORT PANEL ==========
             this.panelDaily.BackColor = System.Drawing.Color.White;
-            this.panelDaily.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelDaily.Location = new System.Drawing.Point(20, 100);
-            this.panelDaily.Size = new System.Drawing.Size(300, 200);
+            this.panelDaily.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.panelDaily.Location = new System.Drawing.Point(30, 100);
+            this.panelDaily.Size = new System.Drawing.Size(310, 180);
             this.panelDaily.TabIndex = 1;
             this.panelDaily.Name = "panelDaily";
 
@@ -269,11 +255,10 @@ namespace ClinicAppointmentSystem
             this.panelDaily.Controls.Add(this.lblDailyCancelledLabel);
             this.panelDaily.Controls.Add(this.lblDailyCancelled);
 
-            // ========== MONTHLY REPORT PANEL ==========
             this.panelMonthly.BackColor = System.Drawing.Color.White;
-            this.panelMonthly.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelMonthly.Location = new System.Drawing.Point(340, 100);
-            this.panelMonthly.Size = new System.Drawing.Size(300, 200);
+            this.panelMonthly.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.panelMonthly.Location = new System.Drawing.Point(360, 100);
+            this.panelMonthly.Size = new System.Drawing.Size(310, 180);
             this.panelMonthly.TabIndex = 2;
             this.panelMonthly.Name = "panelMonthly";
 
@@ -350,11 +335,10 @@ namespace ClinicAppointmentSystem
             this.panelMonthly.Controls.Add(this.lblMonthlyCancelledLabel);
             this.panelMonthly.Controls.Add(this.lblMonthlyCancelled);
 
-            // ========== PATIENT STATISTICS PANEL ==========
             this.panelPatients.BackColor = System.Drawing.Color.White;
-            this.panelPatients.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelPatients.Location = new System.Drawing.Point(660, 100);
-            this.panelPatients.Size = new System.Drawing.Size(300, 200);
+            this.panelPatients.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.panelPatients.Location = new System.Drawing.Point(690, 100);
+            this.panelPatients.Size = new System.Drawing.Size(310, 180);
             this.panelPatients.TabIndex = 3;
             this.panelPatients.Name = "panelPatients";
 
