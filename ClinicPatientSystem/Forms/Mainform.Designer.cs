@@ -1,4 +1,4 @@
-﻿namespace ClinicPatientSystem
+﻿namespace ClinicAppointmentSystem
 {
     partial class Mainform
     {

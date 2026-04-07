@@ -6,12 +6,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{909A179B-4314-4BB3-B3D9-9175AF22EBF2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ClinicPatientSystem</RootNamespace>
-    <AssemblyName>ClinicPatientSystem</AssemblyName>
+    <RootNamespace>ClinicAppointmentSystem</RootNamespace>
+    <AssemblyName>ClinicAppointmentSystem</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <StartupObject>ClinicAppointmentSystem.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,17 +37,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MaterialDesignColors">
+      <HintPath>packages\MaterialDesignColors.3.0.0\lib\net462\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf">
+      <HintPath>packages\MaterialDesignThemes.5.0.0\lib\net462\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Forms\forms\AdminDashboard.cs">
@@ -51,36 +71,6 @@
     </Compile>
     <Compile Include="Forms\forms\AdminDashboard.Designer.cs">
       <DependentUpon>AdminDashboard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\Appointment.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\forms\Appointment.Designer.cs">
-      <DependentUpon>Appointment.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\BookAppointment.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\forms\BookAppointment.Designer.cs">
-      <DependentUpon>BookAppointment.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\ChangePasswordForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\forms\ChangePasswordForm.Designer.cs">
-      <DependentUpon>ChangePasswordForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\DoctorsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\forms\DoctorsForm.Designer.cs">
-      <DependentUpon>DoctorsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\FeedBackForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\forms\FeedBackForm.Designer.cs">
-      <DependentUpon>FeedBackForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\forms\HomePage.cs">
       <SubType>Form</SubType>
@@ -102,92 +92,258 @@
     </Compile>
     <Compile Include="Managers\CurrentUser.cs" />
     <Compile Include="Managers\DataManager.cs" />
-    <Compile Include="Forms\forms\MedicalHistory.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\forms\MedicalHistory.Designer.cs">
-      <DependentUpon>MedicalHistory.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Managers\SessionManager.cs" />
+    <Compile Include="Managers\CSVExporter.cs" />
     <Compile Include="Models\Appointment.cs" />
+    <Compile Include="Models\AuditLogEntry.cs" />
     <Compile Include="Models\Doctor.cs" />
     <Compile Include="Models\Feedback.cs" />
     <Compile Include="Models\MedicalRecord.cs" />
     <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\DashboardActivity.cs" />
     <Compile Include="Models\Patient.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Forms\forms\MyAppointmentForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Services\JsonDataService.cs" />
+    <Compile Include="Services\BackupService.cs" />
+    <Compile Include="Utils\PasswordHasher.cs" />
+    <Compile Include="Utils\PatientTheme.cs" />
+    <Compile Include="Utils\MvvmLite.cs" />
+    <Compile Include="Utils\Converters.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\MyAppointmentForm.Designer.cs">
-      <DependentUpon>MyAppointmentForm.cs</DependentUpon>
+    <Compile Include="ViewModels\AddNewDoctorViewModel.cs" />
+    <Compile Include="ViewModels\AddNewUserViewModel.cs" />
+    <Compile Include="ViewModels\PatientEntryViewModel.cs" />
+    <Compile Include="ViewModels\PatientShellViewModel.cs" />
+    <Compile Include="ViewModels\PatientDashboardViewModel.cs" />
+    <Compile Include="ViewModels\BookVisitViewModel.cs" />
+    <Compile Include="ViewModels\MyAppointmentsViewModel.cs" />
+    <Compile Include="ViewModels\PatientProfileViewModel.cs" />
+    <Compile Include="ViewModels\MedicalHistoryViewModel.cs" />
+    <Compile Include="Views\PatientShellView.xaml.cs">
+      <DependentUpon>PatientShellView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\NotificationForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Views\PatientDashboardView.xaml.cs">
+      <DependentUpon>PatientDashboardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\NotificationForm.Designer.cs">
-      <DependentUpon>NotificationForm.cs</DependentUpon>
+    <Compile Include="Views\BookVisitView.xaml.cs">
+      <DependentUpon>BookVisitView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\PatientForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Views\MyAppointmentsView.xaml.cs">
+      <DependentUpon>MyAppointmentsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\PatientForm.Designer.cs">
-      <DependentUpon>PatientForm.cs</DependentUpon>
+    <Compile Include="Views\MyProfileView.xaml.cs">
+      <DependentUpon>MyProfileView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MedicalHistoryView.xaml.cs">
+      <DependentUpon>MedicalHistoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddNewDoctorWindow.xaml.cs">
+      <DependentUpon>AddNewDoctorWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddNewUserWindow.xaml.cs">
+      <DependentUpon>AddNewUserWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PatientEntryWindow.xaml.cs">
+      <DependentUpon>PatientEntryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Forms\forms\Register.cs">
+    <Compile Include="Forms\forms\DoctorDashboard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\forms\Register.Designer.cs">
-      <DependentUpon>Register.cs</DependentUpon>
+    <Compile Include="Forms\forms\DoctorDashboard.Designer.cs">
+      <DependentUpon>DoctorDashboard.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\ReportsForm.cs">
+    <Compile Include="Forms\controls\UcDashboardHome.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDashboardHome.Designer.cs">
+      <DependentUpon>UcDashboardHome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcConsultationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcConsultationPanel.Designer.cs">
+      <DependentUpon>UcConsultationPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcCalendarView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcCalendarView.Designer.cs">
+      <DependentUpon>UcCalendarView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcBookingForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcBookingForm.Designer.cs">
+      <DependentUpon>UcBookingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcStaffManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcStaffManagement.Designer.cs">
+      <DependentUpon>UcStaffManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcDepartmentManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorQueue.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorQueue.Designer.cs">
+      <DependentUpon>UcDoctorQueue.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcSecurityManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcSystemSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcSystemSettings.Designer.cs">
+      <DependentUpon>UcSystemSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcClinicalReports.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcClinicalReports.Designer.cs">
+      <DependentUpon>UcClinicalReports.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcAppointmentOversight.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcAppointmentOversight.Designer.cs">
+      <DependentUpon>UcAppointmentOversight.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientDirectory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientDirectory.Designer.cs">
+      <DependentUpon>UcPatientDirectory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorManagement.Designer.cs">
+      <DependentUpon>UcDoctorManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcAppointmentGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcAppointmentGrid.Designer.cs">
+      <DependentUpon>UcAppointmentGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcAuditLog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcAuditLog.Designer.cs">
+      <DependentUpon>UcAuditLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcBackupRestore.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcBackupRestore.Designer.cs">
+      <DependentUpon>UcBackupRestore.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcAppointmentOverview.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcAppointmentOverview.Designer.cs">
+      <DependentUpon>UcAppointmentOverview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorHome.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorHome.Designer.cs">
+      <DependentUpon>UcDoctorHome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorAppointments.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorAppointments.Designer.cs">
+      <DependentUpon>UcDoctorAppointments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientQueue.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorFeedback.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorFeedback.Designer.cs">
+      <DependentUpon>UcDoctorFeedback.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorAvailability.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorAvailability.Designer.cs">
+      <DependentUpon>UcDoctorAvailability.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorHistory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcDoctorHistory.Designer.cs">
+      <DependentUpon>UcDoctorHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientGrid.Designer.cs">
+      <DependentUpon>UcPatientGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientHome.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientHome.Designer.cs">
+      <DependentUpon>UcPatientHome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientAppointments.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientAppointments.Designer.cs">
+      <DependentUpon>UcPatientAppointments.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientRateVisits.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientProfile.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientProfile.Designer.cs">
+      <DependentUpon>UcPatientProfile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\controls\UcMedicalHistory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientBooking.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\controls\UcPatientBooking.Designer.cs">
+      <DependentUpon>UcPatientBooking.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\forms\PatientDashboard.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\forms\ReportsForm.Designer.cs">
-      <DependentUpon>ReportsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\RescheduleAppointmentDialog.cs">
+    <Compile Include="Forms\forms\AppointmentDetailForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\forms\RescheduleAppointmentDialog.Designer.cs">
-      <DependentUpon>RescheduleAppointmentDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\UserDashboard.cs">
+    <Compile Include="Forms\forms\RateDoctorForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\forms\UserDashboard.Designer.cs">
-      <DependentUpon>UserDashboard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\forms\UserProfileForm.cs">
+    <Compile Include="Forms\forms\ReceptionDashboardForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\forms\UserProfileForm.Designer.cs">
-      <DependentUpon>UserProfileForm.cs</DependentUpon>
+    <Compile Include="Forms\forms\ReceptionDashboardForm.Designer.cs">
+      <DependentUpon>ReceptionDashboardForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\forms\ViewDoctorsForm.cs">
+    <Compile Include="Forms\forms\RegisterPatientForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\forms\ViewDoctorsForm.Designer.cs">
-      <DependentUpon>ViewDoctorsForm.cs</DependentUpon>
+    <Compile Include="Forms\forms\RegisterPatientForm.Designer.cs">
+      <DependentUpon>RegisterPatientForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Forms\forms\AdminDashboard.resx">
       <DependentUpon>AdminDashboard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\Appointment.resx">
-      <DependentUpon>Appointment.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\BookAppointment.resx">
-      <DependentUpon>BookAppointment.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\ChangePasswordForm.resx">
-      <DependentUpon>ChangePasswordForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\DoctorsForm.resx">
-      <DependentUpon>DoctorsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\FeedBackForm.resx">
-      <DependentUpon>FeedBackForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\forms\HomePage.resx">
       <DependentUpon>HomePage.cs</DependentUpon>
@@ -198,12 +354,6 @@
     <EmbeddedResource Include="Forms\forms\MainContainer.resx">
       <DependentUpon>MainContainer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\NotificationForm.resx">
-      <DependentUpon>NotificationForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\PatientForm.resx">
-      <DependentUpon>PatientForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -213,24 +363,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Forms\forms\Register.resx">
-      <DependentUpon>Register.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\ReportsForm.resx">
-      <DependentUpon>ReportsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\RescheduleAppointmentDialog.resx">
-      <DependentUpon>RescheduleAppointmentDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\UserDashboard.resx">
-      <DependentUpon>UserDashboard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\UserProfileForm.resx">
-      <DependentUpon>UserProfileForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\forms\ViewDoctorsForm.resx">
-      <DependentUpon>ViewDoctorsForm.cs</DependentUpon>
-    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -240,6 +373,48 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Views\PatientShellView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PatientDashboardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BookVisitView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MyAppointmentsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MyProfileView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MedicalHistoryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddNewDoctorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AddNewUserWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PatientEntryWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

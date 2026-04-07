@@ -1,4 +1,4 @@
-﻿using ClinicPatientSystem.Models;
+using ClinicPatientSystem.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +13,7 @@ using System;
 using System.Windows.Forms;
 
 
-namespace ClinicPatientSystem
+namespace ClinicAppointmentSystem
 {
     public partial class AddPatientForm : Form
     {
@@ -24,31 +24,32 @@ namespace ClinicPatientSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (textBox1.Text == "" || textBox2.Text == "")
+            if (string.IsNullOrWhiteSpace(textBox1.Text) || string.IsNullOrWhiteSpace(textBox3.Text))
             {
-                MessageBox.Show("Please fill all fields");
+                MessageBox.Show("Please provide at least Name and Phone Number.");
                 return;
             }
 
-            int age;
-
-            if (!int.TryParse(textBox2.Text, out age))
+            Patient p = new Patient
             {
-                MessageBox.Show("Age must be a number");
-                return;
+                FullName = textBox1.Text.Trim(),
+                Phone = textBox3.Text.Trim(),
+                Gender = comboBox1.Text,
+                DateOfBirth = DateTime.Today.AddYears(-20), // Default age 20 if only age provided
+                Username = textBox3.Text.Trim(), // Default username is phone
+                Password = "patient123" // Default password for admin-created patients
+            };
+
+            // If textBox2 contains a number, use it to estimate DOB
+            if (int.TryParse(textBox2.Text, out int age))
+            {
+                p.DateOfBirth = DateTime.Today.AddYears(-age);
             }
 
-            Patient p = new Patient();
+            DataManager.RegisterPatient(p);
+            DataManager.SavePatients(); // Ensure persistent save
 
-            p.Id = Mainform.patients.Count + 1;
-            p.Name = textBox1.Text;
-            p.Age = age;
-            p.Gender = comboBox1.Text;
-            p.Phone = textBox3.Text;
-
-            Mainform.patients.Add(p);
-
-            MessageBox.Show("Patient added successfully");
+            MessageBox.Show($"Patient added successfully!\nDefault Password: {p.Password}");
 
             textBox1.Clear();
             textBox2.Clear();

@@ -5,6 +5,7 @@ namespace ClinicAppointmentSystem.Models
     public class Feedback
     {
         public int Id { get; set; }
+        public int? AppointmentId { get; set; } // Linked to specific visit
         public int PatientId { get; set; }
         public int? DoctorId { get; set; } // Nullable for clinic feedback
         public string PatientName { get; set; }

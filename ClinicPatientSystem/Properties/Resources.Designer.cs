@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClinicPatientSystem.Properties {
+namespace ClinicAppointmentSystem.Properties {
     using System;
     
     

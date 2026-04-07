@@ -88,7 +88,7 @@ namespace ClinicAppointmentSystem
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
-            Register registerForm = new Register();
+            RegisterPatientForm registerForm = new RegisterPatientForm();
             registerForm.ShowDialog();
         }
 

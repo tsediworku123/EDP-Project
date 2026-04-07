@@ -1,4 +1,4 @@
-﻿namespace ClinicAppointmentSystem
+namespace ClinicAppointmentSystem
 {
     partial class MainContainer
     {
@@ -30,10 +30,12 @@
 
             // Form Properties
             this.Text = "Clinic Management System";
-            this.ClientSize = new System.Drawing.Size(1200, 700);
+            this.ClientSize = new System.Drawing.Size(1400, 850);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.MinimumSize = new System.Drawing.Size(1024, 768);
             this.MaximizeBox = true;
             this.MinimizeBox = true;
             this.IsMdiContainer = true;

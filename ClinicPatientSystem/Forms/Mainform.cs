@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ClinicPatientSystem
+namespace ClinicAppointmentSystem
 {
     public partial class Mainform : Form
     {
