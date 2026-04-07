@@ -1,0 +1,140 @@
+<UserControl x:Class="ClinicAppointmentSystem.Views.BookVisit"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ClinicAppointmentSystem.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:ClinicAppointmentSystem.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="1200"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             Background="{DynamicResource MaterialDesignPaper}">
+
+    <UserControl.DataContext>
+        <vm:BookVisitViewModel />
+    </UserControl.DataContext>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="60,40">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <!-- Title -->
+                <RowDefinition Height="Auto" /> <!-- Specialty Chips -->
+                <RowDefinition Height="*" />    <!-- Main Form Split -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. TITLE -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,30">
+                <TextBlock Text="SCHEDULE A VISIT" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Foreground="{DynamicResource PrimaryHueMidBrush}" />
+                <TextBlock Text="Choose your preferred specialty, physician, and time slot to book an appointment." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" Margin="0,8,0,0" />
+            </StackPanel>
+
+            <!-- 2. SPECIALTY CHIPS -->
+            <ListBox Grid.Row="1" ItemsSource="{Binding Specialties}" SelectedItem="{Binding SelectedSpecialty}" 
+                     Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineListBox}" Margin="0,0,0,40">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+            <!-- 3. MAIN FORM GRID -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- LEFT: Doctor Selection -->
+                <StackPanel Grid.Column="0" Margin="0,0,40,0">
+                    <TextBlock Text="SELECT YOUR PHYSICIAN" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,15" />
+                    
+                    <materialDesign:Card UniformCornerRadius="12" Padding="8" materialDesign:ElevationAssist.Elevation="Dp1">
+                        <StackPanel>
+                            <!-- Search Bar -->
+                            <Grid Margin="10,5">
+                                <materialDesign:PackIcon Kind="Magnify" Opacity="0.5" VerticalAlignment="Center" Margin="5,0,0,0" />
+                                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                         materialDesign:TextFieldAssist.PrefixText="   " 
+                                         materialDesign:HintAssist.Hint="Search Name..." Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                            </Grid>
+                            
+                            <!-- Doctor List -->
+                            <ListBox ItemsSource="{Binding FilteredDoctors}" SelectedItem="{Binding SelectedDoctor}" 
+                                     Height="350" Margin="0,10,0,0" BorderThickness="0"
+                                     HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <materialDesign:PackIcon Kind="AccountCircle" Width="35" Height="35" Foreground="{DynamicResource PrimaryHueMidBrush}" VerticalAlignment="Center" Margin="0,0,15,0" />
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="{Binding FullName}" FontWeight="Bold" />
+                                                <TextBlock Text="{Binding Specialty}" Opacity="0.6" FontSize="12" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Reason Input -->
+                    <TextBox Text="{Binding Reason}" Style="{StaticResource MaterialDesignOutlinedTextBox}" 
+                             materialDesign:HintAssist.Hint="REASON FOR VISIT (OPTIONAL)" 
+                             AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
+                             Height="120" Margin="0,30,0,0" />
+                </StackPanel>
+
+                <!-- RIGHT: Date & Time Picker -->
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="DATE &amp; TIME SELECTION" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontWeight="Bold" Opacity="0.5" Margin="0,0,0,15" />
+                    
+                    <materialDesign:Card UniformCornerRadius="12" Padding="25" materialDesign:ElevationAssist.Elevation="Dp2">
+                        <StackPanel>
+                            <!-- Calendar -->
+                            <Viewbox Height="220">
+                                <Calendar SelectedDate="{Binding SelectedDate}" DisplayDateStart="{Binding SelectedDate}" />
+                            </Viewbox>
+
+                            <Separator Margin="0,20" Opacity="0.5" />
+
+                            <TextBlock Text="AVAILABLE SLOTS" FontWeight="Bold" Opacity="0.6" HorizontalAlignment="Center" Margin="0,0,0,15" />
+                            
+                            <!-- Slots Grid -->
+                            <ItemsControl ItemsSource="{Binding AvailableSlots}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="3" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <RadioButton Style="{StaticResource MaterialDesignOutlineButtonRadioButton}" 
+                                                     Content="{Binding StringFormat='hh:mm tt'}" 
+                                                     Height="45" Margin="5" Padding="0" Cursor="Hand"
+                                                     IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.SelectedTime, Converter={StaticResource DateTimeToBoolConverter}, ConverterParameter={Binding Value}}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Text="Select a physician and date to see slots." 
+                                       Visibility="{Binding AvailableSlots.Count, Converter={StaticResource InverseBoolToVisibilityConverter}, ConverterParameter=0}" 
+                                       HorizontalAlignment="Center" Opacity="0.5" FontStyle="Italic" Margin="0,10" />
+                        </StackPanel>
+                    </materialDesign:Card>
+
+                    <!-- Action Button -->
+                    <Button Command="{Binding ConfirmCommand}" Content="CONFIRM APPOINTMENT" 
+                            Style="{StaticResource MaterialDesignRaisedButton}" 
+                            Height="65" VerticalAlignment="Bottom" Margin="0,30,0,0" 
+                            materialDesign:ButtonAssist.CornerRadius="32" FontWeight="Bold" FontSize="16" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

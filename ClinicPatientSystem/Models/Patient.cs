@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinicPatientSystem.Models
+namespace ClinicAppointmentSystem.Models
 {
     public class Patient
     {

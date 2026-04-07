@@ -6,6 +6,7 @@ namespace ClinicAppointmentSystem.Models
     {
         public int Id { get; set; }
         public int PatientId { get; set; }
+        public int DoctorId { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
         public DateTime CreatedAt { get; set; }

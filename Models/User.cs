@@ -1,4 +1,4 @@
-namespace ClinicAppointmentSystem.Models
+﻿namespace ClinicAppointmentSystem.Models
 {
     public class User
     {
@@ -7,6 +7,14 @@ namespace ClinicAppointmentSystem.Models
         public string Password { get; set; }
         public string Role { get; set; }
         public int PatientId { get; set; }
-        public string Email { get; set; }  // Make sure this line exists
+        public int DoctorId { get; set; }
+        public string Email { get; set; }  
+
+        public const string Admin = "Admin";
+        public const string Doctor = "Doctor";
+        public const string Receptionist = "Receptionist";
+        public const string Patient = "Patient";
+
+        public bool IsActive { get; set; } = true;
     }
 }
