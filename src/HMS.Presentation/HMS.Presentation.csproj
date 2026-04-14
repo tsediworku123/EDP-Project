@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop"> 
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>HMS.Core</RootNamespace>
+    <AssemblyName>HMS.Core</AssemblyName>
+    <StartupObject>HMS.Core.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.Domain\HMS.Domain.csproj" />
+    <ProjectReference Include="..\HMS.Application\HMS.Application.csproj" />
+    <ProjectReference Include="..\HMS.Infrastructure\HMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\HMS.Persistence\HMS.Persistence.csproj" />
+    <ProjectReference Include="..\HMS.Common\HMS.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.0" />
+    <PackageReference Include="MaterialDesignColors" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+  </ItemGroup>
+</Project>
