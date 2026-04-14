@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>HMS.Core.Domain</RootNamespace>
+    <AssemblyName>HMS.Core.Domain</AssemblyName>
+  </PropertyGroup>
+</Project>
