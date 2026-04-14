@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>HMS.Core.Application</RootNamespace>
+    <AssemblyName>HMS.Core.Application</AssemblyName>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.Domain\HMS.Domain.csproj" />
+    <ProjectReference Include="..\HMS.Common\HMS.Common.csproj" />
+    <ProjectReference Include="..\HMS.Infrastructure\HMS.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

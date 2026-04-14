@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>HMS.Core.Persistence</RootNamespace>
+    <AssemblyName>HMS.Core.Persistence</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.Domain\HMS.Domain.csproj" />
+  </ItemGroup>
+</Project>

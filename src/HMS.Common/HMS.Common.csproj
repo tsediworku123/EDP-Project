@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>HMS.Core.Common</RootNamespace>
+    <AssemblyName>HMS.Core.Common</AssemblyName>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HMS.Domain\HMS.Domain.csproj" />
+  </ItemGroup>
+</Project>
