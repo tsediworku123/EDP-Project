@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-C:\Users\DevHaile\projects\EDR project\EDP-Project\obj\Debug\
+C:\Users\DevHaile\projects\EDR project\EDP-Project\obj\Release\
 ClinicAppointmentSystem
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\DevHaile\projects\EDR project\EDP-Project\App.xaml
 9-1881401927
 
@@ -16,5 +16,5 @@ C:\Users\DevHaile\projects\EDR project\EDP-Project\App.xaml
 221714010355
 Views\PatientShellView.xaml;Views\PatientDashboardView.xaml;Views\BookVisitView.xaml;Views\MyAppointmentsView.xaml;Views\MyProfileView.xaml;Views\MedicalHistoryView.xaml;Views\AddNewDoctorWindow.xaml;Views\AddNewUserWindow.xaml;Views\PatientEntryWindow.xaml;
 
-False
+True
 
