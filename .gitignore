@@ -1,5 +1,9 @@
 .vs/
 bin/
 obj/
+packages/
 *.user
 *.suo
+*.sln.docstates
+*.patch
+*.diff
