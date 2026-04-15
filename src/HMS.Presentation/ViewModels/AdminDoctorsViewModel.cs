@@ -64,9 +64,10 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
+            var query = SearchText.ToLower();
             var filtered = DataManager.Doctors?.Where(d => 
-                d.FullName.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase) || 
-                d.Specialization.Contains(SearchText, System.StringComparison.OrdinalIgnoreCase)
+                (d.FullName != null && d.FullName.ToLower().Contains(query)) || 
+                (d.Specialization != null && d.Specialization.ToLower().Contains(query))
             ).ToList();
 
             Doctors = new ObservableCollection<Doctor>(filtered ?? new List<Doctor>());
@@ -92,7 +93,7 @@ namespace HMS.Core.ViewModels
             if (result == MessageBoxResult.OK)
             {
                 DataManager.Doctors.Remove(doctor);
-                DataManager.SaveData();
+                DataManager.SaveAllData();
                 RefreshData();
                 OnPropertyChanged(nameof(TotalActiveDoctors));
             }
