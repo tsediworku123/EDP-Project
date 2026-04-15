@@ -79,32 +79,43 @@ namespace HMS.Core.ViewModels.Auth
 
         private void OpenShellForRole(string role)
         {
-            Window shell = null;
-            switch (role)
+            try 
             {
-                case "Admin":
-                case "Receptionist":
-                    shell = new Views.AdminShellView(); 
-                    break;
-                case "Doctor":
-                    shell = new Views.DoctorShellView();
-                    break;
-                case "Patient":
-                    shell = new Views.PatientShellView();
-                    break;
-                default:
-                    ShowError("Unknown role. Contact the administrator.");
-                    return;
-            }
-
-            shell.Show();
-            foreach (Window w in System.Windows.Application.Current.Windows)
-            {
-                if (w is Views.Auth.LoginView)
+                Window shell = null;
+                switch (role)
                 {
-                    w.Close();
-                    break;
+                    case "Admin":
+                    case "Receptionist":
+                        shell = new Views.AdminShellView(); 
+                        break;
+                    case "Doctor":
+                        shell = new Views.DoctorShellView();
+                        break;
+                    case "Patient":
+                        shell = new Views.PatientShellView();
+                        break;
+                    default:
+                        ShowError("Unknown role.");
+                        return;
                 }
+
+                shell.Show();
+                shell.Activate();
+                shell.Focus();
+                System.Windows.Application.Current.MainWindow = shell;
+
+                foreach (Window w in System.Windows.Application.Current.Windows)
+                {
+                    if (w is Views.Auth.LoginView)
+                    {
+                        w.Close();
+                        break;
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show($"LOAD ERROR: Could not open {role} portal.\n\nDetails: {ex.Message}", "Portal Failure", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

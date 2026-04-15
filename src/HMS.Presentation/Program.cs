@@ -10,11 +10,12 @@ namespace HMS.Core
         static void Main()
         {
             var app = new App();
+            app.ShutdownMode = ShutdownMode.OnLastWindowClose;
             app.InitializeComponent();
             
             // Start with the LoginView
-            var mainWindow = new HMS.Core.Views.Auth.LoginView();
-            app.Run(mainWindow);
+            var loginView = new HMS.Core.Views.Auth.LoginView();
+            app.Run(loginView);
         }
     }
 }
