@@ -262,10 +262,9 @@
                         <TextBlock Margin="0,24,0,0"
                                    HorizontalAlignment="Center"
                                    FontFamily="Segoe UI" FontSize="11">
-                            <Run Foreground="#475569" Text="Default admin: "/>
                             <Run Foreground="#3B82F6" FontWeight="SemiBold" Text="admin"/>
                             <Run Foreground="#475569" Text=" / "/>
-                            <Run Foreground="#3B82F6" FontWeight="SemiBold" Text="Admin123"/>
+                            <Run Foreground="#3B82F6" FontWeight="SemiBold" Text="admin"/>
                         </TextBlock>
                     </StackPanel>
                 </Grid>
