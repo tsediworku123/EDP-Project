@@ -30,7 +30,13 @@
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <materialDesign:Card Grid.Column="0" UniformCornerRadius="0" Background="#1E293B">
+        <materialDesign:Card Grid.Column="0" UniformCornerRadius="0">
+            <materialDesign:Card.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="#0F172A" Offset="0"/>
+                    <GradientStop Color="#1E293B" Offset="1"/>
+                </LinearGradientBrush>
+            </materialDesign:Card.Background>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -39,8 +45,8 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Margin="20,30" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
-                    <TextBlock Text="ALPHA" Foreground="White" FontSize="28" FontWeight="ExtraBold" />
-                    <TextBlock Text="ADMIN CONSOLE" Foreground="#3B82F6" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
+                    <TextBlock Text="ALPHA" Foreground="White" FontSize="32" FontWeight="ExtraBold" />
+                    <TextBlock Text="ADMIN CONSOLE" Foreground="#94A3B8" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Margin="0,10">
