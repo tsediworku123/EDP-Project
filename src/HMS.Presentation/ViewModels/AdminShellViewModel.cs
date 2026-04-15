@@ -25,6 +25,8 @@ namespace HMS.Core.ViewModels
 
         public AdminShellViewModel()
         {
+            DataManager.EnsureLoaded();
+            
             // Set initial view
             ActivePageTitle = "DASHBOARD";
             CurrentView = new AdminDashboardView();
@@ -36,17 +38,17 @@ namespace HMS.Core.ViewModels
 
             NavDoctorsCommand = new RelayCommand(() => {
                 ActivePageTitle = "MANAGE DOCTORS";
-                // CurrentView = new ManageDoctorsView();
+                CurrentView = new AdminDoctorsView(); 
             });
 
             NavUsersCommand = new RelayCommand(() => {
                 ActivePageTitle = "USER ACCOUNTS";
-                // CurrentView = new ManageUsersView();
+                CurrentView = new AdminUsersView();
             });
 
             NavPatientsCommand = new RelayCommand(() => {
                 ActivePageTitle = "PATIENT LIST";
-                // CurrentView = new PatientListView();
+                CurrentView = new AdminPatientsView();
             });
 
             LogoutCommand = new RelayCommand(() => {
