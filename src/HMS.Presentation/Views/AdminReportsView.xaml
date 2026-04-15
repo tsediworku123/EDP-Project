@@ -1,0 +1,42 @@
+<UserControl x:Class="HMS.Core.Views.AdminReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="White">
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,30">
+            <TextBlock Text="REPORTS &amp; DATA EXPORT" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
+            <TextBlock Text="Generate CSV/Excel reports and download clinical data summaries." Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <materialDesign:Card Grid.Column="0" Margin="0,0,20,0" Padding="30" UniformCornerRadius="12">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="FileExport" Width="40" Height="40" Foreground="#3B82F6" />
+                    <TextBlock Text="PATIENT SUMMARY" FontWeight="Bold" FontSize="18" Margin="0,20,0,10" />
+                    <TextBlock Text="Exports all registered patients with demographic details." TextWrapping="Wrap" Opacity="0.7" Margin="0,0,0,20" />
+                    <Button Content="GENERATE PATIENT CSV" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#3B82F6" BorderThickness="0" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card Grid.Column="1" Padding="30" UniformCornerRadius="12">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CalendarExport" Width="40" Height="40" Foreground="#10B981" />
+                    <TextBlock Text="APPOINTMENT STATS" FontWeight="Bold" FontSize="18" Margin="0,20,0,10" />
+                    <TextBlock Text="Full log of all appointments for revenue and traffic audit." TextWrapping="Wrap" Opacity="0.7" Margin="0,0,0,20" />
+                    <Button Content="GENERATE APPOINTMENT CSV" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" BorderThickness="0" />
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</UserControl>
