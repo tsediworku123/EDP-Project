@@ -9,8 +9,7 @@ namespace HMS.Core.Views
         public DoctorPatientsView()
         {
             InitializeComponent();
-            DataManager.EnsureLoaded();
-            DataContext = new { Patients = DataManager.Patients.Take(10).ToList() };
+            DataContext = new ViewModels.DoctorPatientsViewModel();
         }
     }
 }
