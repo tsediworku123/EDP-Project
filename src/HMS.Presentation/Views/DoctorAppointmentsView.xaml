@@ -23,7 +23,9 @@
                     <DataGridTemplateColumn Header="Action" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="VIEW" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6" FontSize="11" Height="30" Padding="5,0" />
+                                <Button Content="VIEW" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6" FontSize="11" Height="30" Padding="5,0" 
+                                        Command="{Binding DataContext.ViewDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                        CommandParameter="{Binding}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
