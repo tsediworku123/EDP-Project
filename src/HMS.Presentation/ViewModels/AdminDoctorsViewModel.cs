@@ -7,6 +7,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
+using HMS.Core.Views;
+using MaterialDesignThemes.Wpf;
+
 namespace HMS.Core.ViewModels
 {
     public class AdminDoctorsViewModel : ObservableObject
@@ -73,9 +76,15 @@ namespace HMS.Core.ViewModels
             Doctors = new ObservableCollection<Doctor>(filtered ?? new List<Doctor>());
         }
 
-        private void AddDoctor()
+        private async void AddDoctor()
         {
-            MessageBox.Show("The 'Add Doctor' modern dialog is being prepared. For now, you can add data directly to the doctors.json file.", "Module in Progress", MessageBoxButton.OK, MessageBoxImage.Information);
+            var view = new AddDoctorDialog
+            {
+                DataContext = new AddNewDoctorViewModel()
+            };
+
+            await DialogHost.Show(view, "MainDialogHost");
+            RefreshData();
         }
 
         private void EditDoctor(Doctor doctor)
