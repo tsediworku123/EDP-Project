@@ -9,7 +9,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="USER ACCOUNT CONTROL" Style="{StaticResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Margin="0,0,0,20" />
+        <TextBlock Grid.Row="0" Text="USER ACCOUNT CONTROL" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Margin="0,0,0,20" />
 
         <materialDesign:Card Grid.Row="1">
             <DataGrid ItemsSource="{Binding Users}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Background="Transparent" BorderThickness="0">
@@ -20,7 +20,7 @@
                     <DataGridTemplateColumn Header="Action" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="MANAGE" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6" Height="30" Padding="5,0"/>
+                                <Button Content="MANAGE" Style="{DynamicResource MaterialDesignFlatButton}" Foreground="#3B82F6" Height="30" Padding="5,0"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

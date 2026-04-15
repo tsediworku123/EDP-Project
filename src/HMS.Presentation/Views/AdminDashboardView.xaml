@@ -9,40 +9,84 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,30">
-            <TextBlock Text="ADMINISTRATIVE OVERVIEW" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
-            <TextBlock Text="Monitor system health, manage staff, and view hospital analytics." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
+        <!-- Welcome Stats -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,40">
+            <TextBlock Text="SYSTEM PERFORMANCE" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
+            <TextBlock Text="Manage hospital operations and monitor staff efficiency." Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
         </StackPanel>
 
-        <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top">
-            <materialDesign:Card Style="{StaticResource PremiumCard}" Margin="0,0,15,0" Background="#F1F5F9">
-                <StackPanel>
-                    <materialDesign:PackIcon Kind="Doctor" Foreground="#3B82F6" Width="32" Height="32" />
-                    <TextBlock Text="{Binding TotalDoctors}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Margin="0,15,0,0" />
-                    <TextBlock Text="Active Doctors" Opacity="0.5" />
-                </StackPanel>
-            </materialDesign:Card>
-            <materialDesign:Card Style="{StaticResource PremiumCard}" Margin="0,0,15,0" Background="#F0F9FF">
-                <StackPanel>
-                    <materialDesign:PackIcon Kind="AccountGroup" Foreground="#0EA5E9" Width="32" Height="32" />
-                    <TextBlock Text="{Binding TotalPatients}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Margin="0,15,0,0" />
-                    <TextBlock Text="Registered Patients" Opacity="0.5" />
-                </StackPanel>
-            </materialDesign:Card>
-            <materialDesign:Card Style="{StaticResource PremiumCard}" Margin="0,0,15,0" Background="#ECFDF5">
-                <StackPanel>
-                    <materialDesign:PackIcon Kind="CalendarCheck" Foreground="#10B981" Width="32" Height="32" />
-                    <TextBlock Text="{Binding TotalAppointments}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Margin="0,15,0,0" />
-                    <TextBlock Text="Total Appointments" Opacity="0.5" />
-                </StackPanel>
-            </materialDesign:Card>
-            <materialDesign:Card Style="{StaticResource PremiumCard}" Background="#FFF7ED">
-                <StackPanel>
-                    <materialDesign:PackIcon Kind="CashMultiple" Foreground="#F59E0B" Width="32" Height="32" />
-                    <TextBlock Text="$42,500" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Margin="0,15,0,0" />
-                    <TextBlock Text="Monthly Revenue" Opacity="0.5" />
-                </StackPanel>
-            </materialDesign:Card>
-        </UniformGrid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Stats Row -->
+            <UniformGrid Grid.Row="0" Columns="4">
+                <materialDesign:Card Grid.Column="0" Margin="0,0,20,20" Padding="25" Background="#F0F9FF" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="Doctor" Foreground="#0284C7" Width="30" Height="30" />
+                        <TextBlock Text="{Binding TotalDoctors}" FontSize="32" FontWeight="Bold" Margin="0,15,0,0" />
+                        <TextBlock Text="DOCTORS" FontSize="11" FontWeight="Bold" Opacity="0.6" />
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="1" Margin="0,0,20,20" Padding="25" Background="#FDF2F8" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="AccountGroup" Foreground="#DB2777" Width="30" Height="30" />
+                        <TextBlock Text="{Binding TotalPatients}" FontSize="32" FontWeight="Bold" Margin="0,15,0,0" />
+                        <TextBlock Text="PATIENTS" FontSize="11" FontWeight="Bold" Opacity="0.6" />
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="2" Margin="0,0,20,20" Padding="25" Background="#F0FDF4" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="CalendarCheck" Foreground="#16A34A" Width="30" Height="30" />
+                        <TextBlock Text="{Binding TotalAppointments}" FontSize="32" FontWeight="Bold" Margin="0,15,0,0" />
+                        <TextBlock Text="APPOINTMENTS" FontSize="11" FontWeight="Bold" Opacity="0.6" />
+                    </StackPanel>
+                </materialDesign:Card>
+                <materialDesign:Card Grid.Column="3" Margin="0,0,0,20" Padding="25" Background="#FFFBEB" UniformCornerRadius="12">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="CurrencyUsd" Foreground="#D97706" Width="30" Height="30" />
+                        <TextBlock Text="$128,450" FontSize="32" FontWeight="Bold" Margin="0,15,0,0" />
+                        <TextBlock Text="TOTAL REVENUE" FontSize="11" FontWeight="Bold" Opacity="0.6" />
+                    </StackPanel>
+                </materialDesign:Card>
+            </UniformGrid>
+
+            <!-- Middle Row: Recent Activity -->
+            <Grid Grid.Row="1" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <materialDesign:Card Grid.Column="0" Margin="0,0,20,0" Padding="30" UniformCornerRadius="15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="RECENT SYSTEM LOGINS" FontWeight="Bold" FontSize="16" Margin="0,0,0,20" />
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding RecentUsers}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" BorderThickness="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="USERNAME" Binding="{Binding Username}" Width="*" />
+                                <DataGridTextColumn Header="ROLE" Binding="{Binding Role}" Width="*" />
+                                <DataGridTextColumn Header="STATUS" Binding="{Binding IsActive}" Width="100" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </materialDesign:Card>
+
+                <materialDesign:Card Grid.Column="1" Padding="30" UniformCornerRadius="15" Background="#1E293B">
+                    <StackPanel>
+                        <TextBlock Text="QUICK ACTIONS" Foreground="White" FontWeight="Bold" FontSize="16" Margin="0,0,0,20" />
+                        <Button Content="SYSTEM BACKUP" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#3B82F6" Margin="0,0,0,10" />
+                        <Button Content="EXCEL DATA EXPORT" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#8B5CF6" Margin="0,0,0,10" />
+                        <Button Content="MANAGE PERMISSIONS" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" Margin="0,0,0,10" />
+                        <Button Content="VIEW AUDIT TRAILS" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#F59E0B" />
+                    </StackPanel>
+                </materialDesign:Card>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

@@ -2,6 +2,7 @@ using HMS.Core.AppLogic.Services;
 using HMS.Core.Common.Utils;
 using HMS.Core.Views;
 using HMS.Core.Views.Auth;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
@@ -11,16 +12,18 @@ namespace HMS.Core.ViewModels
     {
         private object _currentView;
         private string _activePageTitle = "DASHBOARD";
-        private bool _isSidebarCollapsed = false;
+        private string _todayDate = DateTime.Now.ToString("dddd, dd MMMM yyyy");
 
         public object CurrentView { get => _currentView; set => SetProperty(ref _currentView, value); }
         public string ActivePageTitle { get => _activePageTitle; set => SetProperty(ref _activePageTitle, value); }
-        public bool IsSidebarCollapsed { get => _isSidebarCollapsed; set => SetProperty(ref _isSidebarCollapsed, value); }
+        public string TodayDate { get => _todayDate; set => SetProperty(ref _todayDate, value); }
 
         public ICommand NavDashboardCommand { get; }
         public ICommand NavDoctorsCommand { get; }
         public ICommand NavUsersCommand { get; }
         public ICommand NavPatientsCommand { get; }
+        public ICommand NavAppointmentsCommand { get; }
+        public ICommand NavReportsCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public AdminShellViewModel()
@@ -47,8 +50,18 @@ namespace HMS.Core.ViewModels
             });
 
             NavPatientsCommand = new RelayCommand(() => {
-                ActivePageTitle = "PATIENT LIST";
+                ActivePageTitle = "PATIENT DIRECTORY";
                 CurrentView = new AdminPatientsView();
+            });
+
+            NavAppointmentsCommand = new RelayCommand(() => {
+                ActivePageTitle = "APPOINTMENTS";
+                CurrentView = new AdminAppointmentsView();
+            });
+
+            NavReportsCommand = new RelayCommand(() => {
+                ActivePageTitle = "REPORTS & EXPORT";
+                CurrentView = new AdminReportsView();
             });
 
             LogoutCommand = new RelayCommand(() => {
