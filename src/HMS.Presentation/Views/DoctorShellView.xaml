@@ -10,6 +10,80 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}">
 
+    <Window.Resources>
+        <Style x:Key="DoctorNavButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#CBD5E1" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Margin" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="RootBorder" Background="{TemplateBinding Background}" CornerRadius="10" Padding="15,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon x:Name="NavIcon" Kind="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" 
+                                                       Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Left" 
+                                                       Foreground="{TemplateBinding Foreground}" />
+                                
+                                <TextBlock Grid.Column="1" Text="{TemplateBinding Content}" VerticalAlignment="Center" 
+                                           Margin="0,0,0,0" FontWeight="Bold" FontSize="13" 
+                                           Foreground="{TemplateBinding Foreground}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RootBorder" Property="Background" Value="#334155" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="RootBorder" Property="Background" Value="#1E293B" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NavBtnDashboard" TargetType="Button" BasedOn="{StaticResource DoctorNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="DASHBOARD">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnAppointments" TargetType="Button" BasedOn="{StaticResource DoctorNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="APPOINTMENTS">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnPatients" TargetType="Button" BasedOn="{StaticResource DoctorNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY PATIENTS">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnRecords" TargetType="Button" BasedOn="{StaticResource DoctorNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="MEDICAL RECORDS">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="240" />
@@ -17,7 +91,13 @@
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <materialDesign:Card Grid.Column="0" UniformCornerRadius="0" Background="#0F172A">
+        <materialDesign:Card Grid.Column="0" UniformCornerRadius="0">
+            <materialDesign:Card.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="#1E3A8A" Offset="0"/>
+                    <GradientStop Color="#1E293B" Offset="1"/>
+                </LinearGradientBrush>
+            </materialDesign:Card.Background>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -26,23 +106,15 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Margin="20,30">
-                    <TextBlock Text="ALPHA" Foreground="White" FontSize="28" FontWeight="ExtraBold" />
-                    <TextBlock Text="DOCTOR PORTAL" Foreground="#3B82F6" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
+                    <TextBlock Text="ALPHA" Foreground="White" FontSize="32" FontWeight="ExtraBold" />
+                    <TextBlock Text="MEDICAL PROFESSIONAL" Foreground="#93C5FD" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Margin="0,10">
-                    <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="ViewDashboard">
-                        <TextBlock Text="DASHBOARD" />
-                    </Button>
-                    <Button Command="{Binding NavAppointmentsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="CalendarRange">
-                        <TextBlock Text="APPOINTMENTS" />
-                    </Button>
-                    <Button Command="{Binding NavPatientsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="AccountGroup">
-                        <TextBlock Text="MY PATIENTS" />
-                    </Button>
-                    <Button Command="{Binding NavRecordsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="ClipboardFileOutline">
-                        <TextBlock Text="MEDICAL RECORDS" />
-                    </Button>
+                    <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource NavBtnDashboard}" Tag="ViewDashboard" Content="DASHBOARD" />
+                    <Button Command="{Binding NavAppointmentsCommand}" Style="{StaticResource NavBtnAppointments}" Tag="CalendarRange" Content="APPOINTMENTS" />
+                    <Button Command="{Binding NavPatientsCommand}" Style="{StaticResource NavBtnPatients}" Tag="AccountGroup" Content="MY PATIENTS" />
+                    <Button Command="{Binding NavRecordsCommand}" Style="{StaticResource NavBtnRecords}" Tag="ClipboardFileOutline" Content="MEDICAL RECORDS" />
                 </StackPanel>
 
                 <Button Grid.Row="2" Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Logout" Margin="10,0,10,30">

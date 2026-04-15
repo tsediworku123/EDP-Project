@@ -12,10 +12,12 @@ namespace HMS.Core.ViewModels
         private object _currentView;
         private string _activePageTitle = "DASHBOARD";
         private string _doctorName;
+        private bool _isSidebarCollapsed = false;
 
         public object CurrentView { get => _currentView; set => SetProperty(ref _currentView, value); }
         public string ActivePageTitle { get => _activePageTitle; set => SetProperty(ref _activePageTitle, value); }
         public string DoctorName { get => _doctorName; set => SetProperty(ref _doctorName, value); }
+        public bool IsSidebarCollapsed { get => _isSidebarCollapsed; set => SetProperty(ref _isSidebarCollapsed, value); }
 
         public ICommand NavDashboardCommand { get; }
         public ICommand NavAppointmentsCommand { get; }
@@ -25,9 +27,11 @@ namespace HMS.Core.ViewModels
 
         public DoctorShellViewModel()
         {
+            DataManager.EnsureLoaded();
             var doctor = CurrentSession.Instance.LoggedInDoctor;
             DoctorName = doctor != null ? $"DR. {doctor.FullName.ToUpper()}" : "DOCTOR";
 
+            // Set initial view
             ActivePageTitle = "DASHBOARD";
             CurrentView = new DoctorDashboardView();
             
@@ -38,17 +42,17 @@ namespace HMS.Core.ViewModels
 
             NavAppointmentsCommand = new RelayCommand(() => {
                 ActivePageTitle = "APPOINTMENTS";
-                // CurrentView = new DoctorAppointmentsView();
+                CurrentView = new DoctorAppointmentsView();
             });
 
             NavPatientsCommand = new RelayCommand(() => {
                 ActivePageTitle = "MY PATIENTS";
-                // CurrentView = new DoctorPatientsView();
+                CurrentView = new DoctorPatientsView();
             });
 
             NavRecordsCommand = new RelayCommand(() => {
                 ActivePageTitle = "MEDICAL RECORDS";
-                // CurrentView = new DoctorRecordsView();
+                CurrentView = new DoctorRecordsView();
             });
 
             LogoutCommand = new RelayCommand(() => {

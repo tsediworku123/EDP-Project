@@ -9,60 +9,128 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,30">
-            <TextBlock Text="DOCTOR DASHBOARD" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
-            <TextBlock Text="Quick access to your daily schedule and patient records." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="DOCTOR DASHBOARD" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="ExtraBold" Foreground="#2A3042" />
+            <TextBlock Text="Quick access to your daily schedule and clinical patient records." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Foreground="#A6B0CF" />
         </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="350" />
+                <ColumnDefinition Width="380" />
             </Grid.ColumnDefinitions>
 
-            <!-- Appointments List -->
-            <materialDesign:Card Grid.Column="0" Margin="0,0,20,0" Padding="20">
+            <!-- Main Features / Clinical Actions -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,30,0">
                 <StackPanel>
-                    <TextBlock Text="UPCOMING APPOINTMENTS" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontWeight="Bold" Margin="0,0,0,20" />
-                    <ItemsControl ItemsSource="{Binding TodayAppointments}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Padding="0,15">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <materialDesign:PackIcon Kind="Clock" Foreground="#3B82F6" VerticalAlignment="Center" Margin="0,0,15,0" />
-                                        <StackPanel Grid.Column="1">
-                                            <TextBlock Text="{Binding PatientName}" FontWeight="Bold" />
-                                            <TextBlock Text="{Binding Reason}" FontSize="12" Opacity="0.6" />
-                                        </StackPanel>
-                                        <TextBlock Grid.Column="2" Text="{Binding Time}" FontWeight="Bold" VerticalAlignment="Center" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </materialDesign:Card>
+                    <TextBlock Text="QUICK ACTIONS" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontWeight="Bold" Margin="0,0,0,15" Foreground="#495057" />
+                    
+                    <UniformGrid Columns="2" Margin="0,0,0,20">
+                        <Button Command="{Binding ViewPatientRecordsCommand}" Background="#EEF2FF" Foreground="#4F46E5" BorderThickness="0" Height="60" Margin="0,0,10,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="FolderAccount" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Patient Records &amp; Medical History" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding DiagnoseIllnessesCommand}" Background="#FFFBEB" Foreground="#D97706" BorderThickness="0" Height="60" Margin="0,0,0,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="Stethoscope" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Diagnose Illnesses" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding PrescribeMedicationsCommand}" Background="#F0FDF4" Foreground="#16A34A" BorderThickness="0" Height="60" Margin="0,0,10,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="Pill" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Prescribe Medications" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding RequestLabTestsCommand}" Background="#FDF4FF" Foreground="#C026D3" BorderThickness="0" Height="60" Margin="0,0,0,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="FlaskEmptyOutline" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Request Lab Tests" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding ViewTestResultsCommand}" Background="#F0F9FF" Foreground="#0284C7" BorderThickness="0" Height="60" Margin="0,0,10,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="TextBoxSearchOutline" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="View Test Results" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding WriteDischargeSummariesCommand}" Background="#FEF2F2" Foreground="#DC2626" BorderThickness="0" Height="60" Margin="0,0,0,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="FileDocumentEditOutline" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Write Discharge Summaries" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </UniformGrid>
 
-            <!-- Stats -->
+                    <TextBlock Text="TODAY'S APPOINTMENTS" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontWeight="Bold" Margin="0,20,0,15" Foreground="#495057" />
+                    <!-- Made invisible card matching picture exactly with just bottom border -->
+                    <Border BorderBrush="#E9ECEF" BorderThickness="1" CornerRadius="5" Background="White">
+                        <ItemsControl ItemsSource="{Binding TodayAppointments}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#E9ECEF" BorderThickness="0,0,0,1" Padding="15">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Colored circle for the appointment could be added but omitted for exact likeness -->
+                                            
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding PatientName}" FontWeight="Bold" FontSize="14" Foreground="#495057" />
+                                                <TextBlock Text="{Binding Reason}" FontSize="12" Foreground="#A6B0CF" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="2" Text="{Binding Time}" FontWeight="Bold" Foreground="#3B82F6" VerticalAlignment="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Right Column Stats & Quick Managing -->
             <StackPanel Grid.Column="1">
-                <materialDesign:Card Style="{StaticResource PremiumCard}" Background="#E0F2FE" Margin="0,0,0,20">
-                    <StackPanel>
-                        <materialDesign:PackIcon Kind="AccountStar" Foreground="#0284C7" Width="30" Height="30" />
-                        <TextBlock Text="{Binding TotalPatientCount}" Style="{StaticResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Margin="0,10,0,0" />
-                        <TextBlock Text="Total Patients" Opacity="0.7" />
+                <!-- Manage Appointments Card Button -->
+                <Button Command="{Binding ManageAppointmentsCommand}" Background="#1E293B" Foreground="White" Height="45" Margin="0,0,0,25" materialDesign:ButtonAssist.CornerRadius="5" BorderThickness="0" Padding="0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="CalendarClock" VerticalAlignment="Center" Width="18" Height="18" Margin="0,0,8,0"/>
+                        <TextBlock Text="Manage Appointments" VerticalAlignment="Center" FontWeight="Bold" FontSize="12" />
                     </StackPanel>
+                </Button>
+
+                <!-- Patient Count Card -->
+                <materialDesign:Card UniformCornerRadius="10" Background="#E3F2FD" Margin="0,0,0,20" materialDesign:ElevationAssist.Elevation="Dp2">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <materialDesign:PackIcon Kind="AccountMultiple" Foreground="#0284C7" Width="28" Height="28" Margin="0,0,0,15"/>
+                        <materialDesign:PackIcon Kind="Star" Foreground="#0284C7" Width="12" Height="12" Margin="0,-10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                        <TextBlock Grid.Row="1" Text="{Binding TotalPatientCount}" FontSize="24" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,5" />
+                        <TextBlock Grid.Row="2" Text="Total Registered Patients" FontSize="11" Foreground="#64748B" />
+                    </Grid>
                 </materialDesign:Card>
-                <materialDesign:Card Style="{StaticResource PremiumCard}" Background="#F0FDF4">
-                    <StackPanel>
-                        <materialDesign:PackIcon Kind="CalendarCheck" Foreground="#16A34A" Width="30" Height="30" />
-                        <TextBlock Text="{Binding AppointmentsTodayCount}" Style="{StaticResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Margin="0,10,0,0" />
-                        <TextBlock Text="Appointments Today" Opacity="0.7" />
-                    </StackPanel>
+                
+                <!-- Appointments Today Card -->
+                <materialDesign:Card UniformCornerRadius="10" Background="#F0FDF4" materialDesign:ElevationAssist.Elevation="Dp2">
+                    <Grid Margin="20">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <materialDesign:PackIcon Kind="CalendarCheck" Foreground="#16A34A" Width="28" Height="28" Margin="0,0,0,15"/>
+                        <TextBlock Grid.Row="1" Text="{Binding AppointmentsTodayCount}" FontSize="24" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,5" />
+                        <TextBlock Grid.Row="2" Text="Appointments Today" FontSize="11" Foreground="#64748B" />
+                    </Grid>
                 </materialDesign:Card>
             </StackPanel>
         </Grid>

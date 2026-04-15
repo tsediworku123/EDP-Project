@@ -1,0 +1,32 @@
+<UserControl x:Class="HMS.Core.Views.DoctorPatientsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+    <Grid Margin="40">
+        <StackPanel>
+            <TextBlock Text="MY PATIENTS" FontSize="24" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,20"/>
+            <ItemsControl ItemsSource="{Binding Patients}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding FullName}" FontWeight="Bold" FontSize="16"/>
+                                    <TextBlock Text="{Binding Email}" Opacity="0.6"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="DETAILS" Margin="10,0,0,0" Padding="15,5" Height="30"
+                                        Background="#3B82F6" Foreground="White" BorderThickness="0"
+                                        Command="{Binding DataContext.ViewPatientDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</UserControl>
