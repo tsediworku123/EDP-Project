@@ -80,10 +80,10 @@
                 <materialDesign:Card Grid.Column="1" Padding="30" UniformCornerRadius="15" Background="#1E293B">
                     <StackPanel>
                         <TextBlock Text="QUICK ACTIONS" Foreground="White" FontWeight="Bold" FontSize="16" Margin="0,0,0,20" />
-                        <Button Content="SYSTEM BACKUP" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#3B82F6" Margin="0,0,0,10" />
-                        <Button Content="EXCEL DATA EXPORT" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#8B5CF6" Margin="0,0,0,10" />
-                        <Button Content="MANAGE PERMISSIONS" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" Margin="0,0,0,10" />
-                        <Button Content="VIEW AUDIT TRAILS" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#F59E0B" />
+                        <Button Content="SYSTEM BACKUP" Command="{Binding BackupCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#3B82F6" Margin="0,0,0,10" />
+                        <Button Content="EXCEL DATA EXPORT" Command="{Binding ExportCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#8B5CF6" Margin="0,0,0,10" />
+                        <Button Content="MANAGE PERMISSIONS" Command="{Binding ManagePermissionsCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" Margin="0,0,0,10" />
+                        <Button Content="VIEW AUDIT TRAILS" Command="{Binding ViewAuditTrailsCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#F59E0B" />
                     </StackPanel>
                 </materialDesign:Card>
             </Grid>
