@@ -7,12 +7,12 @@ namespace HMS.Core.Domain.Entities
     {
         public int Id { get; set; }
         public string FullName { get; set; }
-        public string Specialty { get; set; }
+        public string Specialization { get; set; }
         public string Department { get; set; } = "General Medicine";
         public string Gender { get; set; }
         public DateTime DateOfBirth { get; set; } 
         public string Address { get; set; }     
-        public string Phone { get; set; }
+        public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public int SlotDurationMinutes { get; set; } = 30;
         public int BufferMinutes { get; set; } = 5;
