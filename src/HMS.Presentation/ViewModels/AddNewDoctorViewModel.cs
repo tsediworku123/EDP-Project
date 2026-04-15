@@ -12,6 +12,9 @@ namespace HMS.Core.ViewModels
 {
     public class AddNewDoctorViewModel : ObservableObject
     {
+        private readonly Doctor _existingDoctor;
+        private readonly bool _isEditing;
+
         private string _fullName;
         public string FullName { get => _fullName; set => SetProperty(ref _fullName, value); }
 
@@ -33,13 +36,30 @@ namespace HMS.Core.ViewModels
         private string _assignedShift = "Morning";
         public string AssignedShift { get => _assignedShift; set => SetProperty(ref _assignedShift, value); }
 
+        public string DialogTitle => _isEditing ? $"EDIT: {FullName}" : "ADD NEW MEDICAL STAFF";
+        public string ActionButtonText => _isEditing ? "SAVE CHANGES" : "REGISTER DOCTOR";
+
         public List<string> Specialties { get; } = new List<string> { "Cardiology", "Neurology", "Pediatrics", "Orthopedics", "Dermatology", "General Medicine", "Oncology", "Psychiatry" };
         public List<string> Departments => DataManager.Departments;
 
         public ICommand SaveCommand { get; }
 
-        public AddNewDoctorViewModel()
+        public AddNewDoctorViewModel(Doctor doctor = null)
         {
+            if (doctor != null)
+            {
+                _existingDoctor = doctor;
+                _isEditing = true;
+                
+                FullName = doctor.FullName;
+                Specialty = doctor.Specialization;
+                Phone = doctor.PhoneNumber;
+                Email = doctor.Email;
+                Department = doctor.Department;
+                AssignedShift = doctor.AssignedShift;
+                Address = doctor.Address;
+            }
+
             SaveCommand = new RelayCommand(Save);
         }
 
@@ -51,28 +71,39 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
-            // Create Doctor
-            var newDoctor = new Doctor
+            if (_isEditing && _existingDoctor != null)
             {
-                Id = DataManager.Doctors.Any() ? DataManager.Doctors.Max(d => d.Id) + 1 : 1,
-                FullName = FullName,
-                Specialization = Specialty,
-                PhoneNumber = Phone,
-                Email = Email,
-                Department = Department,
-                AssignedShift = AssignedShift,
-                Address = Address,
-                IsActive = true
-            };
+                // Update Existing
+                _existingDoctor.FullName = FullName;
+                _existingDoctor.Specialization = Specialty;
+                _existingDoctor.PhoneNumber = Phone;
+                _existingDoctor.Email = Email;
+                _existingDoctor.Department = Department;
+                _existingDoctor.AssignedShift = AssignedShift;
+                _existingDoctor.Address = Address;
+            }
+            else
+            {
+                // Create New
+                var newDoctor = new Doctor
+                {
+                    Id = DataManager.Doctors.Any() ? DataManager.Doctors.Max(d => d.Id) + 1 : 1,
+                    FullName = FullName,
+                    Specialization = Specialty,
+                    PhoneNumber = Phone,
+                    Email = Email,
+                    Department = Department,
+                    AssignedShift = AssignedShift,
+                    Address = Address,
+                    IsActive = true
+                };
+                DataManager.Doctors.Add(newDoctor);
+            }
 
-            // Add to the shared data manager
-            DataManager.Doctors.Add(newDoctor);
             DataManager.SaveAllData();
-
-            // Close the dialog using MaterialDesign command
             DialogHost.CloseDialogCommand.Execute(true, null);
             
-            MessageBox.Show($"Dr. {FullName} has been registered successfully.", "Staff Registered", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Staff records for {FullName} have been updated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

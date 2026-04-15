@@ -4,7 +4,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              Width="500" Padding="30">
     <StackPanel>
-        <TextBlock Text="ADD NEW MEDICAL STAFF" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" FontWeight="Bold" Margin="0,0,0,25" HorizontalAlignment="Center" Foreground="#1E293B"/>
+        <TextBlock Text="{Binding DialogTitle}" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" FontWeight="Bold" Margin="0,0,0,25" HorizontalAlignment="Center" Foreground="#1E293B"/>
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -39,7 +39,7 @@
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button Content="CANCEL" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Style="{DynamicResource MaterialDesignFlatButton}" Margin="0,0,10,0" Foreground="#64748B"/>
-            <Button Content="REGISTER DOCTOR" Command="{Binding SaveCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#3B82F6" Width="180" />
+            <Button Content="{Binding ActionButtonText}" Command="{Binding SaveCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#3B82F6" Width="180" />
         </StackPanel>
     </StackPanel>
 </UserControl>

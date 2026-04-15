@@ -87,10 +87,17 @@ namespace HMS.Core.ViewModels
             RefreshData();
         }
 
-        private void EditDoctor(Doctor doctor)
+        private async void EditDoctor(Doctor doctor)
         {
             if (doctor == null) return;
-            MessageBox.Show($"Editing profile for {doctor.FullName}. Changes will be saved to the database in the next build.", "Edit Doctor", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+            var view = new AddDoctorDialog
+            {
+                DataContext = new AddNewDoctorViewModel(doctor)
+            };
+
+            await DialogHost.Show(view, "MainDialogHost");
+            RefreshData();
         }
 
         private void DeleteDoctor(Doctor doctor)
