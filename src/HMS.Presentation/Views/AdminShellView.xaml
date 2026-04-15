@@ -2,100 +2,140 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:vm="clr-namespace:HMS.Core.ViewModels"
-        Title="ALPHA CLINIC | Administration" Height="850" Width="1350"
+        Title="ALPHA CLINIC | Administration" Height="860" Width="1400"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
         UseLayoutRounding="True" SnapsToDevicePixels="True"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
-        Background="{DynamicResource MaterialDesignPaper}">
+        Background="Transparent">
 
-    <Window.Resources>
-        <Storyboard x:Key="ExpandSidebar">
-            <DoubleAnimation Storyboard.TargetName="navColumn" Storyboard.TargetProperty="Width" To="240" Duration="0:0:0.3">
-                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-        <Storyboard x:Key="CollapseSidebar">
-            <DoubleAnimation Storyboard.TargetName="navColumn" Storyboard.TargetProperty="Width" To="70" Duration="0:0:0.3">
-                <DoubleAnimation.EasingFunction><CubicEase EasingMode="EaseOut" /></DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-    </Window.Resources>
+    <Border CornerRadius="12" ClipToBounds="True" Background="White">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="navColumn" Width="240" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+            <!-- ════════════════════════════════════════ SIDEBAR ════════════════════════════════════════ -->
+            <Border Grid.Column="0" CornerRadius="12,0,0,12">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#0F172A" Offset="0"/>
+                        <GradientStop Color="#1E293B" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-        <!-- Sidebar -->
-        <materialDesign:Card Grid.Column="0" UniformCornerRadius="0">
-            <materialDesign:Card.Background>
-                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Color="#0F172A" Offset="0"/>
-                    <GradientStop Color="#1E293B" Offset="1"/>
-                </LinearGradientBrush>
-            </materialDesign:Card.Background>
-            <Grid>
+                    <!-- Logo -->
+                    <Border Grid.Row="0" Padding="24,28" BorderBrush="#FFFFFF18" BorderThickness="0,0,0,1">
+                        <StackPanel MouseLeftButtonDown="DragWindow" Background="Transparent" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="36" Height="36" CornerRadius="8" Margin="0,0,12,0">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#3B82F6" Offset="0"/>
+                                            <GradientStop Color="#6366F1" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <materialDesign:PackIcon Kind="Hospital" Foreground="White" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="ALPHA CLINIC" Foreground="White" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="ADMIN CONSOLE" Foreground="#64748B" FontSize="10" FontWeight="Bold"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Navigation -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Padding="12,16,12,0">
+                        <StackPanel>
+                            <TextBlock Text="MAIN MENU" Foreground="#475569" FontSize="10" FontWeight="Bold" Margin="12,4,0,8"/>
+
+                            <Button Command="{Binding NavDashboardCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="ViewDashboard">
+                                <TextBlock Text="Dashboard" Foreground="White"/>
+                            </Button>
+                            <Button Command="{Binding NavDoctorsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="Doctor">
+                                <TextBlock Text="Manage Doctors" Foreground="White"/>
+                            </Button>
+                            <Button Command="{Binding NavPatientsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountGroup">
+                                <TextBlock Text="Patient Directory" Foreground="White"/>
+                            </Button>
+                            <Button Command="{Binding NavAppointmentsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="CalendarRange">
+                                <TextBlock Text="Appointments" Foreground="White"/>
+                            </Button>
+
+                            <TextBlock Text="SYSTEM" Foreground="#475569" FontSize="10" FontWeight="Bold" Margin="12,16,0,8"/>
+
+                            <Button Command="{Binding NavUsersCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountKey">
+                                <TextBlock Text="User Accounts" Foreground="White"/>
+                            </Button>
+                            <Button Command="{Binding NavReportsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="ChartBar">
+                                <TextBlock Text="Reports &amp; Export" Foreground="White"/>
+                            </Button>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- User Footer -->
+                    <Border Grid.Row="2" Padding="12,16" BorderBrush="#FFFFFF18" BorderThickness="0,1,0,0">
+                        <StackPanel>
+                            <Border Background="#FFFFFF0D" CornerRadius="8" Padding="12,10" Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="34" Height="34" CornerRadius="17" Background="#3B82F6" Margin="0,0,10,0">
+                                        <TextBlock Text="A" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Administrator" Foreground="White" FontSize="13" FontWeight="Bold"/>
+                                        <TextBlock Text="System Admin" Foreground="#94A3B8" FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <Button Command="{Binding LogoutCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="Logout">
+                                <TextBlock Text="Sign Out" Foreground="#EF5350" FontWeight="Bold"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- ════════════════════════════════════════ MAIN CONTENT ════════════════════════════════════════ -->
+            <Grid Grid.Column="1" Background="#F8FAFC">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Margin="20,30" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
-                    <TextBlock Text="ALPHA" Foreground="White" FontSize="32" FontWeight="ExtraBold" />
-                    <TextBlock Text="ADMIN CONSOLE" Foreground="#94A3B8" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
-                </StackPanel>
+                <!-- Custom Header / Window Controls -->
+                <Border Grid.Row="0" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                    <Grid Margin="30,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding ActivePageTitle}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding TodayDate}" Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                            
+                            <!-- Custom Window Buttons (Styled correctly for borderless) -->
+                            <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="40" Height="40" Padding="0" Foreground="#64748B">
+                                <materialDesign:PackIcon Kind="WindowMinimize" Width="20" Height="20"/>
+                            </Button>
+                            <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="MaximizeWindow" Width="40" Height="40" Padding="0" Foreground="#3B82F6">
+                                <materialDesign:PackIcon Kind="WindowMaximize" Width="20" Height="20"/>
+                            </Button>
+                            <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="CloseWindow" Width="40" Height="40" Padding="0" Foreground="#EF5350">
+                                <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
 
-                <StackPanel Grid.Row="1" Margin="0,10">
-                    <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="ViewDashboard">
-                        <TextBlock Text="DASHBOARD" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    </Button>
-                    <Button Command="{Binding NavDoctorsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Doctor">
-                        <TextBlock Text="MANAGE DOCTORS" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    </Button>
-                    <Button Command="{Binding NavUsersCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="AccountGroup">
-                        <TextBlock Text="USER ACCOUNTS" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    </Button>
-                    <Button Command="{Binding NavPatientsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Account">
-                        <TextBlock Text="PATIENT LIST" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
-                    </Button>
-                </StackPanel>
-
-                <Button Grid.Row="2" Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Logout" Margin="10,0,10,30">
-                    <TextBlock Text="LOGOUT" Foreground="#EF5350" FontWeight="Bold" Visibility="{Binding IsSidebarCollapsed, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}" />
-                </Button>
+                <!-- Page Content -->
+                <ContentControl Grid.Row="1" Content="{Binding CurrentView}"/>
             </Grid>
-        </materialDesign:Card>
-
-        <!-- Main Content -->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <materialDesign:Card Grid.Row="0" UniformCornerRadius="0" Background="White" MouseLeftButtonDown="DragWindow">
-                <Grid Margin="40,0,20,0">
-                    <TextBlock Text="{Binding ActivePageTitle}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" FontWeight="ExtraBold" Foreground="#1E293B" VerticalAlignment="Center" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <TextBlock Text="SYSTEM ADMINISTRATOR" Foreground="#1E293B" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,0" />
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="35" Height="35" Padding="0">
-                            <materialDesign:PackIcon Kind="WindowMinimize" Foreground="#1E293B" Width="20" Height="20" />
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MaximizeWindow" Width="35" Height="35" Padding="0">
-                            <materialDesign:PackIcon Kind="WindowMaximize" Foreground="#1E293B" Width="20" Height="20" />
-                        </Button>
-                        <Button Style="{StaticResource MaterialDesignFlatButton}" Click="CloseWindow" Width="35" Height="35" Padding="0">
-                            <materialDesign:PackIcon Kind="Close" Foreground="#EF5350" Width="20" Height="20" />
-                        </Button>
-                    </StackPanel>
-                </Grid>
-            </materialDesign:Card>
-
-            <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
         </Grid>
-    </Grid>
+    </Border>
 </Window>
