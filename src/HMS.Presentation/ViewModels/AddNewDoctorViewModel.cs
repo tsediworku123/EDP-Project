@@ -94,8 +94,8 @@ namespace HMS.Core.ViewModels
             {
                 Id = nextDoctorId,
                 FullName = FullName,
-                Specialty = Specialty,
-                Phone = Phone,
+                Specialization = Specialty,
+                PhoneNumber = Phone,
                 WorkingHoursStart = WorkingHoursStart,
                 WorkingHoursEnd = WorkingHoursEnd,
                 WorkingDays = WorkingDays,
