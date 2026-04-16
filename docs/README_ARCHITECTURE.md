@@ -1,93 +1,139 @@
-# 🏥 HMS.Core: Professional Hospital Management System
+# 🏥 HMS.Core: Technical Architecture & Developer Guide
 
-This project has been redesigned using **Clean Architecture** principles to ensure scalability, maintainability, and a clear separation of concerns.
-
----
-
-## 🏗️ 1. Project Structure Explained
-
-The system is split into **6 independent projects** in the `src/` directory.
-
-### 🏢 **HMS.Presentation (UI Layer)**
-*   **Role**: Handles user interaction (WPF Windows & Pages).
-*   **Pattern**: **MVVM** (Model-View-ViewModel).
-*   **Contents**: XAML Views, ViewModels, UI Services (Navigation).
-*   **Startup**: This is the "Entry Point" project.
-
-### ⚙️ **HMS.Application (Business Layer)**
-*   **Role**: Contains "Use Cases" (e.g., Registering a Patient, Booking an Appointment).
-*   **Contents**: High-level logic services (`DataManager`, `SessionManager`).
-*   **Isolation**: It doesn't know about UI or Databases—it only knows the Domain.
-
-### 🧠 **HMS.Domain (Core entities)**
-*   **Role**: The heart of the project. Contains business models (Patient, Doctor, etc.) and Enums.
-*   **Contents**: Entities, Core Interfaces (`IRepository`), and Enums (`UserRole`).
-*   **Rule**: It has **ZERO** dependencies on other projects.
-
-### 🗄️ **HMS.Persistence (Data Access Implementation)**
-*   **Role**: Implementation of data storage.
-*   **Contents**: Current JSON persistence logic. In the future, this is where **Entity Framework Core (EF Core)** and SQL Server context will live.
-
-### 🔌 **HMS.Infrastructure (External integrations)**
-*   **Role**: Repositories and external services (Email, Auth, Backup).
-*   **Contents**: `AuthService`, `BackupService`, `JsonDataService`.
-
-### 🧰 **HMS.Common (Shared Utilities)**
-*   **Role**: Reusable helper code for all projects.
-*   **Contents**: `PasswordHasher`, `ObservableObject` (Base for MVVM), `RelayCommand`.
+This document provides a comprehensive deep dive into the engineering principles, design patterns, and technologies that power the **Hospital Management System (HMS)**.
 
 ---
 
-## 🚀 2. How to Run & Build
+## 🏗️ 1. The Technology Stack
 
-### **Using Visual Studio (Recommended)**
-1.  Open **`HMS.sln`** in Visual Studio 2022 or newer.
-2.  Right-click on **`HMS.Presentation`** in the Solution Explorer and select **"Set as Startup Project"**.
-3.  Press **F5** (or click the green Start button).
-4.  **Login**: Use the default administrator credentials (seeding):
-    *   **Username**: `admin`
-    *   **Password**: `Admin@123`
+| Technology | Purpose | Key Benefits |
+| :--- | :--- | :--- |
+| **WPF (.NET 8)** | **The UI Engine** | Uses **XAML** for the visual layout and **C#** for the logic. Supports advanced styling, animations, and data-binding. |
+| **Material Design XAML** | Styling Engine | Google's Material Design language for a premium, modern feel. |
+| **Clean Architecture** | Core Design | Ensures scalability by decoupling business logic from the UI. |
+| **MVVM** | UI Pattern | Clean separation between logic (ViewModel) and layout (View). |
+| **JSON Persistence** | Data Storage | Lightweight, file-based storage for rapid development and portability. |
 
-### **Using Command Line**
-```powershell
-dotnet restore
-dotnet build
-dotnet run --project src\HMS.Presentation\HMS.Presentation.csproj
+---
+
+## 🎨 2. WPF Fundamentals: XAML vs C#
+
+Windows Presentation Foundation (WPF) works on a "Dual-File" principle:
+
+1.  **XAML (`.xaml`) - The "Painter"**:
+    *   **Role**: Declarative UI design.
+    *   **Focus**: Controls (Buttons, TextBoxes), Layout (Grids, StackPanels), and Styling (Colors, Shadows).
+    *   **Like**: HTML/CSS for desktop.
+
+2.  **C# Code-Behind (`.xaml.cs`) - The "Mechanic"**:
+    *   **Role**: Handles initialization of the UI and links it to the logic.
+    *   **Note**: In a good MVVM project, this file is kept as small as possible.
+
+---
+
+## 🔄 3. Understanding MVVM (Model-View-ViewModel)
+
+MVVM is the backbone of WPF development. It ensures that your **Logic** and **UI** are separate, making the code testable and organized.
+
+### **The Three Pillars:**
+
+1.  **MODEL (`HMS.Domain`)**:  
+    *   **What it is**: Pure data objects (Entities).  
+    *   **Example**: `Patient.cs`, `Appointment.cs`.  
+    *   **Note**: It has no logic and doesn't know about the UI.
+
+2.  **VIEW (`HMS.Presentation/Views`)**:  
+    *   **What it is**: The XAML file. It defines the "Look."  
+    *   **Example**: `AdminReportsView.xaml`.  
+    *   **Logic**: Contains **zero** C# code-behind (except for `InitializeComponent`).
+
+3.  **VIEWMODEL (`HMS.Presentation/ViewModels`)**:  
+    *   **What it is**: The "Brain" of the View.  
+    *   **Role**: It fetches data from services and prepares it for the View.  
+    *   **Communication**: It uses **Data Binding** and **Commands**.
+
+---
+
+## 📡 4. How it Works Together (Key Mechanisms)
+
+### **A. Data Binding (Displaying Data)**
+The View "binds" to properties in the ViewModel. When a property in the ViewModel changes, it calls `OnPropertyChanged()`, and the UI automatically updates.
+*   **ViewModel**: `public string TotalRevenue { get; set; }`
+*   **View**: `<TextBlock Text="{Binding TotalRevenue}" />`
+
+### **B. Commands (Handling Actions)**
+Instead of "Event Handlers" (like `btn_Click`), we use **Commands**.
+*   **ViewModel**: `public ICommand ExportCommand => new RelayCommand(ExecuteExport);`
+*   **View**: `<Button Command="{Binding ExportCommand}" />`
+
+### **C. Dependency Injection & Services**
+The ViewModel doesn't talk directly to the JSON files. It uses **Services** (like `DataManager`) to handle data flow, keeping the VM clean.
+
+---
+
+## 📂 5. Folder Structure Deep-Dive
+
+```
+📁 src/
+├── 🏢 HMS.Presentation         # XAML Windows, Pages, ViewModels, Resources.
+├── ⚙️ HMS.Application          # Use Cases and Logic Managers (DataManager).
+├── 🧠 HMS.Domain               # Core Entities (Patient, Doctor, Appointment).
+├── 🗄️ HMS.Persistence          # Repository Implementations (JSON saving).
+├── 🔌 HMS.Infrastructure       # External services (Auth, Backup).
+└── 🧰 HMS.Common               # Base classes (ObservableObject, RelayCommand).
+
+📁 Data/                        # The local database (JSON files).
 ```
 
 ---
 
-## 🛠️ 3. How to Work (Development Workflow)
+## 🛠️ 6. Developer Workflow: Adding a Feature
 
-### **Adding a New Page (e.g., Pharmacy)**
-1.  **Domain**: Create a `Medicine.cs` entity in `HMS.Domain/Entities`.
-2.  **Infrastructure**: Add repository methods for Medicine in `HMS.Infrastructure/Repositories/Json/JsonDataService.cs`.
-3.  **Application**: Create a `PharmacyService` in `HMS.Application`.
-4.  **Presentation (ViewModel)**: Create `PharmacyViewModel.cs`.
-5.  **Presentation (View)**: Create `PharmacyView.xaml` and bind it to the ViewModel.
+To add a new module (e.g., "Pharmacy"):
 
----
-
-## 🔄 4. How to Update Data
-
-The application currently uses **JSON-based** storage for development.
-*   **Location**: All data is stored in the **`Data/`** folder at the root.
-*   **Updating**: You can manually edit the `.json` files (e.g., `patients.json`) to add initial test data, OR use the **BackupService** to restore data.
+1.  **Define Domain**: Add `Medicine.cs` to `HMS.Domain`.
+2.  **Update DataService**: Add `Medicines` list to `JsonDataService` and handle saving/loading.
+3.  **Create Service**: (Optional) Create `PharmacyService` in `HMS.Application` for complex logic.
+4.  **Create ViewModel**: Create `PharmacyViewModel` in `HMS.Presentation/ViewModels`. Define your properties and `RelayCommands`.
+5.  **Design View**: Create `PharmacyView.xaml` in `HMS.Presentation/Views`. Use Material Design components and bind attributes to the ViewModel.
+6.  **Wire Up**: Register the new View in your `AdminShell` navigation logic.
 
 ---
 
-## 📜 5. Clean Architecture Rule of Thumb
-**Always remember the Dependency Rule:**
-Inner layers (Domain, Application) should **NEVER** know anything about outer layers (Presentation, Infrastructure, Persistence).
+## ⚡ 7. Anatomy of an Action: "Creating & Displaying a User"
 
-*   ✅ `Presentation` can talk to `Application`.
-*   ✅ `Application` can talk to `Domain`.
-*   ❌ `Domain` should **NEVER** depend on `Presentation` or `Infrastructure`.
+Let’s trace the full lifecycle of adding a new staff member to the system:
+
+### **Step 1: The Input (The View)**
+An Administrator opens the "Add User" dialog and enters a username and role. 
+-   **Binding**: The input fields (TextBoxes) are bound to properties in the `AdminUsersViewModel`.
+-   **Action**: When "Save" is clicked, it triggers the `AddUserCommand`.
+
+### **Step 2: The Logic (The ViewModel)**
+The `AdminUsersViewModel` receives the data.
+-   **Validation**: It checks if the username exists or if fields are empty.
+-   **Creation**: It creates a new `User` object: `new User { Username = "Dr.Smith", Role = "Doctor" }`.
+-   **Addition**: It adds this object to the global data: `DataManager.Users.Add(newUser)`.
+
+### **Step 3: The Persistence (The Infrastructure)**
+The system ensures the data is saved permanently.
+-   **Call**: The ViewModel calls `DataManager.SaveUsers()`.
+-   **File Write**: The `JsonDataService.cs` serializes the user list into JSON and overwrites **`Data/users.json`**.
+
+### **Step 4: The Ripple Effect (Notification)**
+Now that the data is saved, the UI needs to know.
+-   **Re-filtering**: The ViewModel calls `ApplyFilters()`.
+-   **Signal**: The `FilteredUsers` collection is refreshed. Because it is an `ObservableCollection`, it automatically raises a notification to WPF.
+
+### **Step 5: The UI Refresh (The Bound Grid)**
+The `AdminUsersView.xaml` responds to the data change.
+-   **Update**: The `DataGrid` detects the new item in its `ItemsSource`.
+-   **Display**: A new row appears instantly in the "User Accounts" table with the correct status badge and action buttons. 
+-   **Total Time**: The user sees the new account appear in milliseconds.
 
 ---
 
-## ✅ Summary of Achievement
-*   **Modernized**: Converted to .NET SDK format.
-*   **Organized**: Grouped all codes into professional Clean Architecture layers.
-*   **Cleaned**: Removed redundant WinForms and legacy "ClinicPatient" naming.
-*   **Enterprise-Ready**: Scalable structure ready for SQL Server migration.
+## 🌟 Quality Standards
+*   **Aesthetics First**: Every new screen must use harmonious color palettes and clean spacing.
+*   **Code Cleanliness**: No "Spaghetti code" in code-behind. Keep logic in ViewModels.
+*   **Separation**: Ensure `HMS.Domain` never references `HMS.Presentation`.
