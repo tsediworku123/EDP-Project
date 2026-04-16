@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using HMS.Core.ViewModels;
 
 namespace HMS.Core.Views
 {
@@ -7,6 +8,7 @@ namespace HMS.Core.Views
         public AdminReportsView()
         {
             InitializeComponent();
+            DataContext = new AdminReportsViewModel();
         }
     }
 }
