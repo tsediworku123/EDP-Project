@@ -25,11 +25,11 @@
                 </Grid.RowDefinitions>
 
                 <!-- Personal Info -->
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Full Name" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Grandfather Name" Text="{Binding GrandfatherName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Full Name" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Grandfather Name" Text="{Binding GrandfatherName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
-                <DatePicker Grid.Row="1" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Date of Birth" SelectedDate="{Binding DateOfBirth}" Style="{DynamicResource MaterialDesignOutlinedDatePicker}" />
-                <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Gender" 
+                <DatePicker Grid.Row="1" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Date of Birth" SelectedDate="{Binding DateOfBirth}" Style="{DynamicResource MaterialDesignOutlinedDatePicker}" />
+                <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Gender" 
                           SelectedValue="{Binding Gender}" SelectedValuePath="Content"
                           Style="{DynamicResource MaterialDesignOutlinedComboBox}">
                     <ComboBoxItem Content="Male" />
@@ -37,14 +37,14 @@
                     <ComboBoxItem Content="Other" />
                 </ComboBox>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Phone Number" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Email" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Phone Number" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Email" Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Address" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
-                <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Preferred Language" Text="{Binding PreferredLanguage, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Address" Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Preferred Language" Text="{Binding PreferredLanguage, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
                 <!-- Medical Info -->
-                <ComboBox Grid.Row="4" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Blood Group" 
+                <ComboBox Grid.Row="4" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Blood Group" 
                           SelectedValue="{Binding BloodGroup}" SelectedValuePath="Content"
                           Style="{DynamicResource MaterialDesignOutlinedComboBox}">
                     <ComboBoxItem Content="A+" />
@@ -57,18 +57,18 @@
                     <ComboBoxItem Content="O-" />
                     <ComboBoxItem Content="Unknown" />
                 </ComboBox>
-                <TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Chronic Conditions" Text="{Binding ChronicConditions, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="4" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Chronic Conditions" Text="{Binding ChronicConditions, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Current Medications" Text="{Binding CurrentMedications, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
-                <TextBox Grid.Row="5" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Allergies / Conditions" Text="{Binding AllergiesOrChronicConditions, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Current Medications" Text="{Binding CurrentMedications, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="5" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Allergies / Conditions" Text="{Binding AllergiesOrChronicConditions, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
                 <!-- Contact Info -->
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Emergency Contact Name" Text="{Binding EmergencyName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
-                <TextBox Grid.Row="6" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Emergency Phone" Text="{Binding EmergencyPhone, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0,0,10,15" Padding="15" materialDesign:HintAssist.Hint="Emergency Contact Name" Text="{Binding EmergencyName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="6" Grid.Column="1" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Emergency Phone" Text="{Binding EmergencyPhone, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
-                <TextBox Grid.Row="7" Grid.ColumnSpan="2" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Relationship (Emergency Contact)" Text="{Binding EmergencyContact, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
+                <TextBox Grid.Row="7" Grid.ColumnSpan="2" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Relationship (Emergency Contact)" Text="{Binding EmergencyContact, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
-                <TextBox Grid.Row="8" Grid.ColumnSpan="2" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Medical Notes / History" Text="{Binding MedicalNotes}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" Height="80" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" />
+                <TextBox Grid.Row="8" Grid.ColumnSpan="2" Margin="0,0,0,15" Padding="15" materialDesign:HintAssist.Hint="Medical Notes / History" Text="{Binding MedicalNotes}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" Height="120" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top" />
             </Grid>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">

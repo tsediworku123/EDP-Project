@@ -1,0 +1,115 @@
+<UserControl x:Class="HMS.Core.Views.EditAppointmentDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="600" Padding="0">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="30">
+        <StackPanel>
+            <TextBlock Text="EDIT APPOINTMENT" Style="{DynamicResource MaterialDesignHeadline6TextBlock}"
+                       FontWeight="Bold" Margin="0,0,0,25" HorizontalAlignment="Center" Foreground="#1E293B"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Date & Time -->
+                <DatePicker Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" Padding="15"
+                            materialDesign:HintAssist.Hint="Appointment Date"
+                            SelectedDate="{Binding AppointmentDate}"
+                            Style="{DynamicResource MaterialDesignOutlinedDatePicker}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,15" Padding="15"
+                         materialDesign:HintAssist.Hint="Time (e.g. 10:30 AM)"
+                         Text="{Binding AppointmentTime, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+
+                <!-- Reason & Type -->
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0,0,10,15" Padding="15"
+                         materialDesign:HintAssist.Hint="Reason for Visit"
+                         Text="{Binding Reason, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,15" Padding="15"
+                          materialDesign:HintAssist.Hint="Appointment Type"
+                          SelectedValue="{Binding AppointmentType}" SelectedValuePath="Content"
+                          Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                    <ComboBoxItem Content="Regular"/>
+                    <ComboBoxItem Content="Follow-up"/>
+                    <ComboBoxItem Content="Emergency"/>
+                    <ComboBoxItem Content="Consultation"/>
+                </ComboBox>
+
+                <!-- Status & Priority -->
+                <ComboBox Grid.Row="2" Grid.Column="0" Margin="0,0,10,15" Padding="15"
+                          materialDesign:HintAssist.Hint="Status"
+                          SelectedValue="{Binding Status}" SelectedValuePath="Content"
+                          Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                    <ComboBoxItem Content="Pending"/>
+                    <ComboBoxItem Content="Confirmed"/>
+                    <ComboBoxItem Content="Completed"/>
+                    <ComboBoxItem Content="Cancelled"/>
+                </ComboBox>
+                <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,15" Padding="15"
+                          materialDesign:HintAssist.Hint="Priority"
+                          SelectedValue="{Binding Priority}" SelectedValuePath="Content"
+                          Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+                    <ComboBoxItem Content="Normal"/>
+                    <ComboBoxItem Content="Urgent"/>
+                    <ComboBoxItem Content="Low"/>
+                </ComboBox>
+
+                <!-- Diagnosis & Prescription -->
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0,0,10,15" Padding="15"
+                         materialDesign:HintAssist.Hint="Diagnosis"
+                         Text="{Binding Diagnosis, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,15" Padding="15"
+                         materialDesign:HintAssist.Hint="Prescription"
+                         Text="{Binding Prescription, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"/>
+
+                <!-- Consultation Note -->
+                <TextBox Grid.Row="4" Grid.ColumnSpan="2" Margin="0,0,0,15" Padding="15"
+                         materialDesign:HintAssist.Hint="Consultation Note"
+                         Text="{Binding ConsultationNote, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                         Height="75" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top"/>
+
+                <!-- Recommendation -->
+                <TextBox Grid.Row="5" Grid.ColumnSpan="2" Margin="0,0,0,15" Padding="15"
+                         materialDesign:HintAssist.Hint="Recommendation"
+                         Text="{Binding Recommendation, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                         Height="75" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top"/>
+
+                <!-- Clinical Notes -->
+                <TextBox Grid.Row="6" Grid.ColumnSpan="2" Margin="0,0,0,10" Padding="15"
+                         materialDesign:HintAssist.Hint="Clinical Notes"
+                         Text="{Binding ClinicalNotes, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource MaterialDesignOutlinedTextBox}"
+                         Height="60" TextWrapping="Wrap" AcceptsReturn="True" VerticalContentAlignment="Top"/>
+            </Grid>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                <Button Content="CANCEL"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                        Style="{DynamicResource MaterialDesignFlatButton}"
+                        Margin="0,0,10,0" Foreground="#64748B"/>
+                <Button Content="SAVE CHANGES"
+                        Command="{Binding SaveCommand}"
+                        Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}"
+                        Background="#3B82F6" Width="180"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
