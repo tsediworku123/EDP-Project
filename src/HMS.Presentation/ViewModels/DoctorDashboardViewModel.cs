@@ -35,13 +35,11 @@ namespace HMS.Core.ViewModels
             ViewPatientRecordsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorRecordsView(), "MEDICAL RECORDS"));
             
             ManageAppointmentsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorAppointmentsView(), "APPOINTMENTS"));
-            
-            // For features that don't have views yet, standard messagebox
-            DiagnoseIllnessesCommand = new RelayCommand(() => MessageBox.Show("Illness Diagnosis Tool will open here.", "Action", MessageBoxButton.OK, MessageBoxImage.Information));
-            PrescribeMedicationsCommand = new RelayCommand(() => MessageBox.Show("E-Prescribing System will open here.", "Action", MessageBoxButton.OK, MessageBoxImage.Information));
-            RequestLabTestsCommand = new RelayCommand(() => MessageBox.Show("Lab Test Requisition Form will open here.", "Action", MessageBoxButton.OK, MessageBoxImage.Information));
-            ViewTestResultsCommand = new RelayCommand(() => MessageBox.Show("Lab & Imaging Results will open here.", "Action", MessageBoxButton.OK, MessageBoxImage.Information));
-            WriteDischargeSummariesCommand = new RelayCommand(() => MessageBox.Show("Discharge Summary Editor will open here.", "Action", MessageBoxButton.OK, MessageBoxImage.Information));
+            DiagnoseIllnessesCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorDiagnoseView(), "DIAGNOSIS"));
+            PrescribeMedicationsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorPrescribeView(), "PRESCRIPTIONS"));
+            RequestLabTestsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorLabTestsView(), "REQUEST LABS"));
+            ViewTestResultsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorTestResultsView(), "TEST RESULTS"));
+            WriteDischargeSummariesCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorDischargeView(), "DISCHARGE SUMMARY"));
         }
 
         private void LoadData()

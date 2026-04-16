@@ -1,0 +1,21 @@
+<UserControl x:Class="HMS.Core.Views.DoctorDiagnoseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="White">
+    <Grid Margin="40">
+        <StackPanel>
+            <TextBlock Text="DIAGNOSE ILLNESSES" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="ExtraBold" Foreground="#000000" />
+            <TextBlock Text="Select a patient below to input clinical diagnoses." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Foreground="#6B7280" Margin="0,8,0,40" />
+
+            <!-- Simple placeholder card -->
+            <materialDesign:Card UniformCornerRadius="10" Padding="30" Width="600" HorizontalAlignment="Left" Background="#FFFBEB">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="Stethoscope" Width="40" Height="40" Foreground="#D97706" Margin="0,0,0,15"/>
+                    <TextBlock Text="Active Diagnosis Module" FontWeight="Bold" FontSize="18" Foreground="#92400E" />
+                    <TextBlock Text="Patient selector and ICD-10 codex will be integrated here." Foreground="#D97706" Margin="0,10,0,0" />
+                </StackPanel>
+            </materialDesign:Card>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,20 @@
+<UserControl x:Class="HMS.Core.Views.DoctorLabTestsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="White">
+    <Grid Margin="40">
+        <StackPanel>
+            <TextBlock Text="REQUEST LAB TESTS" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="ExtraBold" Foreground="#000000" />
+            <TextBlock Text="Submit orders for imaging, bloodwork, and other clinical screenings." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Foreground="#6B7280" Margin="0,8,0,40" />
+
+            <materialDesign:Card UniformCornerRadius="10" Padding="30" Width="600" HorizontalAlignment="Left" Background="#FDF4FF">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="FlaskEmptyOutline" Width="40" Height="40" Foreground="#C026D3" Margin="0,0,0,15"/>
+                    <TextBlock Text="Lab Test Requisition Module" FontWeight="Bold" FontSize="18" Foreground="#701A75" />
+                    <TextBlock Text="Select panels, stat priorities, and external lab routing here." Foreground="#C026D3" Margin="0,10,0,0" />
+                </StackPanel>
+            </materialDesign:Card>
+        </StackPanel>
+    </Grid>
+</UserControl>

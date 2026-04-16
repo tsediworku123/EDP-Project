@@ -84,7 +84,8 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <materialDesign:DialogHost Identifier="MainDialogHost" CloseOnClickAway="True">
+        <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="240" />
             <ColumnDefinition Width="*" />
@@ -150,5 +151,6 @@
 
             <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
         </Grid>
-    </Grid>
+        </Grid>
+    </materialDesign:DialogHost>
 </Window>
