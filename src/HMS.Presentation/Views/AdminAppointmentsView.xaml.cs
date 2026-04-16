@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using HMS.Core.AppLogic.Services;
+using HMS.Core.ViewModels;
 
 namespace HMS.Core.Views
 {
@@ -8,8 +9,7 @@ namespace HMS.Core.Views
         public AdminAppointmentsView()
         {
             InitializeComponent();
-            DataManager.EnsureLoaded();
-            DataContext = new { Appointments = DataManager.Appointments };
+            DataContext = new AdminAppointmentsViewModel();
         }
     }
 }
