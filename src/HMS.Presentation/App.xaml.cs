@@ -12,9 +12,11 @@ namespace HMS.Core
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show($"FATAL ERROR: {e.Exception.Message}\n\nStack Trace: {e.Exception.StackTrace}", "System Crash Protection", MessageBoxButton.OK, MessageBoxImage.Error);
+            var msg = $"FATAL DISPATCHER ERROR:\n{e.Exception.Message}\n\nStack: {e.Exception.StackTrace}\n\nInner: {e.Exception.InnerException?.Message}";
+            try { System.IO.File.WriteAllText("crashlog_dispatcher.txt", msg); } catch { }
+            MessageBox.Show(msg, "System Crash Protection", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
-            System.Environment.Exit(1);
+            // System.Environment.Exit(1); // Disabled to prevent fatal shutdown during debugging
         }
     }
 }
