@@ -23,14 +23,18 @@
             <TextBox Grid.Row="0" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Full Name" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
             <DatePicker Grid.Row="0" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Date of Birth" SelectedDate="{Binding DateOfBirth}" Style="{DynamicResource MaterialDesignOutlinedDatePicker}" />
 
-            <ComboBox Grid.Row="1" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Gender" SelectedItem="{Binding Gender}" Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+            <ComboBox Grid.Row="1" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Gender" 
+                      SelectedValue="{Binding Gender}" SelectedValuePath="Content"
+                      Style="{DynamicResource MaterialDesignOutlinedComboBox}">
                 <ComboBoxItem Content="Male" />
                 <ComboBoxItem Content="Female" />
                 <ComboBoxItem Content="Other" />
             </ComboBox>
             <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,15" materialDesign:HintAssist.Hint="Phone Number" Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" Style="{DynamicResource MaterialDesignOutlinedTextBox}" />
 
-            <ComboBox Grid.Row="2" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Blood Group" SelectedItem="{Binding BloodGroup}" Style="{DynamicResource MaterialDesignOutlinedComboBox}">
+            <ComboBox Grid.Row="2" Grid.Column="0" Margin="0,0,10,15" materialDesign:HintAssist.Hint="Blood Group" 
+                      SelectedValue="{Binding BloodGroup}" SelectedValuePath="Content"
+                      Style="{DynamicResource MaterialDesignOutlinedComboBox}">
                 <ComboBoxItem Content="A+" />
                 <ComboBoxItem Content="A-" />
                 <ComboBoxItem Content="B+" />

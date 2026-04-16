@@ -41,7 +41,7 @@
                         <materialDesign:PackIcon Kind="AccountMultiple" Foreground="#3B82F6" Margin="0,0,10,0" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center">
                             <Run Text="Total Patients:" Foreground="#64748B" FontSize="11"/>
-                            <Run Text="{Binding TotalPatientsCount}" FontWeight="Bold" FontSize="13"/>
+                            <Run Text="{Binding TotalPatientsCount, Mode=OneWay}" FontWeight="Bold" FontSize="13"/>
                         </TextBlock>
                     </StackPanel>
                 </Border>

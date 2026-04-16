@@ -17,7 +17,14 @@ namespace HMS.Core.ViewModels
         public ObservableCollection<Patient> Patients
         {
             get => _patients;
-            set => SetProperty(ref _patients, value);
+            set
+            {
+                if (SetProperty(ref _patients, value))
+                {
+                    OnPropertyChanged(nameof(TotalPatientsCount));
+                    OnPropertyChanged(nameof(ActivePatientsCount));
+                }
+            }
         }
 
         private string _searchText;
