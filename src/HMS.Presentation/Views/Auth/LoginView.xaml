@@ -259,13 +259,13 @@
                         </Button>
 
                         <!-- Hint -->
-                        <TextBlock Margin="0,24,0,0"
+                        <!-- <TextBlock Margin="0,24,0,0"
                                    HorizontalAlignment="Center"
                                    FontFamily="Segoe UI" FontSize="11">
                             <Run Foreground="#3B82F6" FontWeight="SemiBold" Text="admin"/>
                             <Run Foreground="#475569" Text=" / "/>
                             <Run Foreground="#3B82F6" FontWeight="SemiBold" Text="admin"/>
-                        </TextBlock>
+                        </TextBlock> -->
                     </StackPanel>
                 </Grid>
             </Border>

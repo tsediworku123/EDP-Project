@@ -2,36 +2,294 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Background="White">
-    <Grid Margin="40">
+             xmlns:viewmodels="clr-namespace:HMS.Core.ViewModels"
+             Background="#F8FAFC">
+    
+    <Grid Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /> <!-- Header -->
+            <RowDefinition Height="Auto" /> <!-- Stats -->
+            <RowDefinition Height="Auto" /> <!-- Toolbar -->
+            <RowDefinition Height="*" />    <!-- Content -->
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,30">
-            <TextBlock Text="MASTER APPOINTMENT LOG" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
-            <TextBlock Text="Full overview of all clinical visits and scheduling status." Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,25">
+            <TextBlock Text="APPOINTMENTS OVERVIEW" FontSize="24" FontWeight="Bold" Foreground="#1E293B" />
+            <TextBlock Text="Centralized management for all clinical visits and scheduling operations." Foreground="#64748B" FontSize="14" Margin="0,4,0,0"/>
         </StackPanel>
 
-        <materialDesign:Card Grid.Row="1" UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp1">
-            <DataGrid ItemsSource="{Binding Appointments}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" BorderThickness="0">
+        <!-- Stats Cards -->
+        <Grid Grid.Row="1" Margin="0,0,0,25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Total Appointments -->
+            <materialDesign:Card Grid.Column="0" Margin="0,0,12,0" Padding="20" UniformCornerRadius="12" Background="White" materialDesign:ElevationAssist.Elevation="Dp2">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="48" Height="48" CornerRadius="24" Background="#EFF6FF">
+                        <materialDesign:PackIcon Kind="CalendarCheck" Foreground="#3B82F6" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TotalAppointments}" FontSize="24" FontWeight="Bold" Foreground="#1E293B"/>
+                        <TextBlock Text="Total Logged" FontSize="12" Foreground="#64748B"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Today's -->
+            <materialDesign:Card Grid.Column="1" Margin="6,0,6,0" Padding="20" UniformCornerRadius="12" Background="White" materialDesign:ElevationAssist.Elevation="Dp2">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="48" Height="48" CornerRadius="24" Background="#F0FDF4">
+                        <materialDesign:PackIcon Kind="CalendarClock" Foreground="#22C55E" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding TodayAppointments}" FontSize="24" FontWeight="Bold" Foreground="#1E293B"/>
+                        <TextBlock Text="Total Today" FontSize="12" Foreground="#64748B"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Pending/Scheduled -->
+            <materialDesign:Card Grid.Column="2" Margin="12,0,0,0" Padding="20" UniformCornerRadius="12" Background="White" materialDesign:ElevationAssist.Elevation="Dp2">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="48" Height="48" CornerRadius="24" Background="#FFF7ED">
+                        <materialDesign:PackIcon Kind="ClockAlert" Foreground="#F97316" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PendingAppointments}" FontSize="24" FontWeight="Bold" Foreground="#1E293B"/>
+                        <TextBlock Text="Upcoming" FontSize="12" Foreground="#64748B"/>
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+
+        <!-- Filters Toolbar -->
+        <Border Grid.Row="2" Background="White" CornerRadius="12" Padding="20,15" Margin="0,0,0,20" materialDesign:ElevationAssist.Elevation="Dp1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Search -->
+                <materialDesign:ColorZone Grid.Column="0" Mode="Standard" CornerRadius="8" Padding="12,4" materialDesign:ElevationAssist.Elevation="Dp0" Background="#F1F5F9" Margin="0,0,15,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="Search" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Search by patient, doctor or reason..." BorderThickness="0" Background="Transparent" VerticalAlignment="Center"/>
+                    </Grid>
+                </materialDesign:ColorZone>
+
+                <!-- Status Filter -->
+                <ComboBox Grid.Column="1" ItemsSource="{Binding StatusOptions}" SelectedValue="{Binding SelectedStatus}" materialDesign:HintAssist.Hint="Status Filter" Width="180" Margin="0,0,15,0" Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
+
+                <!-- Refresh -->
+                <Button Grid.Column="2" Command="{Binding RefreshCommand}" Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}" Background="#3B82F6" BorderThickness="0">
+                    <materialDesign:PackIcon Kind="Refresh" />
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <materialDesign:Card Grid.Row="3" UniformCornerRadius="12" materialDesign:ElevationAssist.Elevation="Dp2" Background="White">
+            <DataGrid ItemsSource="{Binding FilteredAppointments}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" BorderThickness="0" CanUserAddRows="False" GridLinesVisibility="None" SelectionMode="Single">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                        <Setter Property="Background" Value="#F8FAFC"/>
+                        <Setter Property="Height" Value="45"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="15,0"/>
+                    </Style>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                        <Setter Property="Height" Value="60"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F1F5F9"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+                
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="DATE" Binding="{Binding AppointmentDate, StringFormat=dd MMM yyyy HH:mm}" Width="150" />
-                    <DataGridTextColumn Header="PATIENT ID" Binding="{Binding PatientId}" Width="100" />
-                    <DataGridTextColumn Header="DOCTOR ID" Binding="{Binding DoctorId}" Width="100" />
-                    <DataGridTextColumn Header="REASON" Binding="{Binding Reason}" Width="*" />
-                    <DataGridTemplateColumn Header="STATUS" Width="120">
+                    <!-- Date Column -->
+                    <DataGridTemplateColumn Header="SCHEDULE" Width="180">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Background="#F1F5F9" CornerRadius="4" Padding="8,4">
-                                    <TextBlock Text="{Binding Status}" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
+                                <StackPanel VerticalAlignment="Center" Margin="15,0">
+                                    <TextBlock Text="{Binding DateString}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                    <TextBlock Text="{Binding TimeString}" FontSize="12" Foreground="#64748B"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Patient Column -->
+                    <DataGridTemplateColumn Header="PATIENT" Width="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center" Margin="15,0">
+                                    <TextBlock Text="{Binding PatientName}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                    <TextBlock Text="{Binding Priority}" FontSize="11" Foreground="#3B82F6"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Doctor Column -->
+                    <DataGridTemplateColumn Header="ASSIGNED DOCTOR" Width="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center" Margin="15,0">
+                                    <TextBlock Text="{Binding DoctorName}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                    <TextBlock Text="{Binding Department}" FontSize="11" Foreground="#64748B"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Status Column -->
+                    <DataGridTemplateColumn Header="STATUS" Width="140">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="12" Padding="10,4" HorizontalAlignment="Left" Margin="15,0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="Scheduled">
+                                                    <Setter Property="Background" Value="#E0F2FE"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Confirmed">
+                                                    <Setter Property="Background" Value="#E0E7FF"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                    <Setter Property="Background" Value="#DCFCE7"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                    <Setter Property="Background" Value="#FEE2E2"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Scheduled">
+                                                        <Setter Property="Foreground" Value="#0369A1"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Confirmed">
+                                                        <Setter Property="Foreground" Value="#4338CA"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                        <Setter Property="Foreground" Value="#15803D"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                        <Setter Property="Foreground" Value="#B91C1C"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
+                    <!-- Actions Column -->
+                    <DataGridTemplateColumn Header="ACTIONS" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,15,0">
+                                    <!-- Confirm Action -->
+                                    <Button Command="{Binding DataContext.ConfirmAppointmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Confirm Appointment" 
+                                            Foreground="#4338CA">
+                                        <materialDesign:PackIcon Kind="CheckAll" />
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Scheduled">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <!-- Complete Action -->
+                                    <Button Command="{Binding DataContext.CompleteAppointmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Mark as Completed" 
+                                            Foreground="#22C55E">
+                                        <materialDesign:PackIcon Kind="CheckCircle" />
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Confirmed">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <!-- Reactivate Action -->
+                                    <Button Command="{Binding DataContext.ReactivateCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Re-activate Appointment" 
+                                            Foreground="#3B82F6">
+                                        <materialDesign:PackIcon Kind="Restore" />
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <!-- Cancel Action -->
+                                    <Button Command="{Binding DataContext.CancelAppointmentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Cancel Appointment" 
+                                            Foreground="#EF5350">
+                                        <materialDesign:PackIcon Kind="CloseCircle" />
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Scheduled">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Confirmed">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
         </materialDesign:Card>
     </Grid>
 </UserControl>
+

@@ -8,8 +8,7 @@ namespace HMS.Core.Views
         public AdminPatientsView()
         {
             InitializeComponent();
-            DataManager.EnsureLoaded();
-            DataContext = new { Patients = DataManager.Patients };
+            DataContext = new ViewModels.AdminPatientsViewModel();
         }
     }
 }

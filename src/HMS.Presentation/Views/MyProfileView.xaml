@@ -15,144 +15,111 @@
     </UserControl.DataContext>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="60,40">
+        <Grid Margin="40">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" /> <!-- Header -->
-                <RowDefinition Height="*" />    <!-- Profile Details Grid -->
+                <RowDefinition Height="*" />    <!-- Content -->
             </Grid.RowDefinitions>
-
-            <!-- 1. HEADER SECTION -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,50">
-                <TextBlock Text="MY CLINICAL PROFILE" 
-                           Style="{StaticResource MaterialDesignHeadline3TextBlock}" 
-                           FontWeight="Bold" Foreground="#2196F3" />
-                <TextBlock Text="Keep your personal details, contact channels, and clinical notes up to date for better care." 
-                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
-                           Opacity="0.6" Margin="4,12,0,0" />
+ 
+            <!-- 1. HEADER -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,40">
+                <TextBlock Text="PERSONAL CARE PROFILE" 
+                           Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                           FontWeight="Black" Foreground="#3B82F6" />
+                <TextBlock Text="Manage your identity, communications, and emergency care preferences." 
+                           Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                           Opacity="0.5" Margin="0,8,0,0" />
             </StackPanel>
-
-            <!-- 2. MULTI-COLUMN PROFILE GRID -->
+ 
+            <!-- 2. GRID CONTENT -->
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <!-- LEFT COLUMN: PERSONAL & CONTACT -->
-                <StackPanel Grid.Column="0" Margin="0,0,30,0">
-                    
-                    <!-- PERSONAL DETAILS CARD -->
-                    <materialDesign:Card UniformCornerRadius="15" Padding="40" materialDesign:ElevationAssist.Elevation="Dp2" Margin="0,0,0,35">
+ 
+                <!-- Left: Identity & Contact -->
+                <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                    <materialDesign:Card UniformCornerRadius="24" Padding="35" materialDesign:ElevationAssist.Elevation="Dp2" Margin="0,0,0,25">
                         <StackPanel>
-                            <TextBlock Text="PERSONAL DETAILS" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
-                                       FontWeight="Bold" Opacity="0.5" Margin="0,0,0,35"  />
+                            <TextBlock Text="IDENTITY &amp; ADDRESS" FontWeight="Black" FontSize="12" Foreground="#64748B" Margin="0,0,0,25" />
                             
-                            <!-- Full Name -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                                <materialDesign:PackIcon Kind="Account" Width="26" Height="26" Foreground="#2196F3" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <TextBox Text="{Binding Patient.FullName}" materialDesign:HintAssist.Hint="Full Legal Name" 
-                                          Style="{StaticResource MaterialDesignFloatingHintTextBox}" Width="350" FontSize="15" />
-                            </StackPanel>
-
-                            <!-- Date of Birth -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                                <materialDesign:PackIcon Kind="CalendarMonth" Width="26" Height="26" Foreground="#2196F3" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <DatePicker SelectedDate="{Binding Patient.DateOfBirth}" materialDesign:HintAssist.Hint="Date of Birth" 
-                                             Width="350" FontSize="15" />
-                            </StackPanel>
-
-                            <!-- Gender -->
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                                <materialDesign:PackIcon Kind="GenderMaleFemale" Width="26" Height="26" Foreground="#2196F3" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <ComboBox Text="{Binding Patient.Gender}" materialDesign:HintAssist.Hint="Select Gender Identity" 
-                                           Width="350" FontSize="15">
-                                    <ComboBoxItem Content="Male" />
-                                    <ComboBoxItem Content="Female" />
-                                    <ComboBoxItem Content="Other" />
-                                </ComboBox>
-                            </StackPanel>
-
-                            <!-- Address -->
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="MapMarkerOutline" Width="26" Height="26" Foreground="#2196F3" VerticalAlignment="Top" Margin="0,6,25,0" />
-                                <TextBox Text="{Binding Patient.Address}" materialDesign:HintAssist.Hint="Current Residential Address" 
-                                          AcceptsReturn="True" TextWrapping="Wrap" 
-                                         Width="350" Height="110" VerticalContentAlignment="Top" FontSize="15" />
-                            </StackPanel>
+                            <Grid Margin="0,0,0,20">
+                                <materialDesign:PackIcon Kind="AccountBox" Foreground="#3B82F6" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding Patient.FullName}" materialDesign:HintAssist.Hint="Full Name" 
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="35,0,0,0" FontSize="14" />
+                            </Grid>
+ 
+                            <Grid Margin="0,0,0,20">
+                                <materialDesign:PackIcon Kind="Calendar" Foreground="#3B82F6" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <DatePicker SelectedDate="{Binding Patient.DateOfBirth}" materialDesign:HintAssist.Hint="Birth Date" 
+                                            Margin="35,0,0,0" FontSize="14" BorderThickness="0,0,0,1" />
+                            </Grid>
+ 
+                            <Grid Margin="0,0,0,20">
+                                <materialDesign:PackIcon Kind="MapMarker" Foreground="#3B82F6" Width="20" Height="20" VerticalAlignment="Top" Margin="0,8,0,0"/>
+                                <TextBox Text="{Binding Patient.Address}" materialDesign:HintAssist.Hint="Residential Address" 
+                                         AcceptsReturn="True" TextWrapping="Wrap" Height="80"
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="35,0,0,0" FontSize="14" />
+                            </Grid>
                         </StackPanel>
                     </materialDesign:Card>
-
-                    <!-- CONTACT CHANNELS CARD -->
-                    <materialDesign:Card UniformCornerRadius="15" Padding="40" materialDesign:ElevationAssist.Elevation="Dp2" Background="White">
+ 
+                    <materialDesign:Card UniformCornerRadius="24" Padding="35" materialDesign:ElevationAssist.Elevation="Dp2">
                         <StackPanel>
-                            <TextBlock Text="COMMUNICATION CHANNELS" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
-                                       FontWeight="Bold" Opacity="0.5" Margin="0,0,0,35"  />
-                            
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                                <materialDesign:PackIcon Kind="Phone" Width="26" Height="26" Foreground="#43A047" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <TextBox Text="{Binding Patient.Phone}" materialDesign:HintAssist.Hint="Primary Phone Number" 
-                                          Width="350" FontSize="15" />
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Email" Width="26" Height="26" Foreground="#1E88E5" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <TextBox Text="{Binding Patient.Email}" materialDesign:HintAssist.Hint="Active Email for Notifications" 
-                                          Width="350" FontSize="15" />
-                            </StackPanel>
+                            <TextBlock Text="COMMUNICATION" FontWeight="Black" FontSize="12" Foreground="#64748B" Margin="0,0,0,25" />
+                            <Grid Margin="0,0,0,20">
+                                <materialDesign:PackIcon Kind="Phone" Foreground="#10B981" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding Patient.Phone}" materialDesign:HintAssist.Hint="Mobile Number" 
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="35,0,0,0" FontSize="14" />
+                            </Grid>
+                            <Grid>
+                                <materialDesign:PackIcon Kind="Email" Foreground="#3B82F6" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding Patient.Email}" materialDesign:HintAssist.Hint="Email Address" 
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="35,0,0,0" FontSize="14" />
+                            </Grid>
                         </StackPanel>
                     </materialDesign:Card>
                 </StackPanel>
-
-                <!-- RIGHT COLUMN: EMERGENCY & CLINICAL -->
-                <StackPanel Grid.Column="1" Margin="30,0,0,0">
-                    
-                    <!-- EMERGENCY CONTACT CARD -->
-                    <materialDesign:Card UniformCornerRadius="15" Padding="40" materialDesign:ElevationAssist.Elevation="Dp4" Background="#FFF9C4" Margin="0,0,0,35">
+ 
+                <!-- Right: Emergency & Health -->
+                <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                    <materialDesign:Card UniformCornerRadius="24" Padding="35" materialDesign:ElevationAssist.Elevation="Dp2" Background="#FFF1F2" Margin="0,0,0,25">
                         <StackPanel>
-                            <TextBlock Text="EMERGENCY CONTACT (ICE)" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
-                                       FontWeight="Bold" Foreground="#F57F17" Opacity="0.8" Margin="0,0,0,35"  />
-                            
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
-                                <materialDesign:PackIcon Kind="AccountAlert" Width="26" Height="26" Foreground="#F57F17" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <TextBox Text="{Binding Patient.EmergencyContactName}" materialDesign:HintAssist.Hint="Contact Person's Full Name" 
-                                          Width="350" FontSize="15" />
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="PhoneAlert" Width="26" Height="26" Foreground="#F57F17" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                <TextBox Text="{Binding Patient.EmergencyContactPhone}" materialDesign:HintAssist.Hint="Contact Phone Number" 
-                                          Width="350" FontSize="15" />
-                            </StackPanel>
+                            <TextBlock Text="EMERGENCY CARE CONTACT" FontWeight="Black" FontSize="12" Foreground="#E11D48" Margin="0,0,0,25" />
+                            <Grid Margin="0,0,0,20">
+                                <materialDesign:PackIcon Kind="AccountAlert" Foreground="#E11D48" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding Patient.EmergencyContactName}" materialDesign:HintAssist.Hint="Primary ICE Contact" 
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="35,0,0,0" FontSize="14" Foreground="#1E293B" />
+                            </Grid>
+                            <Grid>
+                                <materialDesign:PackIcon Kind="PhoneForward" Foreground="#E11D48" Width="20" Height="20" VerticalAlignment="Center"/>
+                                <TextBox Text="{Binding Patient.EmergencyContactPhone}" materialDesign:HintAssist.Hint="ICE Phone Number" 
+                                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="35,0,0,0" FontSize="14" Foreground="#1E293B" />
+                            </Grid>
                         </StackPanel>
                     </materialDesign:Card>
-
-                    <!-- CLINICAL CONDITIONS CARD -->
-                    <materialDesign:Card UniformCornerRadius="15" Padding="40" materialDesign:ElevationAssist.Elevation="Dp2" Background="White">
+ 
+                    <materialDesign:Card UniformCornerRadius="24" Padding="35" materialDesign:ElevationAssist.Elevation="Dp2">
                         <StackPanel>
-                            <TextBlock Text="CLINICAL NOTES &amp; CONDITIONS" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
-                                       FontWeight="Bold" Opacity="0.5" Margin="0,0,0,35"  />
-                            
+                            <TextBlock Text="HEALTH NOTES &amp; CONDITIONS" FontWeight="Black" FontSize="12" Foreground="#64748B" Margin="0,0,0,25" />
                             <TextBox Text="{Binding Patient.AllergiesOrChronicConditions}" 
-                                     materialDesign:HintAssist.Hint="List any diagnosed allergies or chronic conditions..." 
-                                      
+                                     materialDesign:HintAssist.Hint="Chronic Conditions or Allergies" 
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}" 
-                                     Height="110" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,35" FontSize="14" />
-                            
+                                     Height="100" AcceptsReturn="True" TextWrapping="Wrap" Margin="0,0,0,20" />
                             <TextBox Text="{Binding Patient.MedicalNotes}" 
-                                     materialDesign:HintAssist.Hint="Any additional information your physician should know..." 
-                                      
+                                     materialDesign:HintAssist.Hint="Self-Reported Health Notes" 
                                      Style="{StaticResource MaterialDesignOutlinedTextBox}" 
-                                     Height="180" AcceptsReturn="True" TextWrapping="Wrap" FontSize="14" />
+                                     Height="150" AcceptsReturn="True" TextWrapping="Wrap" />
                         </StackPanel>
                     </materialDesign:Card>
-
-                    <!-- UPDATE ACTION BUTTON -->
+ 
                     <Button Command="{Binding UpdateCommand}" Style="{StaticResource MaterialDesignRaisedButton}" 
-                            Height="72" Margin="0,45,0,20" Background="#2196F3" BorderBrush="#2196F3"
-                            materialDesign:ButtonAssist.CornerRadius="36" FontWeight="Bold" FontSize="18" Cursor="Hand">
+                            Height="60" Margin="0,30,0,0" Background="#0F172A" BorderBrush="#0F172A"
+                            materialDesign:ButtonAssist.CornerRadius="16" FontWeight="Black" FontSize="14">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CloudUpload" Width="28" Height="28" VerticalAlignment="Center" Margin="0,0,15,0" />
-                            <TextBlock Text="UPDATE PROFILE INFORMATION" VerticalAlignment="Center" />
+                            <materialDesign:PackIcon Kind="Check" Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="SAVE PROFILE CHANGES" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
