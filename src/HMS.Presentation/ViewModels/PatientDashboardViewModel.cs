@@ -16,12 +16,18 @@ namespace HMS.Core.ViewModels
         private int _totalVisits;
         private int _upcomingCount;
         private int _medicalRecordsCount;
+        private string _allergies;
+        private string _currentMedications;
+        private string _bloodGroup;
 
         public string WelcomeMessage { get => _welcomeMessage; set => SetProperty(ref _welcomeMessage, value); }
         public Appointment NextAppointment { get => _nextAppointment; set => SetProperty(ref _nextAppointment, value); }
         public int TotalVisits { get => _totalVisits; set => SetProperty(ref _totalVisits, value); }
         public int UpcomingCount { get => _upcomingCount; set => SetProperty(ref _upcomingCount, value); }
         public int MedicalRecordsCount { get => _medicalRecordsCount; set => SetProperty(ref _medicalRecordsCount, value); }
+        public string Allergies { get => _allergies; set => SetProperty(ref _allergies, value); }
+        public string CurrentMedications { get => _currentMedications; set => SetProperty(ref _currentMedications, value); }
+        public string BloodGroup { get => _bloodGroup; set => SetProperty(ref _bloodGroup, value); }
 
         public ObservableCollection<DashboardActivity> RecentActivity { get; } = new ObservableCollection<DashboardActivity>();
 
@@ -32,6 +38,9 @@ namespace HMS.Core.ViewModels
             {
                 _patientId = patient.Id;
                 WelcomeMessage = $"Welcome back, {patient.FullName?.Split(' ').FirstOrDefault() ?? "Patient"}";
+                Allergies = patient.AllergiesOrChronicConditions ?? "No allergies recorded";
+                CurrentMedications = patient.CurrentMedications ?? "None";
+                BloodGroup = patient.BloodGroup ?? "Unknown";
             }
             else
             {

@@ -14,102 +14,102 @@
         <vm:MyAppointmentsViewModel />
     </UserControl.DataContext>
 
-    <Grid Margin="60,40">
+    <Grid Margin="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /> <!-- Header -->
-            <RowDefinition Height="Auto" /> <!-- Search area -->
-            <RowDefinition Height="*" />    <!-- Tabs & Content area -->
+            <RowDefinition Height="Auto" /> <!-- Search & Stats -->
+            <RowDefinition Height="*" />    <!-- Main Content -->
         </Grid.RowDefinitions>
-
+ 
         <!-- 1. HEADER SECTION -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,45">
-            <TextBlock Text="MY APPOINTMENTS" 
-                       Style="{StaticResource MaterialDesignHeadline3TextBlock}" 
-                       FontWeight="Bold" Foreground="#2196F3" />
-            <TextBlock Text="Effortlessly manage your scheduled visits and review your complete clinical history." 
-                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
-                       Opacity="0.6" Margin="4,12,0,0" />
+        <StackPanel Grid.Row="0" Margin="0,0,0,30">
+            <TextBlock Text="MY MEDICAL VISITS" 
+                       Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                       FontWeight="Black" Foreground="#3B82F6" />
+            <TextBlock Text="Review your upcoming consultations and clinical history records." 
+                       Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                       Opacity="0.5" Margin="0,8,0,0" />
         </StackPanel>
-
-        <!-- 2. SEARCH & FILTER INTEGRATION -->
-        <materialDesign:Card Grid.Row="1" UniformCornerRadius="15" Padding="30,15" Margin="0,0,0,45" 
-                             materialDesign:ElevationAssist.Elevation="Dp1" Background="White">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
-                         materialDesign:HintAssist.Hint="Filter by Physician Name or Specialty..." 
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                         FontSize="15" BorderThickness="0" />
-                <materialDesign:PackIcon Grid.Column="1" Kind="Magnify" Width="24" Height="24" 
-                                         VerticalAlignment="Center" Margin="15,0,0,0" Opacity="0.4" />
-            </Grid>
-        </materialDesign:Card>
-
-        <!-- 3. TABS & APPOINTMENT CARDS -->
-        <TabControl Grid.Row="2" materialDesign:NavigationRailAssist.ShowSelectionBackground="True" 
-                    Background="Transparent" BorderThickness="0">
+ 
+        <!-- 2. SEARCH & STATS -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             
-            <!-- UPCOMING APPOINTMENTS -->
-            <TabItem Header="UPCOMING SESSIONS">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,30,0,0">
-                    <ItemsControl ItemsSource="{Binding UpcomingAppointments}" Margin="0,10,15,0">
+            <materialDesign:Card UniformCornerRadius="16" Padding="15,5" materialDesign:ElevationAssist.Elevation="Dp1" Background="White">
+                <Grid>
+                    <materialDesign:PackIcon Kind="Magnify" Foreground="#64748B" Width="22" Height="22" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             materialDesign:HintAssist.Hint="Filter by physician or reason..." 
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
+                             BorderThickness="0" Margin="45,0,10,0" FontSize="14" />
+                </Grid>
+            </materialDesign:Card>
+ 
+            <Button Grid.Column="1" Style="{StaticResource MaterialDesignRaisedButton}" 
+                    Background="#3B82F6" BorderBrush="#3B82F6"
+                    materialDesign:ButtonAssist.CornerRadius="12" Margin="15,0,0,0" Height="50" Padding="25,0">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="NEW APPOINTMENT" FontWeight="Bold" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+ 
+        <!-- 3. MAIN CONTENT: TABS -->
+        <TabControl Grid.Row="2" Margin="0,20,0,0">
+            <TabControl.Resources>
+                <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignTabItem}">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="Bold"/>
+                    <Setter Property="Padding" Value="20,10"/>
+                </Style>
+            </TabControl.Resources>
+            
+            <!-- UPCOMING -->
+            <TabItem Header="UPCOMING">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                    <ItemsControl ItemsSource="{Binding UpcomingAppointments}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <materialDesign:Card UniformCornerRadius="15" Margin="0,0,0,30" Padding="0" 
-                                                     materialDesign:ElevationAssist.Elevation="Dp3" Background="White">
-                                    <Grid Height="140">
+                                <materialDesign:Card UniformCornerRadius="20" Margin="0,0,15,20" Padding="0" materialDesign:ElevationAssist.Elevation="Dp2" Background="White">
+                                    <Grid Height="120">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         
-                                        <!-- DATE ACCENT STRIP -->
-                                        <Border Grid.Column="0" Background="#2196F3" Width="120" Padding="15">
+                                        <!-- Date Indicator -->
+                                        <Border Background="#EFF6FF" Width="100" CornerRadius="20,0,0,20">
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding AppointmentDate, StringFormat='MMM'}" 
-                                                           Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="14" Opacity="0.9" />
-                                                <TextBlock Text="{Binding AppointmentDate, StringFormat='dd'}" 
-                                                           Style="{StaticResource MaterialDesignHeadline3TextBlock}" 
-                                                           Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,-4" />
+                                                <TextBlock Text="{Binding AppointmentDate, StringFormat='dd'}" FontSize="28" FontWeight="Black" Foreground="#3B82F6" HorizontalAlignment="Center" />
+                                                <TextBlock Text="{Binding AppointmentDate, StringFormat='MMM'}" FontSize="12" FontWeight="Bold" Foreground="#60A5FA" HorizontalAlignment="Center" Margin="0,-2,0,0" />
                                             </StackPanel>
                                         </Border>
-
-                                        <!-- DETAILS -->
-                                        <Grid Grid.Column="1" Margin="40,0">
-                                            <StackPanel VerticalAlignment="Center">
-                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                                                    <materialDesign:PackIcon Kind="ClockTimeFiveOutline" Width="20" Height="20" 
-                                                                             Foreground="#2196F3" VerticalAlignment="Center" Margin="0,0,12,0" />
-                                                    <TextBlock Text="{Binding AppointmentDate, StringFormat='hh:mm tt'}" 
-                                                               FontSize="15" FontWeight="SemiBold" Foreground="#1A237E" VerticalAlignment="Center" />
-                                                </StackPanel>
-                                                
-                                                <TextBlock Text="{Binding DoctorName, TargetNullValue='Alpha Clinic Physician'}" 
-                                                           Style="{StaticResource MaterialDesignHeadline5TextBlock}" 
-                                                           FontWeight="Bold" Foreground="#37474F" />
-                                                
-                                                <Border Background="#E8F5E9" HorizontalAlignment="Left" CornerRadius="10" Padding="12,4" Margin="0,10,0,0">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16" Foreground="#2E7D32" 
-                                                                                 VerticalAlignment="Center" Margin="0,0,8,0" />
-                                                        <TextBlock Text="CONFIRMED APPOINTMENT" Foreground="#2E7D32" 
-                                                                   FontWeight="Bold" FontSize="11" VerticalAlignment="Center" />
-                                                    </StackPanel>
-                                                </Border>
+                                        
+                                        <!-- Doctor Info -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0">
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                                <materialDesign:PackIcon Kind="Doctor" Foreground="#3B82F6" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                <TextBlock Text="{Binding DoctorName}" FontWeight="Bold" FontSize="16" Foreground="#1E293B" />
                                             </StackPanel>
-                                        </Grid>
-
-                                        <!-- ACTIONS -->
-                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,40,0" Orientation="Horizontal">
-                                            <Button Content="CANCEL" Style="{StaticResource MaterialDesignFlatButton}" 
-                                                    Foreground="#D32F2F" FontWeight="Bold" Margin="0,0,20,0" />
-                                            <Button Content="VIEW DETAILS" Style="{StaticResource MaterialDesignRaisedButton}" 
-                                                    materialDesign:ButtonAssist.CornerRadius="22" Height="44" Padding="30,0" 
-                                                    Background="#2196F3" BorderBrush="#2196F3" />
+                                            <TextBlock Text="{Binding DoctorSpecialty}" Foreground="#64748B" FontSize="13" FontWeight="SemiBold" />
+                                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                                <materialDesign:PackIcon Kind="ClockOutline" Width="16" Height="16" Foreground="#94A3B8" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding AppointmentDate, StringFormat='hh:mm tt'}" Foreground="#94A3B8" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        
+                                        <!-- Status & Action -->
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="0,0,30,0">
+                                            <Border Background="#DBEAFE" CornerRadius="10" Padding="12,5" Margin="0,0,0,15" HorizontalAlignment="Right">
+                                                <TextBlock Text="CONFIRMED" Foreground="#1D4ED8" FontWeight="Black" FontSize="10" />
+                                            </Border>
+                                            <Button Content="DETAILS" Background="#EFF6FF" Foreground="#3B82F6" BorderBrush="#3B82F6" 
+                                                    Style="{StaticResource MaterialDesignOutlinedButton}" Height="34" Padding="20,0" materialDesign:ButtonAssist.CornerRadius="10" />
                                         </StackPanel>
                                     </Grid>
                                 </materialDesign:Card>
@@ -118,15 +118,14 @@
                     </ItemsControl>
                 </ScrollViewer>
             </TabItem>
-
-            <!-- PAST VISITS -->
+ 
+            <!-- PAST -->
             <TabItem Header="PAST VISITS">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,30,0,0">
-                    <ItemsControl ItemsSource="{Binding PastAppointments}" Margin="0,10,15,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                    <ItemsControl ItemsSource="{Binding PastAppointments}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <materialDesign:Card UniformCornerRadius="12" Margin="0,0,0,20" Padding="30" 
-                                                     Opacity="0.85" materialDesign:ElevationAssist.Elevation="Dp1">
+                                <materialDesign:Card UniformCornerRadius="16" Margin="0,0,15,12" Padding="20" materialDesign:ElevationAssist.Elevation="Dp1" Background="White">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -134,19 +133,17 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         
-                                        <materialDesign:PackIcon Kind="CalendarCheckOutline" Foreground="#607D8B" 
-                                                                 Width="32" Height="32" VerticalAlignment="Center" Margin="0,0,30,0" />
+                                        <Border Width="40" Height="40" Background="#F8FAFC" CornerRadius="10">
+                                            <materialDesign:PackIcon Kind="CheckCircle" Foreground="#10B981" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
                                         
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding AppointmentDate, StringFormat='dddd, MMMM dd, yyyy'}" 
-                                                       FontWeight="Bold" Foreground="#37474F" FontSize="16" />
-                                            <TextBlock Text="{Binding Reason, TargetNullValue='General Consultation'}" 
-                                                       Style="{StaticResource MaterialDesignBody1TextBlock}" 
-                                                       Margin="0,8,0,0" Opacity="0.6" FontStyle="Italic" />
+                                        <StackPanel Grid.Column="1" Margin="20,0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DoctorName}" FontWeight="Bold" FontSize="14" Foreground="#1E293B" />
+                                            <TextBlock Text="{Binding AppointmentDate, StringFormat='dddd, MMMM dd yyyy'}" Foreground="#64748B" FontSize="12" />
                                         </StackPanel>
-
-                                        <Border Grid.Column="2" Background="#F1F1F1" CornerRadius="12" Padding="15,6" VerticalAlignment="Center">
-                                            <TextBlock Text="COMPLETED" FontWeight="Bold" Foreground="#9E9E9E" FontSize="12" />
+ 
+                                        <Border Grid.Column="2" Background="#ECFDF5" CornerRadius="8" Padding="10,4" VerticalAlignment="Center">
+                                            <TextBlock Text="COMPLETED" Foreground="#059669" FontWeight="Black" FontSize="10" />
                                         </Border>
                                     </Grid>
                                 </materialDesign:Card>
@@ -155,33 +152,26 @@
                     </ItemsControl>
                 </ScrollViewer>
             </TabItem>
-
-            <!-- CANCELLED APPOINTMENTS -->
+ 
+            <!-- CANCELLED -->
             <TabItem Header="CANCELLED">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,30,0,0">
-                    <ItemsControl ItemsSource="{Binding CancelledAppointments}" Margin="0,10,15,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,20,0,0">
+                    <ItemsControl ItemsSource="{Binding CancelledAppointments}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <materialDesign:Card UniformCornerRadius="12" Margin="0,0,0,20" Padding="25" 
-                                                     Background="#FFF5F5" materialDesign:ElevationAssist.Elevation="Dp1">
+                                <materialDesign:Card UniformCornerRadius="16" Margin="0,0,15,12" Padding="20" Background="#FFF1F2" materialDesign:ElevationAssist.Elevation="Dp0">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        
-                                        <materialDesign:PackIcon Kind="CalendarRemove" Foreground="#C62828" 
-                                                                 Width="28" Height="28" VerticalAlignment="Center" Margin="0,0,25,0" />
-                                        
+                                        <materialDesign:PackIcon Kind="CloseCircle" Foreground="#EF4444" Width="24" Height="24" VerticalAlignment="Center" Margin="5,0,20,0"/>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding AppointmentDate, StringFormat='dd MMM yyyy | hh:mm tt'}" 
-                                                       FontWeight="Bold" Foreground="#C62828" />
-                                            <TextBlock Text="Patient scheduled visit was cancelled." Opacity="0.5" Margin="0,4,0,0" />
+                                            <TextBlock Text="{Binding AppointmentDate, StringFormat='MMMM dd, yyyy'}" FontWeight="Bold" Foreground="#991B1B" />
+                                            <TextBlock Text="Session Cancelled" Foreground="#EF4444" Opacity="0.7" FontSize="12" />
                                         </StackPanel>
-                                        
-                                        <Button Grid.Column="2" Content="REBOOK VISIT" Style="{StaticResource MaterialDesignFlatButton}" 
-                                                Foreground="#2196F3" FontWeight="Bold" VerticalAlignment="Center" />
+                                        <Button Grid.Column="2" Content="REBOOK" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6" FontWeight="Black" VerticalAlignment="Center" />
                                     </Grid>
                                 </materialDesign:Card>
                             </DataTemplate>
