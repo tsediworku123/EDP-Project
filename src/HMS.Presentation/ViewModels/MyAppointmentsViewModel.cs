@@ -18,9 +18,9 @@ namespace HMS.Core.ViewModels
             set { if (SetProperty(ref _searchText, value)) RefreshFilteredLists(); } 
         }
 
-        public ObservableCollection<Appointment> UpcomingAppointments { get; } = new ObservableCollection<Appointment>();
-        public ObservableCollection<Appointment> PastAppointments { get; } = new ObservableCollection<Appointment>();
-        public ObservableCollection<Appointment> CancelledAppointments { get; } = new ObservableCollection<Appointment>();
+        public ObservableCollection<AppointmentDisplay> UpcomingAppointments { get; } = new ObservableCollection<AppointmentDisplay>();
+        public ObservableCollection<AppointmentDisplay> PastAppointments { get; } = new ObservableCollection<AppointmentDisplay>();
+        public ObservableCollection<AppointmentDisplay> CancelledAppointments { get; } = new ObservableCollection<AppointmentDisplay>();
 
         private List<Appointment> _allAppointments = new List<Appointment>();
 
@@ -56,13 +56,50 @@ namespace HMS.Core.ViewModels
             }
 
             foreach (var a in query.Where(x => x.Status == "Scheduled" && x.AppointmentDate >= DateTime.Now).OrderBy(x => x.AppointmentDate))
-                UpcomingAppointments.Add(a);
+                UpcomingAppointments.Add(MapToDisplay(a));
             
             foreach (var a in query.Where(x => x.Status == "Completed" || (x.Status == "Scheduled" && x.AppointmentDate < DateTime.Now)).OrderByDescending(x => x.AppointmentDate))
-                PastAppointments.Add(a);
+                PastAppointments.Add(MapToDisplay(a));
             
             foreach (var a in query.Where(x => x.Status == "Cancelled").OrderByDescending(x => x.AppointmentDate))
-                CancelledAppointments.Add(a);
+                CancelledAppointments.Add(MapToDisplay(a));
         }
+
+        private AppointmentDisplay MapToDisplay(Appointment a)
+        {
+            var doc = DataManager.Doctors.FirstOrDefault(d => d.Id == a.DoctorId);
+            return new AppointmentDisplay
+            {
+                Id = a.Id,
+                AppointmentDate = a.AppointmentDate,
+                Reason = a.Reason,
+                Status = a.Status,
+                DoctorName = doc?.FullName ?? "Unknown Doctor",
+                DoctorSpecialty = doc?.Specialization ?? "General Practice",
+                StatusColor = GetStatusColor(a.Status)
+            };
+        }
+
+        private string GetStatusColor(string status)
+        {
+            switch (status)
+            {
+                case "Scheduled": return "#3B82F6";
+                case "Completed": return "#10B981";
+                case "Cancelled": return "#EF4444";
+                default: return "#64748B";
+            }
+        }
+    }
+
+    public class AppointmentDisplay
+    {
+        public int Id { get; set; }
+        public DateTime AppointmentDate { get; set; }
+        public string DoctorName { get; set; }
+        public string DoctorSpecialty { get; set; }
+        public string Reason { get; set; }
+        public string Status { get; set; }
+        public string StatusColor { get; set; }
     }
 }

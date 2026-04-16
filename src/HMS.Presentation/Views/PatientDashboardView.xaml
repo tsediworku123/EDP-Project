@@ -15,133 +15,106 @@
     </UserControl.Resources>
     
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="40">
+        <Grid Margin="35">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" /> <!-- Greeting -->
-                <RowDefinition Height="Auto" /> <!-- Hero Section (Upcoming) -->
-                <RowDefinition Height="Auto" /> <!-- Stats Section -->
-                <RowDefinition Height="Auto" /> <!-- Activity & Details -->
+                <RowDefinition Height="Auto" /> <!-- Hero / Next Visit -->
+                <RowDefinition Height="Auto" /> <!-- Quick Actions -->
+                <RowDefinition Height="Auto" /> <!-- Health & Activity -->
             </Grid.RowDefinitions>
-
+ 
             <!-- 1. GREETING & HEADER -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,35">
+            <StackPanel Grid.Row="0" Margin="0,0,0,30">
                 <TextBlock Text="{Binding WelcomeMessage}" 
-                           Style="{StaticResource MaterialDesignHeadline3TextBlock}" 
-                           FontWeight="Bold" Foreground="#1A237E" />
-                <TextBlock Text="Managing your health is our priority. Explore your recent clinic updates below." 
-                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
-                           Opacity="0.6" Margin="0,10,0,0" />
+                           Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                           FontWeight="Black" Foreground="#3B82F6" />
+                <TextBlock Text="Your health is in good hands. Stay updated with your latest clinic insights." 
+                           Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                           Opacity="0.5" Margin="0,8,0,0" />
             </StackPanel>
-
+ 
             <!-- 2. HERO CARD (NEXT APPOINTMENT) -->
-            <materialDesign:Card Grid.Row="1" UniformCornerRadius="20" Padding="0" Margin="0,0,0,45" 
-                                 materialDesign:ElevationAssist.Elevation="Dp6" Background="{StaticResource HeroGradient}"
-                                 Cursor="Hand">
-                <materialDesign:Card.InputBindings>
-                    <MouseBinding MouseAction="LeftClick" Command="{Binding DataContext.NavBookingCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
-                </materialDesign:Card.InputBindings>
-                <Grid Height="240">
+            <materialDesign:Card Grid.Row="1" UniformCornerRadius="24" Padding="0" Margin="0,0,0,30" 
+                                  materialDesign:ElevationAssist.Elevation="Dp8" Background="{StaticResource HeroGradient}">
+                <Grid Height="220">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     
-                    <!-- Decorative Icon Background -->
-                    <materialDesign:PackIcon Kind="CalendarStarOutline" Grid.Column="1" Width="200" Height="200" 
-                                             Foreground="White" Opacity="0.1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-40,-40" />
-
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="50,0">
-                        <Border Background="White" CornerRadius="12" HorizontalAlignment="Left" Padding="15,6" Margin="0,0,0,20" Opacity="0.9">
-                            <TextBlock Text="NEXT CLINIC VISIT" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
-                                       Foreground="#3B82F6" FontWeight="Bold"  />
+                    <materialDesign:PackIcon Kind="CalendarStar" Grid.Column="1" Width="200" Height="200" 
+                                              Foreground="White" Opacity="0.1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-30,-30" />
+ 
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="45,0">
+                        <Border Background="White" CornerRadius="12" HorizontalAlignment="Left" Padding="14,6" Margin="0,0,0,20" Opacity="0.9">
+                            <TextBlock Text="NEXT SCHEDULED VISIT" FontSize="10" Foreground="#3B82F6" FontWeight="Black"  />
                         </Border>
                         
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ClockTimeEight" Width="42" Height="42" Foreground="White" 
-                                                      VerticalAlignment="Center" Margin="0,0,20,0" />
-                            <TextBlock Text="{Binding NextAppointment.AppointmentDate, StringFormat='dddd, MMMM dd | hh:mm tt', TargetNullValue='No Upcoming Visits Scheduled', FallbackValue='Stay proactive — book today!'}" 
-                                       Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
-                                       Foreground="White" FontWeight="Bold" VerticalAlignment="Center" />
-                        </StackPanel>
+                        <TextBlock Text="{Binding NextAppointment.AppointmentDate, StringFormat='dddd, MMMM dd | hh:mm tt', TargetNullValue='Time for a Checkup?', FallbackValue='Stay Proactive!'}" 
+                                   Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                                   Foreground="White" FontWeight="Bold" />
                         
-                        <TextBlock Text="{Binding NextAppointment.Reason, TargetNullValue='Regular checkups are essential for long-term health and wellness.', FallbackValue='Manage your health—Explore our clinic services.'}" 
+                        <TextBlock Text="{Binding NextAppointment.Reason, TargetNullValue='You don\'t have any upcoming visits. Keeping regular checkups is the best way to prevent issues.', FallbackValue='Your next health milestone is set.'}" 
                                    Style="{StaticResource MaterialDesignBody1TextBlock}" 
-                                   Foreground="White" Margin="0,15,0,0" Opacity="1" FontWeight="SemiBold" MaxWidth="600" TextWrapping="Wrap" />
+                                   Foreground="White" Margin="0,12,0,0" Opacity="0.9" MaxWidth="500" TextWrapping="Wrap" />
                     </StackPanel>
-
-                    <!-- Interactive Action Area -->
+ 
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Button Style="{StaticResource MaterialDesignRaisedButton}" 
                                 Background="White" Foreground="#3B82F6"
-                                materialDesign:ButtonAssist.CornerRadius="28" 
-                                Height="56" Padding="40,0" 
+                                materialDesign:ButtonAssist.CornerRadius="15" 
+                                Height="54" Padding="35,0" 
                                 Command="{Binding DataContext.NavBookingCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                Content="+ BOOK NEW VISIT" 
-                                FontWeight="Bold" FontSize="15" 
-                                Cursor="Hand" />
+                                Content="SCHEDULE VISIT" 
+                                FontWeight="Black" FontSize="14" />
                     </StackPanel>
                 </Grid>
             </materialDesign:Card>
-
-            <!-- 3. STAT TILES GRID -->
-            <UniformGrid Grid.Row="2" Columns="3" Margin="0,0,0,45">
-                <!-- Visits Stat -->
-                <materialDesign:Card Style="{StaticResource PremiumCard}" Margin="0,0,25,0" Background="#F1F5F9">
-                    <StackPanel>
-                        <materialDesign:PackIcon Kind="ClipboardCheckOutline" Width="32" Height="32" Foreground="#3B82F6" />
-                        <TextBlock Text="{Binding TotalVisits}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
-                                   FontWeight="Bold" Foreground="#1E293B" Margin="0,20,0,5" />
-                        <TextBlock Text="Total Successful Visits" Style="{StaticResource MaterialDesignBody2TextBlock}" 
-                                   FontWeight="SemiBold" Opacity="0.5" />
+ 
+            <!-- 3. QUICK ACTIONS BAR -->
+            <UniformGrid Grid.Row="2" Columns="4" Margin="0,0,0,30">
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,10,0" Height="60" materialDesign:ButtonAssist.CornerRadius="16" Background="#EFF6FF">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CalendarPlus" Foreground="#3B82F6" Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Book Appointment" Foreground="#1E40AF" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
-                </materialDesign:Card>
-
-                <!-- Upcoming Stat -->
-                <materialDesign:Card Style="{StaticResource PremiumCard}" Margin="12,0,12,0" Background="#F1F8E9">
-                    <StackPanel>
-                        <materialDesign:PackIcon Kind="CalendarClock" Width="32" Height="32" Foreground="#388E3C" />
-                        <TextBlock Text="{Binding UpcomingCount}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
-                                   FontWeight="Bold" Foreground="#388E3C" Margin="0,20,0,5" />
-                        <TextBlock Text="Upcoming Appointments" Style="{StaticResource MaterialDesignBody2TextBlock}" 
-                                   FontWeight="SemiBold" Opacity="0.5" />
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="10,0" Height="60" materialDesign:ButtonAssist.CornerRadius="16" Background="#F0FDF4">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileUpload" Foreground="#22C55E" Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Upload Records" Foreground="#166534" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
-                </materialDesign:Card>
-
-                <!-- Medical Records Stat -->
-                <materialDesign:Card Style="{StaticResource PremiumCard}" Margin="25,0,0,0" Background="#ECEFF1">
-                    <StackPanel>
-                        <materialDesign:PackIcon Kind="FileCabinet" Width="32" Height="32" Foreground="#455A64" />
-                        <TextBlock Text="{Binding MedicalRecordsCount}" Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
-                                   FontWeight="Bold" Foreground="#455A64" Margin="0,20,0,5" />
-                        <TextBlock Text="Available Medical Records" Style="{StaticResource MaterialDesignBody2TextBlock}" 
-                                   FontWeight="SemiBold" Opacity="0.5" />
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="10,0" Height="60" materialDesign:ButtonAssist.CornerRadius="16" Background="#FEF2F2">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CreditCard" Foreground="#EF4444" Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Pay Invoices" Foreground="#991B1B" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
-                </materialDesign:Card>
+                </Button>
+                <Button Style="{StaticResource MaterialDesignFlatButton}" Margin="10,0,0,0" Height="60" materialDesign:ButtonAssist.CornerRadius="16" Background="#FAF5FF">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ChatBubbleOutline" Foreground="#A855F7" Width="22" Height="22" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Message Clinic" Foreground="#6B21A8" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </UniformGrid>
-
-            <!-- 4. LOWER CONTENT SECTION -->
+ 
+            <!-- 4. HEALTH & ACTIVITY SECTION -->
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="1.4*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
-                <!-- Recent Clinical Activity Feed -->
-                <materialDesign:Card Grid.Column="0" UniformCornerRadius="15" Padding="40" 
-                                     materialDesign:ElevationAssist.Elevation="Dp2" VerticalAlignment="Top" Margin="0,0,30,0">
+ 
+                <!-- Left: Recent Activity -->
+                <materialDesign:Card Grid.Column="0" UniformCornerRadius="20" Padding="30" Margin="0,0,25,0">
                     <StackPanel>
-                        <Grid Margin="0,0,0,30">
-                            <TextBlock Text="RECENT CLINICAL ACTIVITY" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
-                                       FontWeight="Bold" Opacity="0.5"  VerticalAlignment="Center" />
-                            <Button Content="VIEW ALL HISTORY" Style="{StaticResource MaterialDesignFlatButton}" 
-                                    Command="{Binding DataContext.NavHistoryCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                    Foreground="#3B82F6" HorizontalAlignment="Right" FontWeight="Bold" Margin="0,-10,-10,-10" />
-                        </Grid>
+                        <TextBlock Text="RECENT CLINICAL UPDATES" FontWeight="Black" FontSize="12" Foreground="#64748B" Margin="0,0,0,25" />
                         
                         <ItemsControl ItemsSource="{Binding RecentActivity}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Padding="0,20">
+                                    <Border BorderBrush="#F1F5F9" BorderThickness="0,0,0,1" Padding="0,15">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
@@ -149,18 +122,16 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             
-                                            <materialDesign:PackIcon Kind="{Binding Icon}" Width="28" Height="28" 
-                                                                     Foreground="#2196F3" VerticalAlignment="Center" Margin="0,0,30,0" Opacity="0.8" />
+                                            <Border Width="44" Height="44" Background="#F1F5F9" CornerRadius="12">
+                                                <materialDesign:PackIcon Kind="{Binding Icon}" Width="22" Height="22" Foreground="#3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
                                             
-                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="16" Foreground="#37474F" />
-                                                <TextBlock Text="{Binding Summary}" Opacity="0.6" Margin="0,6,0,0" FontSize="14" LineHeight="20" />
+                                            <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="15" Foreground="#1E293B" />
+                                                <TextBlock Text="{Binding Summary}" Opacity="0.5" FontSize="13" Margin="0,2,0,0" />
                                             </StackPanel>
                                             
-                                            <Border Grid.Column="2" Background="#F5F5F5" CornerRadius="8" Padding="12,6" VerticalAlignment="Center" Margin="20,0,0,0">
-                                                <TextBlock Text="{Binding Date, StringFormat='dd MMM yyyy'}" 
-                                                           Style="{StaticResource MaterialDesignOverlineTextBlock}" FontWeight="Bold" />
-                                            </Border>
+                                            <TextBlock Grid.Column="2" Text="{Binding Date, StringFormat='MMM dd'}" FontWeight="SemiBold" FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -168,26 +139,41 @@
                         </ItemsControl>
                     </StackPanel>
                 </materialDesign:Card>
-
-                <!-- Health Tips / Quick Info Support -->
+ 
+                <!-- Right: Health Profile Summary & Tips -->
                 <StackPanel Grid.Column="1">
-                    <materialDesign:Card UniformCornerRadius="15" Padding="30" Background="#F0F4C3" materialDesign:ElevationAssist.Elevation="Dp1">
+                    <!-- Health Summary Card -->
+                    <materialDesign:Card UniformCornerRadius="20" Padding="25" Margin="0,0,0,25" Background="#0F172A">
                         <StackPanel>
-                            <materialDesign:PackIcon Kind="LightbulbOnOutline" Width="28" Height="28" Foreground="#827717" Margin="0,0,0,15" />
-                            <TextBlock Text="Stay Healthy!" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
-                                       FontWeight="Bold" Foreground="#827717" />
-                            <TextBlock Text="Drinking water regularly and getting 8 hours of sleep can significantly improve your immune system." 
-                                       Margin="0,10,0,0" Opacity="0.75" TextWrapping="Wrap" />
+                            <TextBlock Text="HEALTH PROFILE SUMMARY" FontWeight="Black" FontSize="10" Foreground="#3B82F6" Margin="0,0,0,20" />
+                            
+                            <!-- Blood Group -->
+                            <Grid Margin="0,0,0,15">
+                                <TextBlock Text="Blood Type" Foreground="White" Opacity="0.6"/>
+                                <TextBlock Text="{Binding BloodGroup}" Foreground="White" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </Grid>
+                            
+                            <!-- Allergies -->
+                            <StackPanel Margin="0,0,0,15">
+                                <TextBlock Text="Allergies" Foreground="White" Opacity="0.6"/>
+                                <TextBlock Text="{Binding Allergies}" Foreground="#EF4444" FontWeight="Bold" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                            </StackPanel>
+ 
+                            <!-- Medications -->
+                            <StackPanel>
+                                <TextBlock Text="Current Medications" Foreground="White" Opacity="0.6"/>
+                                <TextBlock Text="{Binding CurrentMedications}" Foreground="#10B981" FontWeight="Bold" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                            </StackPanel>
                         </StackPanel>
                     </materialDesign:Card>
-                    
-                    <materialDesign:Card UniformCornerRadius="15" Padding="30" Margin="0,25,0,0" Background="#FFEBEE" materialDesign:ElevationAssist.Elevation="Dp1">
+ 
+                    <!-- Seasonal Tip -->
+                    <materialDesign:Card UniformCornerRadius="20" Padding="25" Background="#FEF3C7">
                         <StackPanel>
-                            <materialDesign:PackIcon Kind="ShieldCheck" Width="28" Height="28" Foreground="#C62828" Margin="0,0,0,15" />
-                            <TextBlock Text="Safety First" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
-                                       FontWeight="Bold" Foreground="#C62828" />
-                            <TextBlock Text="Always bring your personal ID and medical cards when visiting the clinic for a seamless experience." 
-                                       Margin="0,10,0,0" Opacity="0.75" TextWrapping="Wrap" />
+                            <materialDesign:PackIcon Kind="LightbulbOn" Foreground="#D97706" Width="28" Height="28" Margin="0,0,0,15" />
+                            <TextBlock Text="Weekly Health Tip" FontWeight="Black" FontSize="14" Foreground="#92400E" />
+                            <TextBlock Text="In your last visit, consistent hydration was recommended. Try to drink at least 2 liters of water daily!" 
+                                       Foreground="#B45309" Margin="0,10,0,0" TextWrapping="Wrap" LineHeight="20" />
                         </StackPanel>
                     </materialDesign:Card>
                 </StackPanel>

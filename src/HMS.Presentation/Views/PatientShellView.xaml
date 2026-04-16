@@ -12,6 +12,33 @@
         Background="{DynamicResource MaterialDesignPaper}">
 
     <Window.Resources>
+ 
+        <!-- Sidebar Navigation Button Style -->
+        <Style x:Key="MaterialDesignNavButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="10"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="1"/>
+                    <Setter Property="Background" Value="#1E293B"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+ 
+        <!-- Sidebar Text Visibility Logic -->
+        <Style x:Key="SidebarTextStyle" TargetType="TextBlock">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+ 
         <!-- Smooth Sidebar Animation -->
         <Storyboard x:Key="ExpandSidebar">
             <DoubleAnimation Storyboard.TargetName="navColumn" Storyboard.TargetProperty="Width" To="240" Duration="0:0:0.3">
@@ -47,26 +74,25 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- 1. LEFT NAVIGATION RAIL (ADMIN-STYLE SLATE 900) -->
+        <!-- 1. LEFT NAVIGATION RAIL (PREMIUM SLATE 900) -->
         <materialDesign:Card Grid.Column="0" UniformCornerRadius="0" materialDesign:ElevationAssist.Elevation="Dp12" Background="#0F172A">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" /> <!-- Logo/Close Toggle -->
+                    <RowDefinition Height="Auto" /> <!-- Logo Section -->
                     <RowDefinition Height="*" />    <!-- Nav Items -->
-                    <RowDefinition Height="Auto" /> <!-- Profile/Logout -->
+                    <RowDefinition Height="Auto" /> <!-- User Profile Section -->
                 </Grid.RowDefinitions>
-
+ 
                 <!-- Logo & Toggle Section -->
-                <Grid Grid.Row="0" Margin="10,20">
+                <Grid Grid.Row="0" Margin="15,25">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" /> <!-- Logo Area -->
-                        <ColumnDefinition Width="Auto" /> <!-- Toggle Area -->
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-
-                    <!-- "ALPHA" BRANDING (hides on collapse via Trigger) -->
-                    <StackPanel Grid.Column="0" Margin="10,0" VerticalAlignment="Center" x:Name="AlphaLogo">
-                        <TextBlock Text="ALPHA" Foreground="White" FontSize="28" FontWeight="ExtraBold" />
-                        <TextBlock Text="PATIENT PORTAL" Foreground="#3B82F6" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
+ 
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" x:Name="AlphaLogo">
+                        <TextBlock Text="ALPHA" Foreground="White" FontSize="26" FontWeight="ExtraBold" />
+                        <TextBlock Text="CLIENT PORTAL" Foreground="#60A5FA" FontSize="9" FontWeight="Black" Margin="2,-2,0,0" Opacity="0.9" />
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Style.Triggers>
@@ -77,147 +103,161 @@
                             </Style>
                         </StackPanel.Style>
                     </StackPanel>
-
-                    <!-- Hamburger / Toggle -->
+ 
                     <Button Grid.Column="1" Command="{Binding ToggleSidebarCommand}" Style="{StaticResource MaterialDesignFlatButton}" 
-                            Width="50" Height="50" ToolTip="Toggle Sidebar">
-                        <materialDesign:PackIcon Kind="Menu" Foreground="White" Width="28" Height="28" />
+                            Width="44" Height="44" materialDesign:ButtonAssist.CornerRadius="10">
+                        <materialDesign:PackIcon Kind="Menu" Foreground="White" Width="24" Height="24" Opacity="0.8" />
                     </Button>
                 </Grid>
-
-                <!-- Navigation List (Standard Buttons with Active Highlight Triggers) -->
-                <StackPanel Grid.Row="1" Margin="0,20">
-                    <Button Command="{Binding NavDashboardCommand}" Tag="DASHBOARD">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignNavButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActivePageTitle}" Value="DASHBOARD">
-                                        <Setter Property="Background" Value="#3B82F6" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="DASHBOARD" Foreground="White" FontWeight="Bold">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+ 
+                <!-- Navigation List -->
+                <StackPanel Grid.Row="1" Margin="10,10">
+                    <!-- Dashboard -->
+                    <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="DASHBOARD" Margin="0,4">
+                        <Grid HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ViewDashboard" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="DASHBOARD" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                            <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActivePageTitle}" Value="DASHBOARD">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </Grid>
                     </Button>
-                    
-                    <Button Command="{Binding NavBookingCommand}" Tag="BOOK NEW VISIT">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignNavButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActivePageTitle}" Value="BOOK NEW VISIT">
-                                        <Setter Property="Background" Value="#3B82F6" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="BOOK NEW VISIT" Foreground="White" FontWeight="Bold">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+ 
+                    <!-- Appointments -->
+                    <Button Command="{Binding NavAppointmentsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="MY APPOINTMENTS" Margin="0,4">
+                        <Grid HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CalendarClock" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="MY VISITS" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                            <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY APPOINTMENTS">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </Grid>
                     </Button>
-
-                    <Button Command="{Binding NavAppointmentsCommand}" Tag="MY APPOINTMENTS">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignNavButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY APPOINTMENTS">
-                                        <Setter Property="Background" Value="#3B82F6" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="MY APPOINTMENTS" Foreground="White" FontWeight="Bold">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+ 
+                    <!-- History -->
+                    <Button Command="{Binding NavHistoryCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="MEDICAL RECORDS" Margin="0,4">
+                        <Grid HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="FileDocumentMultiple" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="HEALTH RECORDS" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                            <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActivePageTitle}" Value="MEDICAL RECORDS">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </Grid>
                     </Button>
-
-                    <Button Command="{Binding NavHistoryCommand}" Tag="MEDICAL RECORDS">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignNavButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActivePageTitle}" Value="MEDICAL RECORDS">
-                                        <Setter Property="Background" Value="#3B82F6" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="MEDICAL RECORDS" Foreground="White" FontWeight="Bold">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Button>
-
-                    <Button Command="{Binding NavProfileCommand}" Tag="MY PROFILE">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignNavButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY PROFILE">
-                                        <Setter Property="Background" Value="#3B82F6" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="MY PROFILE" Foreground="White" FontWeight="Bold">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
+ 
+                    <!-- Profile -->
+                    <Button Command="{Binding NavProfileCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="MY PROFILE" Margin="0,4">
+                        <Grid HorizontalAlignment="Stretch">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="AccountSettings" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="MY PROFILE" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                            <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY PROFILE">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </Grid>
                     </Button>
                 </StackPanel>
-
-                <!-- Logout Bottom -->
-                <Button Grid.Row="2" Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Logout" Margin="10,0,10,30">
-                    <TextBlock Text="LOGOUT" Foreground="#EF5350" FontWeight="Bold">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsSidebarCollapsed}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </Button>
-
+ 
+                <!-- User Profile Section -->
+                <StackPanel Grid.Row="2" Margin="10,0,10,20">
+                    <Separator Margin="10,0,10,15" Opacity="0.1" Background="White"/>
+                    
+                    <Grid Margin="5,5,5,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <Border Width="40" Height="40" Background="#3B82F6" CornerRadius="20" HorizontalAlignment="Center">
+                            <TextBlock Text="P" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold" FontSize="18"/>
+                        </Border>
+                        
+                        <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="Client Account" Foreground="White" FontWeight="Bold" FontSize="14">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="Verified Member" Foreground="#60A5FA" FontSize="11" Opacity="0.8">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+ 
+                    <Button Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignFlatButton}" 
+                            Foreground="#F87171" HorizontalContentAlignment="Left" Padding="10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Logout" Width="20" Height="20" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="SIGN OUT" VerticalAlignment="Center" FontWeight="Bold" FontSize="12">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+ 
                 <!-- Animation Triggers -->
                 <Grid.Style>
                     <Style TargetType="Grid">

@@ -20,44 +20,81 @@
             <RowDefinition Height="Auto" /> <!-- Header -->
             <RowDefinition Height="*" />    <!-- Timeline -->
         </Grid.RowDefinitions>
-
-        <!-- 1. HEADER -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,40">
-            <TextBlock Text="MEDICAL HISTORY" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="ExtraBold" Foreground="#000000" />
-            <TextBlock Text="A complete chronological record of your past clinical consultations and diagnoses." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Foreground="#6B7280" Margin="0,8,0,0" />
+ 
+        <!-- 1. HEADER SECTION -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,45">
+            <TextBlock Text="MEDICAL HISTORY" 
+                       Style="{StaticResource MaterialDesignHeadline4TextBlock}" 
+                       FontWeight="Black" Foreground="#3B82F6" />
+            <TextBlock Text="A chronological record of your clinical visits, diagnoses, and treatments." 
+                       Style="{StaticResource MaterialDesignBody1TextBlock}" 
+                       Opacity="0.5" Margin="0,8,0,0" />
         </StackPanel>
-
+ 
         <!-- 2. TIMELINE FEED -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Grid Margin="20,0,0,0">
-                <!-- Vertical Timeline Line -->
-                <Border BorderBrush="#E5E7EB" BorderThickness="2,0,0,0" HorizontalAlignment="Left" Margin="10,0,0,0" />
+            <Grid>
+                <!-- Centralized Vertical Timeline Line -->
+                <Border BorderBrush="#E2E8F0" BorderThickness="2,0,0,0" HorizontalAlignment="Left" Margin="14,0,0,0" />
                 
                 <ItemsControl ItemsSource="{Binding Records}" Margin="0,10,0,0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="0,0,0,40">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-
-                                <!-- Bullet (White circle with border) -->
-                                <Border Grid.Column="0" Width="22" Height="22" CornerRadius="11" BorderBrush="#E5E7EB" BorderThickness="2" Background="#F3F4F6" VerticalAlignment="Top" Margin="0,5,30,0" />
-
+ 
+                                <!-- Timeline Bullet (Premium look) -->
+                                <Border Grid.Column="0" Width="30" Height="30" CornerRadius="15" 
+                                        BorderBrush="White" BorderThickness="4" Background="#3B82F6" 
+                                        VerticalAlignment="Top" Margin="0,15,0,0">
+                                    <materialDesign:ElevationAssist.Elevation>Dp3</materialDesign:ElevationAssist.Elevation>
+                                 </Border>
+ 
                                 <!-- Content Card -->
-                                <materialDesign:Card Grid.Column="1" UniformCornerRadius="10" Padding="30,20" materialDesign:ElevationAssist.Elevation="Dp1" Width="500" HorizontalAlignment="Left">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Date, StringFormat='dd MMMM yyyy'}" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" FontWeight="Bold" Foreground="#3B82F6" FontSize="13" />
-                                        <TextBlock Text="{Binding Title}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" FontWeight="Bold" Foreground="#1F2937" Margin="0,10,0,5" />
-                                        <TextBlock Text="{Binding Treatment}" Style="{StaticResource MaterialDesignBody1TextBlock}" Foreground="#6B7280" TextWrapping="Wrap" LineHeight="20" />
+                                <materialDesign:Card Grid.Column="1" UniformCornerRadius="24" Padding="35,25" 
+                                                     materialDesign:ElevationAssist.Elevation="Dp2" Margin="30,0,50,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
                                         
-                                        <Border BorderBrush="#F3F4F6" BorderThickness="0,1,0,0" Margin="0,15,0,10" />
-                                        <StackPanel Orientation="Horizontal">
-                                            <materialDesign:PackIcon Kind="HospitalBuilding" Foreground="#9CA3AF" VerticalAlignment="Center" Margin="0,0,8,0" Width="16" Height="16" />
-                                            <TextBlock Text="Clinical Center | Alpha Medical Group" Foreground="#9CA3AF" VerticalAlignment="Center" FontSize="11" FontWeight="SemiBold" />
+                                        <StackPanel Grid.Column="0">
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                                                <materialDesign:PackIcon Kind="CalendarMonth" Foreground="#3B82F6" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Date, StringFormat='MMMM dd, yyyy'}" 
+                                                           FontWeight="Bold" Foreground="#3B82F6" FontSize="13" VerticalAlignment="Center" />
+                                            </StackPanel>
+                                            
+                                            <TextBlock Text="{Binding Title}" Style="{StaticResource MaterialDesignHeadline5TextBlock}" 
+                                                       FontWeight="Black" Foreground="#1E293B" Margin="0,0,0,10" />
+                                            
+                                            <TextBlock Text="{Binding Diagnosis}" FontWeight="SemiBold" Foreground="#64748B" FontSize="15" Margin="0,0,0,5" />
+                                            
+                                            <Border Background="#F8FAFC" CornerRadius="12" Padding="20,15" Margin="0,15,0,0">
+                                                <StackPanel>
+                                                    <TextBlock Text="TREATMENT PLAN" FontSize="10" FontWeight="Black" Foreground="#94A3B8" Margin="0,0,0,8" />
+                                                    <TextBlock Text="{Binding Treatment}" Foreground="#475569" TextWrapping="Wrap" LineHeight="20" FontSize="14" />
+                                                </StackPanel>
+                                            </Border>
                                         </StackPanel>
-                                    </StackPanel>
+                                        
+                                        <StackPanel Grid.Column="1" Margin="30,0,0,0" VerticalAlignment="Top">
+                                            <Border Width="60" Height="60" Background="#F1F5F9" CornerRadius="30">
+                                                <materialDesign:PackIcon Kind="Doctor" Width="30" Height="30" Foreground="#64748B" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <TextBlock Text="Physician" HorizontalAlignment="Center" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" Margin="0,8,0,0" />
+                                            <TextBlock Text="{Binding DoctorName}" HorizontalAlignment="Center" FontSize="12" FontWeight="Bold" Foreground="#1E293B" />
+                                            
+                                            <Button Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                                    Margin="0,25,0,0" Height="36" Padding="15,0" 
+                                                    materialDesign:ButtonAssist.CornerRadius="10"
+                                                    Content="DOWNLOAD" FontSize="11" FontWeight="Black" />
+                                        </StackPanel>
+                                    </Grid>
                                 </materialDesign:Card>
                             </Grid>
                         </DataTemplate>
