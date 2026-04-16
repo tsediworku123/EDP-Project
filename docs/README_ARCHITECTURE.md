@@ -111,6 +111,7 @@ An Administrator opens the "Add User" dialog and enters a username and role.
 
 ### **Step 2: The Logic (The ViewModel)**
 The `AdminUsersViewModel` receives the data.
+-   **Blueprint (The Domain)**: It uses the `User` entity from **`HMS.Domain`** as the model for the new account.
 -   **Validation**: It checks if the username exists or if fields are empty.
 -   **Creation**: It creates a new `User` object: `new User { Username = "Dr.Smith", Role = "Doctor" }`.
 -   **Addition**: It adds this object to the global data: `DataManager.Users.Add(newUser)`.

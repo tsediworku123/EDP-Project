@@ -1,5 +1,5 @@
 using HMS.Core.Common.Utils;
-using HMS.Core.Infrastructure.Repositories.Json;
+using HMS.Core.AppLogic.Services;
 using HMS.Core.Domain.Entities;
 using System;
 using System.Collections.ObjectModel;
@@ -11,7 +11,6 @@ namespace HMS.Core.ViewModels
 {
     public partial class AddNewUserViewModel : ObservableObject
     {
-        private readonly JsonDataService _dataService;
         private readonly Window _window;
 
         private string _username;
@@ -52,7 +51,6 @@ namespace HMS.Core.ViewModels
         public AddNewUserViewModel(Window window)
         {
             _window = window;
-            _dataService = new JsonDataService();
             SaveCommand = new RelayCommand(Save);
             CancelCommand = new RelayCommand(Cancel);
             LoadDoctors();
@@ -65,7 +63,8 @@ namespace HMS.Core.ViewModels
 
         private void LoadDoctors()
         {
-            var docs = _dataService.LoadDoctors();
+            DataManager.EnsureLoaded();
+            var docs = DataManager.Doctors;
             foreach (var doc in docs) Doctors.Add(doc);
         }
 
@@ -89,7 +88,7 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
-            var users = _dataService.LoadUsers();
+            var users = DataManager.Users;
             if (users.Any(u => u.Username.Equals(Username, StringComparison.OrdinalIgnoreCase)))
             {
                 MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -109,7 +108,7 @@ namespace HMS.Core.ViewModels
             };
 
             users.Add(newUser);
-            _dataService.SaveUsers(users);
+            DataManager.SaveUsers();
 
             MessageBox.Show($"User '{Username}' created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             _window.DialogResult = true;
