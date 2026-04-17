@@ -18,6 +18,8 @@ namespace HMS.Core.AppLogic.Services
         public static List<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
         public static List<Notification> Notifications { get; set; } = new List<Notification>();
         public static List<AuditLogEntry> AuditLogs { get; set; } = new List<AuditLogEntry>();
+        public static List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public static List<LabTest> LabTests { get; set; } = new List<LabTest>();
         private static bool isInitialized = false;
 
         public static User CurrentUser { get; set; }
@@ -45,6 +47,8 @@ namespace HMS.Core.AppLogic.Services
             if (Appointments == null || Appointments.Count == 0) Appointments = _jsonService.LoadAppointments();
             if (Feedbacks == null || Feedbacks.Count == 0) Feedbacks = _jsonService.LoadFeedbacks();
             if (MedicalRecords == null || MedicalRecords.Count == 0) MedicalRecords = _jsonService.LoadMedicalRecords();
+            if (Prescriptions == null || Prescriptions.Count == 0) Prescriptions = _jsonService.LoadPrescriptions();
+            if (LabTests == null || LabTests.Count == 0) LabTests = _jsonService.LoadLabTests();
             
             var dynamicDepts = _jsonService.LoadDepartments();
             if (dynamicDepts != null && dynamicDepts.Any()) Departments = dynamicDepts;
@@ -191,7 +195,7 @@ namespace HMS.Core.AppLogic.Services
             AuditLogs.Add(new AuditLogEntry { Id = AuditLogs.Count + 1, Timestamp = DateTime.Now, Username = user ?? "System", Action = action, Module = module });
         }
 
-        public static void SaveAllData() { SaveUsers(); SaveDoctors(); SavePatients(); SaveAppointments(); SaveFeedbacks(); SaveMedicalRecords(); SaveDepartments(); }
+        public static void SaveAllData() { SaveUsers(); SaveDoctors(); SavePatients(); SaveAppointments(); SaveFeedbacks(); SaveMedicalRecords(); SaveDepartments(); SavePrescriptions(); SaveLabTests(); }
         public static void SaveUsers() { _jsonService.SaveUsers(Users); }
         public static void SaveDoctors() { _jsonService.SaveDoctors(Doctors); }
         public static void SavePatients() { _jsonService.SavePatients(Patients); }
@@ -199,6 +203,8 @@ namespace HMS.Core.AppLogic.Services
         public static void SaveFeedbacks() { _jsonService.SaveFeedbacks(Feedbacks); }
         public static void SaveMedicalRecords() { _jsonService.SaveMedicalRecords(MedicalRecords); }
         public static void SaveDepartments() { _jsonService.SaveDepartments(Departments); }
+        public static void SavePrescriptions() { _jsonService.SavePrescriptions(Prescriptions); }
+        public static void SaveLabTests() { _jsonService.SaveLabTests(LabTests); }
 
         public static void BackupData() { LastBackupTime = DateTime.Now; }
     }

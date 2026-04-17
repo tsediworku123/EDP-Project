@@ -1,7 +1,5 @@
 using System.Windows.Controls;
-using HMS.Core.AppLogic.Services;
-using System;
-using System.Linq;
+using HMS.Core.ViewModels;
 
 namespace HMS.Core.Views
 {
@@ -10,8 +8,7 @@ namespace HMS.Core.Views
         public DoctorRecordsView()
         {
             InitializeComponent();
-            DataManager.EnsureLoaded();
-            DataContext = new { Records = DataManager.MedicalRecords.Take(10).ToList() };
+            DataContext = new DoctorRecordsViewModel();
         }
     }
 }
