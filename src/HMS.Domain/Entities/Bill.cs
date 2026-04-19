@@ -24,6 +24,7 @@ namespace HMS.Core.Domain.Entities
 
     public class BillItem
     {
+        public int Id { get; set; }
         public string Description { get; set; } // Consultation fee, Lab Fee, Medicine, Room Rent, etc.
         public int Quantity { get; set; } = 1;
         public decimal UnitPrice { get; set; } = 0;
