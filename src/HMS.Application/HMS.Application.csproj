@@ -12,6 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HMS.Domain\HMS.Domain.csproj" />
     <ProjectReference Include="..\HMS.Common\HMS.Common.csproj" />
-    <ProjectReference Include="..\HMS.Infrastructure\HMS.Infrastructure.csproj" />
+    <ProjectReference Include="..\HMS.Persistence\HMS.Persistence.csproj" />
   </ItemGroup>
 </Project>
