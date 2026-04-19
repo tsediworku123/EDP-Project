@@ -1,5 +1,7 @@
 using HMS.Core.Domain.Entities;
-using HMS.Core.Infrastructure.Repositories.Json;
+using HMS.Core.Persistence;
+using HMS.Core.Persistence.Repositories;
+using HMS.Core.Domain.Interfaces;
 using HMS.Core.Common.Utils;
 using System;
 using System.Collections.Generic;
@@ -29,7 +31,7 @@ namespace HMS.Core.AppLogic.Services
         public static bool AllowDoubleBooking = false;
         public static DateTime LastBackupTime { get; set; } = DateTime.MinValue;
 
-        private static readonly JsonDataService _jsonService = new JsonDataService();
+        private static readonly IUnitOfWork _unitOfWork = new UnitOfWork(DatabaseFactory.CreateContext());
 
         static DataManager()
         {
@@ -41,19 +43,31 @@ namespace HMS.Core.AppLogic.Services
             if (isInitialized) return;
             isInitialized = true;
 
-            if (Users == null || Users.Count == 0) Users = _jsonService.LoadUsers();
-            if (Doctors == null || Doctors.Count == 0) Doctors = _jsonService.LoadDoctors();
-            if (Patients == null || Patients.Count == 0) Patients = _jsonService.LoadPatients();
-            if (Appointments == null || Appointments.Count == 0) Appointments = _jsonService.LoadAppointments();
-            if (Feedbacks == null || Feedbacks.Count == 0) Feedbacks = _jsonService.LoadFeedbacks();
-            if (MedicalRecords == null || MedicalRecords.Count == 0) MedicalRecords = _jsonService.LoadMedicalRecords();
-            if (Prescriptions == null || Prescriptions.Count == 0) Prescriptions = _jsonService.LoadPrescriptions();
-            if (LabTests == null || LabTests.Count == 0) LabTests = _jsonService.LoadLabTests();
-            
-            var dynamicDepts = _jsonService.LoadDepartments();
-            if (dynamicDepts != null && dynamicDepts.Any()) Departments = dynamicDepts;
+            // Ensure database is created
+            using (var context = DatabaseFactory.CreateContext())
+            {
+                context.Database.EnsureCreated();
+            }
+
+            LoadFromDb();
 
             if (Doctors.Count < 5) SeedClinicalData();
+        }
+
+        private static void LoadFromDb()
+        {
+            Users = _unitOfWork.Users.GetAll().ToList();
+            Doctors = _unitOfWork.Doctors.GetAll().ToList();
+            Patients = _unitOfWork.Patients.GetAll().ToList();
+            Appointments = _unitOfWork.Appointments.GetAll().ToList();
+            Feedbacks = _unitOfWork.Feedbacks.GetAll().ToList();
+            MedicalRecords = _unitOfWork.MedicalRecords.GetAll().ToList();
+            Prescriptions = _unitOfWork.Prescriptions.GetAll().ToList();
+            LabTests = _unitOfWork.LabTests.GetAll().ToList();
+            Notifications = _unitOfWork.Notifications.GetAll().ToList();
+            AuditLogs = _unitOfWork.AuditLogs.GetAll().ToList();
+            
+            // Departments are currently hardcoded in list, but we could load from DB if there was a table
         }
 
         public static void SeedClinicalData()
@@ -61,30 +75,30 @@ namespace HMS.Core.AppLogic.Services
             Doctors.Clear();
 
             var clinicalStaff = new List<Doctor> {
-                new Doctor { Id = 1, FullName = "Dr. Elena Rodriguez", Specialization = "Cardiology", Department = "Cardiology", IsActive = true, WorkingDays = "Mon,Tue,Wed,Thu,Fri", WorkingHoursStart = new TimeSpan(8,0,0), WorkingHoursEnd = new TimeSpan(16,0,0) },
-                new Doctor { Id = 2, FullName = "Dr. Marcus Thorne", Specialization = "Orthopedics", Department = "Orthopedics", IsActive = true, WorkingDays = "Mon,Tue,Wed,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
-                new Doctor { Id = 3, FullName = "Dr. Sarah Jenkins", Specialization = "Pediatrics", Department = "Pediatrics", IsActive = true, WorkingDays = "Mon,Wed,Fri", WorkingHoursStart = new TimeSpan(10,0,0), WorkingHoursEnd = new TimeSpan(16,0,0) },
-                new Doctor { Id = 4, FullName = "Dr. Robert Chen", Specialization = "Neurology", Department = "Neurology", IsActive = true, WorkingDays = "Tue,Thu,Sat", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
-                new Doctor { Id = 5, FullName = "Dr. Aisha Patel", Specialization = "Dermatology", Department = "Dermatology", IsActive = true, WorkingDays = "Mon,Tue,Thu,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,30,0) },
-                new Doctor { Id = 6, FullName = "Dr. Thomas Miller", Specialization = "General Medicine", Department = "General Medicine", IsActive = true, WorkingDays = "Mon,Wed,Fri", WorkingHoursStart = new TimeSpan(8,30,0), WorkingHoursEnd = new TimeSpan(16,30,0) },
-                new Doctor { Id = 7, FullName = "Dr. Linda Zhao", Specialization = "Internal Med", Department = "General Medicine", IsActive = true, WorkingDays = "Tue,Wed,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
-                new Doctor { Id = 8, FullName = "Dr. Kevin Brooks", Specialization = "Psychiatry", Department = "Psychiatry", IsActive = true, WorkingDays = "Mon,Thu,Sat", WorkingHoursStart = new TimeSpan(10,0,0), WorkingHoursEnd = new TimeSpan(18,0,0) },
-                new Doctor { Id = 10, FullName = "Dr. Sophia Walsh", Specialization = "Gynecology", Department = "Gynecology", IsActive = true, WorkingDays = "Mon,Tue,Wed,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(15,0,0) },
-                new Doctor { Id = 11, FullName = "Dr. David Kim", Specialization = "Dental Care", Department = "Dental", IsActive = true, WorkingDays = "Mon,Wed,Fri", WorkingHoursStart = new TimeSpan(8,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
-                new Doctor { Id = 12, FullName = "Dr. Angela Hope", Specialization = "ENT Surgery", Department = "ENT", IsActive = true, WorkingDays = "Tue,Thu,Sat", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
-                new Doctor { Id = 13, FullName = "Dr. James Carter", Specialization = "General Medicine", Department = "General Medicine", IsActive = true, WorkingDays = "Mon,Tue,Wed,Thu,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(18,0,0) }
+                new Doctor { FullName = "Dr. Elena Rodriguez", Specialization = "Cardiology", Department = "Cardiology", IsActive = true, WorkingDays = "Mon,Tue,Wed,Thu,Fri", WorkingHoursStart = new TimeSpan(8,0,0), WorkingHoursEnd = new TimeSpan(16,0,0) },
+                new Doctor { FullName = "Dr. Marcus Thorne", Specialization = "Orthopedics", Department = "Orthopedics", IsActive = true, WorkingDays = "Mon,Tue,Wed,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
+                new Doctor { FullName = "Dr. Sarah Jenkins", Specialization = "Pediatrics", Department = "Pediatrics", IsActive = true, WorkingDays = "Mon,Wed,Fri", WorkingHoursStart = new TimeSpan(10,0,0), WorkingHoursEnd = new TimeSpan(16,0,0) },
+                new Doctor { FullName = "Dr. Robert Chen", Specialization = "Neurology", Department = "Neurology", IsActive = true, WorkingDays = "Tue,Thu,Sat", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
+                new Doctor { FullName = "Dr. Aisha Patel", Specialization = "Dermatology", Department = "Dermatology", IsActive = true, WorkingDays = "Mon,Tue,Thu,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,30,0) },
+                new Doctor { FullName = "Dr. Thomas Miller", Specialization = "General Medicine", Department = "General Medicine", IsActive = true, WorkingDays = "Mon,Wed,Fri", WorkingHoursStart = new TimeSpan(8,30,0), WorkingHoursEnd = new TimeSpan(16,30,0) },
+                new Doctor { FullName = "Dr. Linda Zhao", Specialization = "Internal Med", Department = "General Medicine", IsActive = true, WorkingDays = "Tue,Wed,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
+                new Doctor { FullName = "Dr. Kevin Brooks", Specialization = "Psychiatry", Department = "Psychiatry", IsActive = true, WorkingDays = "Mon,Thu,Sat", WorkingHoursStart = new TimeSpan(10,0,0), WorkingHoursEnd = new TimeSpan(18,0,0) },
+                new Doctor { FullName = "Dr. Sophia Walsh", Specialization = "Gynecology", Department = "Gynecology", IsActive = true, WorkingDays = "Mon,Tue,Wed,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(15,0,0) },
+                new Doctor { FullName = "Dr. David Kim", Specialization = "Dental Care", Department = "Dental", IsActive = true, WorkingDays = "Mon,Wed,Fri", WorkingHoursStart = new TimeSpan(8,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
+                new Doctor { FullName = "Dr. Angela Hope", Specialization = "ENT Surgery", Department = "ENT", IsActive = true, WorkingDays = "Tue,Thu,Sat", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(17,0,0) },
+                new Doctor { FullName = "Dr. James Carter", Specialization = "General Medicine", Department = "General Medicine", IsActive = true, WorkingDays = "Mon,Tue,Wed,Thu,Fri", WorkingHoursStart = new TimeSpan(9,0,0), WorkingHoursEnd = new TimeSpan(18,0,0) }
             };
 
-            foreach(var d in clinicalStaff) if(!Doctors.Any(x => x.Id == d.Id)) Doctors.Add(d);
+            foreach(var d in clinicalStaff) if(!Doctors.Any(x => x.FullName == d.FullName)) Doctors.Add(d);
             SaveDoctors();
 
             var currentPat = Patients.FirstOrDefault();
             if (currentPat != null && !Appointments.Any(a => a.PatientId == currentPat.Id))
             {
-                Appointments.Add(new Appointment { Id = 101, PatientId = currentPat.Id, DoctorId = 2, AppointmentDate = DateTime.Now.AddDays(-10), Status = "Completed", Reason = "Initial consultation for migraine.", Diagnosis = "Stress-induced Migraine", Recommendation = "Reduced screen time." });
-                Appointments.Add(new Appointment { Id = 102, PatientId = currentPat.Id, DoctorId = 5, AppointmentDate = DateTime.Now.AddDays(-5), Status = "Completed", Reason = "Follow-up blood work.", Diagnosis = "Vitamin D Deficiency", Recommendation = "Take Vitamin D supplement." });
-                Appointments.Add(new Appointment { Id = 103, PatientId = currentPat.Id, DoctorId = 6, AppointmentDate = DateTime.Now.AddDays(-1), Status = "Completed", Reason = "Cardio checkup.", PatientRating = 0 });
-                Appointments.Add(new Appointment { Id = 104, PatientId = currentPat.Id, DoctorId = 1, AppointmentDate = DateTime.Now.AddDays(3), Status = "Scheduled", Reason = "Annual checkup." });
+                Appointments.Add(new Appointment { PatientId = currentPat.Id, DoctorId = 1, AppointmentDate = DateTime.Now.AddDays(-10), Status = "Completed", Reason = "Initial consultation for migraine.", Diagnosis = "Stress-induced Migraine", Recommendation = "Reduced screen time." });
+                Appointments.Add(new Appointment { PatientId = currentPat.Id, DoctorId = 2, AppointmentDate = DateTime.Now.AddDays(-5), Status = "Completed", Reason = "Follow-up blood work.", Diagnosis = "Vitamin D Deficiency", Recommendation = "Take Vitamin D supplement." });
+                Appointments.Add(new Appointment { PatientId = currentPat.Id, DoctorId = 3, AppointmentDate = DateTime.Now.AddDays(-1), Status = "Completed", Reason = "Cardio checkup.", PatientRating = 0 });
+                Appointments.Add(new Appointment { PatientId = currentPat.Id, DoctorId = 4, AppointmentDate = DateTime.Now.AddDays(3), Status = "Scheduled", Reason = "Annual checkup." });
             }
         }
 
@@ -144,14 +158,34 @@ namespace HMS.Core.AppLogic.Services
 
         public static void RegisterPatient(Patient patient)
         {
-            if (patient.Id == 0) patient.Id = Patients.Any() ? Patients.Max(p => p.Id) + 1 : 1;
-            if (string.IsNullOrEmpty(patient.PatientCode)) patient.PatientCode = $"PAT-{patient.Id:D5}";
+            // Identity columns handle ID generation
+            if (string.IsNullOrEmpty(patient.PatientCode)) 
+            {
+                 // We can't know the ID yet, so we use a temp code or update after save
+                 patient.PatientCode = $"PAT-PENDING"; 
+            }
             Patients.Add(patient);
-            Users.Add(new User { Id = Users.Any() ? Users.Max(u => u.Id) + 1 : 1, Username = patient.Phone, Password = PasswordHasher.HashPassword(patient.Password), Role = "Patient", PatientId = patient.Id, IsActive = true });
-            SavePatients(); SaveUsers();
+            
+            // Note: In a real app, we would save the patient first to get the ID, 
+            // then create the user with that ID.
+            Users.Add(new User { 
+                Username = patient.Phone, 
+                Password = PasswordHasher.HashPassword(patient.Password), 
+                Role = "Patient", 
+                IsActive = true 
+            });
+            
+            SavePatients(); 
+            SaveUsers();
+            
+            // Update patient code with the generated ID
+            if (patient.PatientCode == "PAT-PENDING") {
+                patient.PatientCode = $"PAT-{patient.Id:D5}";
+                SavePatients();
+            }
         }
 
-        public static void AddFeedback(Feedback f) { f.Id = Feedbacks.Any() ? Feedbacks.Max(x => x.Id) + 1 : 1; Feedbacks.Add(f); SaveFeedbacks(); }
+        public static void AddFeedback(Feedback f) { Feedbacks.Add(f); SaveFeedbacks(); }
 
         public static List<Appointment> GetPatientAppointments(int patientId) => Appointments.Where(a => a.PatientId == patientId).ToList();
         public static List<MedicalRecord> GetPatientMedicalRecords(int patientId) => MedicalRecords.Where(r => r.PatientId == patientId).ToList();
@@ -192,19 +226,67 @@ namespace HMS.Core.AppLogic.Services
         }
 
         public static void LogAudit(string user, string action, string module = "Security") {
-            AuditLogs.Add(new AuditLogEntry { Id = AuditLogs.Count + 1, Timestamp = DateTime.Now, Username = user ?? "System", Action = action, Module = module });
+            AuditLogs.Add(new AuditLogEntry { Timestamp = DateTime.Now, Username = user ?? "System", Action = action, Module = module });
         }
 
-        public static void SaveAllData() { SaveUsers(); SaveDoctors(); SavePatients(); SaveAppointments(); SaveFeedbacks(); SaveMedicalRecords(); SaveDepartments(); SavePrescriptions(); SaveLabTests(); }
-        public static void SaveUsers() { _jsonService.SaveUsers(Users); }
-        public static void SaveDoctors() { _jsonService.SaveDoctors(Doctors); }
-        public static void SavePatients() { _jsonService.SavePatients(Patients); }
-        public static void SaveAppointments() { _jsonService.SaveAppointments(Appointments); }
-        public static void SaveFeedbacks() { _jsonService.SaveFeedbacks(Feedbacks); }
-        public static void SaveMedicalRecords() { _jsonService.SaveMedicalRecords(MedicalRecords); }
-        public static void SaveDepartments() { _jsonService.SaveDepartments(Departments); }
-        public static void SavePrescriptions() { _jsonService.SavePrescriptions(Prescriptions); }
-        public static void SaveLabTests() { _jsonService.SaveLabTests(LabTests); }
+        public static void SaveAllData() { _unitOfWork.Complete(); }
+        public static void SaveUsers() { 
+            foreach(var u in Users) {
+                if(u.Id == 0) _unitOfWork.Users.Add(u);
+                else _unitOfWork.Users.Update(u);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SaveDoctors() { 
+            foreach(var d in Doctors) {
+                if(d.Id == 0) _unitOfWork.Doctors.Add(d);
+                else _unitOfWork.Doctors.Update(d);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SavePatients() { 
+             foreach(var p in Patients) {
+                if(p.Id == 0) _unitOfWork.Patients.Add(p);
+                else _unitOfWork.Patients.Update(p);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SaveAppointments() { 
+            foreach(var a in Appointments) {
+                if(a.Id == 0) _unitOfWork.Appointments.Add(a);
+                else _unitOfWork.Appointments.Update(a);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SaveFeedbacks() { 
+            foreach(var f in Feedbacks) {
+                if(f.Id == 0) _unitOfWork.Feedbacks.Add(f);
+                else _unitOfWork.Feedbacks.Update(f);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SaveMedicalRecords() { 
+            foreach(var m in MedicalRecords) {
+                if(m.Id == 0) _unitOfWork.MedicalRecords.Add(m);
+                else _unitOfWork.MedicalRecords.Update(m);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SaveDepartments() { /* Not implemented in DB yet */ }
+        public static void SavePrescriptions() { 
+            foreach(var p in Prescriptions) {
+                if(p.Id == 0) _unitOfWork.Prescriptions.Add(p);
+                else _unitOfWork.Prescriptions.Update(p);
+            }
+            _unitOfWork.Complete(); 
+        }
+        public static void SaveLabTests() { 
+            foreach(var l in LabTests) {
+                if(l.Id == 0) _unitOfWork.LabTests.Add(l);
+                else _unitOfWork.LabTests.Update(l);
+            }
+            _unitOfWork.Complete(); 
+        }
 
         public static void BackupData() { LastBackupTime = DateTime.Now; }
     }
