@@ -1,5 +1,5 @@
 using HMS.Core.Common.Utils;
-using HMS.Core.Infrastructure.Repositories.Json;
+using HMS.Core.AppLogic.Services;
 using HMS.Core.Domain.Entities;
 using System;
 using System.Windows;
@@ -10,7 +10,6 @@ namespace HMS.Core.ViewModels
 {
     public partial class PatientEntryViewModel : ObservableObject
     {
-        private readonly JsonDataService _dataService;
         private readonly Window _window;
         private int _patientId = 0;
 
@@ -50,7 +49,6 @@ namespace HMS.Core.ViewModels
         public PatientEntryViewModel(Window window)
         {
             _window = window;
-            _dataService = new JsonDataService();
             SaveCommand = new RelayCommand(Save);
             CancelCommand = new RelayCommand(Cancel);
         }
@@ -78,14 +76,11 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
-            var patients = _dataService.LoadPatients();
+            DataManager.EnsureLoaded();
             if (_patientId == 0) // New Patient
             {
-                int nextId = patients.Any() ? patients.Max(p => p.Id) + 1 : 1;
                 var newPatient = new Patient
                 {
-                    Id = nextId,
-                    PatientCode = $"PAT-{nextId:D5}",
                     FullName = FullName,
                     DateOfBirth = DateOfBirth,
                     Gender = Gender,
@@ -98,11 +93,11 @@ namespace HMS.Core.ViewModels
                     EmergencyContactPhone = EmergencyPhone,
                     IsActive = true
                 };
-                patients.Add(newPatient);
+                DataManager.RegisterPatient(newPatient); // DataManager handles ID and saving
             }
             else // Edit Existing
             {
-                var p = patients.FirstOrDefault(x => x.Id == _patientId);
+                var p = DataManager.Patients.FirstOrDefault(x => x.Id == _patientId);
                 if (p != null)
                 {
                     p.FullName = FullName;
@@ -115,10 +110,9 @@ namespace HMS.Core.ViewModels
                     p.MedicalNotes = MedicalNotes;
                     p.EmergencyContactName = EmergencyName;
                     p.EmergencyContactPhone = EmergencyPhone;
+                    DataManager.SavePatients();
                 }
             }
-
-            _dataService.SavePatients(patients);
             MessageBox.Show("Patient record saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             _window.DialogResult = true;
             _window.Close();

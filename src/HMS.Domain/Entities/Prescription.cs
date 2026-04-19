@@ -17,6 +17,7 @@ namespace HMS.Core.Domain.Entities
 
     public class PrescriptionItem
     {
+        public int Id { get; set; }
         public string MedicineName { get; set; }
         public string Dosage { get; set; } // e.g., 500mg
         public string Frequency { get; set; } // e.g., Twice daily

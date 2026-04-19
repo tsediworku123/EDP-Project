@@ -1,7 +1,9 @@
-using HMS.Core.AppLogic.Services;
-using HMS.Core.Domain.Enums;
+using HMS.Core.Persistence;
+using HMS.Core.Persistence.Repositories;
+using HMS.Core.Persistence.Services;
 using HMS.Core.Domain.Entities;
-using HMS.Core.Infrastructure.Repositories.Json;
+using HMS.Core.Domain.Enums;
+using HMS.Core.AppLogic.Services;
 using HMS.Core.Common.Utils;
 using HMS.Core.ViewModels.Base;
 using System.Windows;
@@ -12,8 +14,7 @@ namespace HMS.Core.ViewModels.Auth
 {
     public class LoginViewModel : BaseViewModel
     {
-        private readonly AuthService    _authService;
-        private readonly JsonDataService _dataService;
+        private readonly AuthService _authService;
 
         private string _username;
         public string Username { get => _username; set => SetProperty(ref _username, value); }
@@ -31,8 +32,8 @@ namespace HMS.Core.ViewModels.Auth
 
         public LoginViewModel()
         {
-            _dataService = new JsonDataService();
-            _authService = new AuthService(_dataService);
+            var unitOfWork = new UnitOfWork(DatabaseFactory.CreateContext());
+            _authService = new AuthService(unitOfWork);
             LoginCommand = new RelayCommand(ExecuteLogin);
         }
 
@@ -62,8 +63,9 @@ namespace HMS.Core.ViewModels.Auth
                 return;
             }
 
-            var doctor  = user.Role == UserRole.Doctor.ToString()  ? _dataService.LoadDoctors().Find(d => d.Id == user.DoctorId) : null;
-            var patient = user.Role == UserRole.Patient.ToString() ? _dataService.LoadPatients().Find(p => p.Id == user.PatientId) : null;
+            DataManager.EnsureLoaded();
+            var doctor  = user.Role == UserRole.Doctor.ToString()  ? DataManager.Doctors.FirstOrDefault(d => d.Id == user.DoctorId) : null;
+            var patient = user.Role == UserRole.Patient.ToString() ? DataManager.Patients.FirstOrDefault(p => p.Id == user.PatientId) : null;
             CurrentSession.Instance.StartSession(user, doctor, patient);
 
             OpenShellForRole(user.Role);

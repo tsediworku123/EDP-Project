@@ -1,0 +1,7 @@
+CRITICAL STARTUP ERROR:
+The type initializer for 'HMS.Core.AppLogic.Services.DataManager' threw an exception.
+
+   at HMS.Core.AppLogic.Services.DataManager.EnsureLoaded()
+   at HMS.Core.Program.Main() in C:\Users\Yasino\OneDrive\Desktop\Our_project\EDP-Project\src\HMS.Presentation\Program.cs:line 15
+
+Inner: Database operation expected to affect 1 row(s) but actually affected 0 row(s). Data may have been modified or deleted since entities were loaded. See http://go.microsoft.com/fwlink/?LinkId=527962 for information on understanding and handling optimistic concurrency exceptions.
