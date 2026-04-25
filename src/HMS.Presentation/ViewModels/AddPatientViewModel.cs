@@ -122,13 +122,13 @@ namespace HMS.Core.ViewModels
                 _existingPatient.CurrentMedications = CurrentMedications;
                 _existingPatient.ChronicConditions = ChronicConditions;
                 _existingPatient.PreferredLanguage = PreferredLanguage;
+
+                DataManager.SavePatients();
             }
             else
             {
-                var newId = DataManager.Patients.Any() ? DataManager.Patients.Max(p => p.Id) + 1 : 1;
                 var newPatient = new Patient
                 {
-                    Id = newId,
                     FullName = FullName,
                     GrandfatherName = GrandfatherName,
                     DateOfBirth = DateOfBirth,
@@ -145,13 +145,13 @@ namespace HMS.Core.ViewModels
                     CurrentMedications = CurrentMedications,
                     ChronicConditions = ChronicConditions,
                     PreferredLanguage = PreferredLanguage,
-                    PatientCode = $"PAT-{newId:D5}",
-                    IsActive = true
+                    IsActive = true,
+                    Password = "password123" // Default password or should be from UI
                 };
-                DataManager.Patients.Add(newPatient);
+                
+                DataManager.RegisterPatient(newPatient);
             }
 
-            DataManager.SaveAllData();
             DialogHost.CloseDialogCommand.Execute(true, null);
             MessageBox.Show($"Registry records for {FullName} have been processed.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }

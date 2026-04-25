@@ -31,7 +31,7 @@ namespace HMS.Core.AppLogic.Services
         public static bool AllowDoubleBooking = false;
         public static DateTime LastBackupTime { get; set; } = DateTime.MinValue;
 
-        private static readonly IUnitOfWork _unitOfWork = new UnitOfWork(DatabaseFactory.CreateContext());
+        private static IUnitOfWork CreateUnitOfWork() => new UnitOfWork(DatabaseFactory.CreateContext());
 
         static DataManager()
         {
@@ -56,18 +56,19 @@ namespace HMS.Core.AppLogic.Services
 
         private static void LoadFromDb()
         {
-            Users = _unitOfWork.Users.GetAll().ToList();
-            Doctors = _unitOfWork.Doctors.GetAll().ToList();
-            Patients = _unitOfWork.Patients.GetAll().ToList();
-            Appointments = _unitOfWork.Appointments.GetAll().ToList();
-            Feedbacks = _unitOfWork.Feedbacks.GetAll().ToList();
-            MedicalRecords = _unitOfWork.MedicalRecords.GetAll().ToList();
-            Prescriptions = _unitOfWork.Prescriptions.GetAll().ToList();
-            LabTests = _unitOfWork.LabTests.GetAll().ToList();
-            Notifications = _unitOfWork.Notifications.GetAll().ToList();
-            AuditLogs = _unitOfWork.AuditLogs.GetAll().ToList();
-            
-            // Departments are currently hardcoded in list, but we could load from DB if there was a table
+            using (var uow = CreateUnitOfWork())
+            {
+                Users = uow.Users.GetAll().ToList();
+                Doctors = uow.Doctors.GetAll().ToList();
+                Patients = uow.Patients.GetAll().ToList();
+                Appointments = uow.Appointments.GetAll().ToList();
+                Feedbacks = uow.Feedbacks.GetAll().ToList();
+                MedicalRecords = uow.MedicalRecords.GetAll().ToList();
+                Prescriptions = uow.Prescriptions.GetAll().ToList();
+                LabTests = uow.LabTests.GetAll().ToList();
+                Notifications = uow.Notifications.GetAll().ToList();
+                AuditLogs = uow.AuditLogs.GetAll().ToList();
+            }
         }
 
         public static void SeedClinicalData()
@@ -158,30 +159,48 @@ namespace HMS.Core.AppLogic.Services
 
         public static void RegisterPatient(Patient patient)
         {
-            // Identity columns handle ID generation
-            if (string.IsNullOrEmpty(patient.PatientCode)) 
+            try 
             {
-                 // We can't know the ID yet, so we use a temp code or update after save
-                 patient.PatientCode = $"PAT-PENDING"; 
+                // Add to in-memory list if not already there
+                if (!Patients.Contains(patient))
+                {
+                    Patients.Add(patient);
+                }
+
+                // 1. Save patient first to generate database record
+                // The database handles ID generation via Identity
+                if (string.IsNullOrEmpty(patient.PatientCode)) 
+                {
+                    patient.PatientCode = "PAT-PENDING"; 
+                }
+                
+                SavePatients(); 
+
+                // 2. Now that we have patient.Id (updated by EF), create the corresponding user
+                if (patient.Id != 0 && !Users.Any(u => u.Role == "Patient" && u.PatientId == patient.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Username = patient.Phone, 
+                        Password = PasswordHasher.HashPassword(patient.Password ?? "password123"), 
+                        Role = "Patient", 
+                        PatientId = patient.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+                
+                // 3. Update patient code with the generated ID if it was pending
+                if (patient.PatientCode == "PAT-PENDING" && patient.Id != 0) {
+                    patient.PatientCode = $"PAT-{patient.Id:D5}";
+                    SavePatients();
+                }
             }
-            Patients.Add(patient);
-            
-            // Note: In a real app, we would save the patient first to get the ID, 
-            // then create the user with that ID.
-            Users.Add(new User { 
-                Username = patient.Phone, 
-                Password = PasswordHasher.HashPassword(patient.Password), 
-                Role = "Patient", 
-                IsActive = true 
-            });
-            
-            SavePatients(); 
-            SaveUsers();
-            
-            // Update patient code with the generated ID
-            if (patient.PatientCode == "PAT-PENDING") {
-                patient.PatientCode = $"PAT-{patient.Id:D5}";
-                SavePatients();
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Patient registration failed: {ex.Message}", "Error");
+                throw;
             }
         }
 
@@ -229,63 +248,105 @@ namespace HMS.Core.AppLogic.Services
             AuditLogs.Add(new AuditLogEntry { Timestamp = DateTime.Now, Username = user ?? "System", Action = action, Module = module });
         }
 
-        public static void SaveAllData() { _unitOfWork.Complete(); }
+        public static void SaveAllData() { 
+            SaveUsers();
+            SaveDoctors();
+            SavePatients();
+            SaveAppointments();
+            SaveFeedbacks();
+            SaveMedicalRecords();
+            SavePrescriptions();
+            SaveLabTests();
+        }
+
         public static void SaveUsers() { 
-            foreach(var u in Users) {
-                if(u.Id == 0) _unitOfWork.Users.Add(u);
-                else _unitOfWork.Users.Update(u);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var u in Users) {
+                    if(u.Id == 0) uow.Users.Add(u);
+                    else uow.Users.Update(u);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SaveDoctors() { 
-            foreach(var d in Doctors) {
-                if(d.Id == 0) _unitOfWork.Doctors.Add(d);
-                else _unitOfWork.Doctors.Update(d);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var d in Doctors) {
+                    if(d.Id == 0) uow.Doctors.Add(d);
+                    else uow.Doctors.Update(d);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SavePatients() { 
-             foreach(var p in Patients) {
-                if(p.Id == 0) _unitOfWork.Patients.Add(p);
-                else _unitOfWork.Patients.Update(p);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var p in Patients.ToList()) {
+                    if(p.Id == 0) uow.Patients.Add(p);
+                    else uow.Patients.Update(p);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SaveAppointments() { 
-            foreach(var a in Appointments) {
-                if(a.Id == 0) _unitOfWork.Appointments.Add(a);
-                else _unitOfWork.Appointments.Update(a);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var a in Appointments) {
+                    if(a.Id == 0) uow.Appointments.Add(a);
+                    else uow.Appointments.Update(a);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SaveFeedbacks() { 
-            foreach(var f in Feedbacks) {
-                if(f.Id == 0) _unitOfWork.Feedbacks.Add(f);
-                else _unitOfWork.Feedbacks.Update(f);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var f in Feedbacks) {
+                    if(f.Id == 0) uow.Feedbacks.Add(f);
+                    else uow.Feedbacks.Update(f);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SaveMedicalRecords() { 
-            foreach(var m in MedicalRecords) {
-                if(m.Id == 0) _unitOfWork.MedicalRecords.Add(m);
-                else _unitOfWork.MedicalRecords.Update(m);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var m in MedicalRecords) {
+                    if(m.Id == 0) uow.MedicalRecords.Add(m);
+                    else uow.MedicalRecords.Update(m);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SaveDepartments() { /* Not implemented in DB yet */ }
+
         public static void SavePrescriptions() { 
-            foreach(var p in Prescriptions) {
-                if(p.Id == 0) _unitOfWork.Prescriptions.Add(p);
-                else _unitOfWork.Prescriptions.Update(p);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var p in Prescriptions) {
+                    if(p.Id == 0) uow.Prescriptions.Add(p);
+                    else uow.Prescriptions.Update(p);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
+
         public static void SaveLabTests() { 
-            foreach(var l in LabTests) {
-                if(l.Id == 0) _unitOfWork.LabTests.Add(l);
-                else _unitOfWork.LabTests.Update(l);
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var l in LabTests) {
+                    if(l.Id == 0) uow.LabTests.Add(l);
+                    else uow.LabTests.Update(l);
+                }
+                uow.Complete(); 
             }
-            _unitOfWork.Complete(); 
         }
 
         public static void BackupData() { LastBackupTime = DateTime.Now; }
