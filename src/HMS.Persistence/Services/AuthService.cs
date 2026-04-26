@@ -17,13 +17,13 @@ namespace HMS.Core.Persistence.Services
             EnsureDefaultAdminExists();
         }
 
-        public User Login(string username, string password)
+        public User Login(string email, string password)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 return null;
 
             var user = _unitOfWork.Users.Find(u =>
-                u.Username.ToLower() == username.Trim().ToLower()
+                u.Email != null && u.Email.ToLower() == email.Trim().ToLower()
                 && u.IsActive).FirstOrDefault();
 
             if (user == null) return null;
@@ -51,7 +51,6 @@ namespace HMS.Core.Persistence.Services
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "admin",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Admin.ToString(),
                     Email = "admin@hospital.com",
@@ -63,7 +62,6 @@ namespace HMS.Core.Persistence.Services
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "doctor",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Doctor.ToString(),
                     Email = "doctor@hospital.com",
@@ -76,7 +74,6 @@ namespace HMS.Core.Persistence.Services
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "recep",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Receptionist.ToString(),
                     Email = "recep@hospital.com",
@@ -88,7 +85,6 @@ namespace HMS.Core.Persistence.Services
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "patient",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Patient.ToString(),
                     Email = "patient@hospital.com",
@@ -101,7 +97,6 @@ namespace HMS.Core.Persistence.Services
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "nurse",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Nurse.ToString(),
                     Email = "nurse@hospital.com",
@@ -114,7 +109,6 @@ namespace HMS.Core.Persistence.Services
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "pharmacist",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Pharmacist.ToString(),
                     Email = "pharmacist@hospital.com",

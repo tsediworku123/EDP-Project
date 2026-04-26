@@ -113,8 +113,8 @@
                     <StackPanel Grid.Row="1" Margin="0,10">
                         <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource NavBtnPharmDashboard}" Tag="ViewDashboard" Content="DASHBOARD" />
                         <Button Command="{Binding NavPrescriptionsCommand}" Style="{StaticResource NavBtnPharmPrescriptions}" Tag="ClipboardTextOutline" Content="PRESCRIPTIONS" />
-                        <Button Command="{Binding NavInventoryCommand}" Style="{StaticResource NavBtnPharmInventory}" Tag="PackageVariantClosed" Content="DRUG INVENTORY" />
-                        <Button Command="{Binding NavBillingCommand}" Style="{StaticResource NavBtnPharmBilling}" Tag="ReceiptOutline" Content="BILLING" />
+                        <Button Command="{Binding NavInventoryCommand}" Style="{StaticResource NavBtnPharmInventory}" Tag="Archive" Content="DRUG INVENTORY" />
+                        <Button Command="{Binding NavBillingCommand}" Style="{StaticResource NavBtnPharmBilling}" Tag="FileDocumentOutline" Content="BILLING" />
                     </StackPanel>
 
                     <Button Grid.Row="2" Command="{Binding NavLogoutCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Logout" Margin="10,0,10,30">

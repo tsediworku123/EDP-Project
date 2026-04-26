@@ -31,7 +31,7 @@ namespace HMS.Core.Domain.Entities
         public string PhotoPath { get; set; }
         public string InsuranceNumber { get; set; }
         public string Password { get; set; }
-        public string Username { get; set; }
+
         public string PatientCode { get; set; }
     }
 }

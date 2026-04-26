@@ -23,6 +23,7 @@ namespace HMS.Core.Domain.Interfaces
         IRepository<InsuranceClaim> InsuranceClaims { get; }
         IRepository<BillingStaff> BillingStaff { get; }
         IRepository<Bill> Bills { get; }
+        IRepository<PatientVital> PatientVitals { get; }
         
         int Complete();
     }

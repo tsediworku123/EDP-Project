@@ -33,6 +33,7 @@ namespace HMS.Core.Persistence.Context
         public DbSet<Payment> Payments { get; set; }
         public DbSet<InsuranceClaim> InsuranceClaims { get; set; }
         public DbSet<BillingStaff> BillingStaff { get; set; }
+        public DbSet<PatientVital> PatientVitals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

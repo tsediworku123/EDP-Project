@@ -27,6 +27,7 @@ namespace HMS.Core.AppLogic.Services
         public static List<Nurse> Nurses { get; set; } = new List<Nurse>();
         public static List<Pharmacist> Pharmacists { get; set; } = new List<Pharmacist>();
         public static List<InventoryItem> Inventory { get; set; } = new List<InventoryItem>();
+        public static List<PatientVital> PatientVitals { get; set; } = new List<PatientVital>();
         public static List<LabTechnician> LabTechnicians { get; set; } = new List<LabTechnician>();
         public static List<Bill> Bills { get; set; } = new List<Bill>();
         public static List<Payment> Payments { get; set; } = new List<Payment>();
@@ -65,6 +66,8 @@ namespace HMS.Core.AppLogic.Services
             if (Doctors.Count < 5) SeedClinicalData();
             if (!Nurses.Any()) SeedNurses();
             if (!Pharmacists.Any()) SeedPharmacists();
+            if (!PatientVitals.Any()) SeedPatientVitals();
+            if (!Inventory.Any()) SeedInventory();
             if (!Inventory.Any()) SeedInventory();
             if (!LabTests.Any()) SeedLabTests();
             if (!LabTechnicians.Any()) SeedLabTechnicians();
@@ -78,16 +81,72 @@ namespace HMS.Core.AppLogic.Services
             {
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'NurseId') ALTER TABLE Users ADD NurseId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'PharmacistId') ALTER TABLE Users ADD PharmacistId INT NULL");
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'LabTechnicianId') ALTER TABLE Users ADD LabTechnicianId INT NULL");
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'BillingStaffId') ALTER TABLE Users ADD BillingStaffId INT NULL");
 
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Nurses') AND type = 'U') CREATE TABLE Nurses (Id INT PRIMARY KEY IDENTITY(1,1), FullName NVARCHAR(MAX), Specialization NVARCHAR(MAX), Phone NVARCHAR(MAX), Email NVARCHAR(MAX), Department NVARCHAR(MAX), IsActive BIT NOT NULL DEFAULT 1)");
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Pharmacists') AND type = 'U') CREATE TABLE Pharmacists (Id INT PRIMARY KEY IDENTITY(1,1), FullName NVARCHAR(MAX), LicenseNumber NVARCHAR(MAX), Phone NVARCHAR(MAX), Email NVARCHAR(MAX), IsActive BIT NOT NULL DEFAULT 1)");
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Inventory') AND type = 'U') CREATE TABLE Inventory (Id INT PRIMARY KEY IDENTITY(1,1), Name NVARCHAR(MAX), Category NVARCHAR(MAX), SKU NVARCHAR(MAX), Description NVARCHAR(MAX), Manufacturer NVARCHAR(MAX), StockQuantity INT NOT NULL DEFAULT 0, ReorderLevel INT NOT NULL DEFAULT 10, PurchaseUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0, SellingUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0, StorageLocation NVARCHAR(MAX), ExpiryDate DATETIME2 NULL, LastStockUpdate DATETIME2 NOT NULL DEFAULT GETDATE(), SupplierName NVARCHAR(MAX), IsActive BIT NOT NULL DEFAULT 1)");
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('LabTechnicians') AND type = 'U') CREATE TABLE LabTechnicians (Id INT PRIMARY KEY IDENTITY(1,1), FullName NVARCHAR(MAX), EmployeeCode NVARCHAR(MAX), Specialization NVARCHAR(MAX), Phone NVARCHAR(MAX), Email NVARCHAR(MAX), Department NVARCHAR(MAX) DEFAULT 'Laboratory', IsActive BIT NOT NULL DEFAULT 1)");
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('BillingStaff') AND type = 'U') CREATE TABLE BillingStaff (Id INT PRIMARY KEY IDENTITY(1,1), FullName NVARCHAR(MAX), EmployeeCode NVARCHAR(MAX), Position NVARCHAR(MAX), Phone NVARCHAR(MAX), Email NVARCHAR(MAX), Department NVARCHAR(MAX) DEFAULT 'Finance/Billing', IsActive BIT NOT NULL DEFAULT 1)");
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Payments') AND type = 'U') CREATE TABLE Payments (Id INT PRIMARY KEY IDENTITY(1,1), BillId INT NOT NULL, PatientId INT NOT NULL, PaymentDate DATETIME2 NOT NULL, Amount DECIMAL(18,2) NOT NULL, PaymentMethod NVARCHAR(MAX), TransactionId NVARCHAR(MAX), Status NVARCHAR(MAX), Notes NVARCHAR(MAX), HandledBy NVARCHAR(MAX))");
-                context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('InsuranceClaims') AND type = 'U') CREATE TABLE InsuranceClaims (Id INT PRIMARY KEY IDENTITY(1,1), BillId INT NOT NULL, PatientId INT NOT NULL, InsuranceProvider NVARCHAR(MAX), PolicyNumber NVARCHAR(MAX), ClaimNumber NVARCHAR(MAX), ClaimAmount DECIMAL(18,2) NOT NULL, ApprovedAmount DECIMAL(18,2) NOT NULL, SubmittedDate DATETIME2 NOT NULL, ProcessedDate DATETIME2 NULL, Status NVARCHAR(MAX), RejectionReason NVARCHAR(MAX), Notes NVARCHAR(MAX))");
+                // Ensure Nurses table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Nurses') AND type = 'U')
+                    CREATE TABLE Nurses (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        Specialization NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        Department NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure Pharmacists table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Pharmacists') AND type = 'U')
+                    CREATE TABLE Pharmacists (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        LicenseNumber NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure Inventory table (dbo schema)
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Inventory') AND type = 'U')
+                    CREATE TABLE Inventory (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        Name NVARCHAR(MAX),
+                        Category NVARCHAR(MAX),
+                        SKU NVARCHAR(MAX),
+                        Description NVARCHAR(MAX),
+                        Manufacturer NVARCHAR(MAX),
+                        StockQuantity INT NOT NULL DEFAULT 0,
+                        ReorderLevel INT NOT NULL DEFAULT 10,
+                        PurchaseUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
+                        SellingUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
+                        UnitType NVARCHAR(MAX) NULL,
+                        StorageLocation NVARCHAR(MAX),
+                        ExpiryDate DATETIME2 NULL,
+                        LastStockUpdate DATETIME2 NOT NULL DEFAULT GETDATE(),
+                        SupplierName NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure UnitType column in Inventory table
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Inventory') AND name = 'UnitType') ALTER TABLE Inventory ADD UnitType NVARCHAR(MAX) NULL");
+
+                // Ensure PatientVitals table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('PatientVitals') AND type = 'U')
+                    CREATE TABLE PatientVitals (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        PatientId INT NOT NULL,
+                        PatientName NVARCHAR(MAX),
+                        RoomNumber NVARCHAR(MAX),
+                        BloodPressure NVARCHAR(MAX),
+                        Temperature NVARCHAR(MAX),
+                        Pulse NVARCHAR(MAX),
+                        SPO2 NVARCHAR(MAX),
+                        LastUpdated DATETIME2 NOT NULL DEFAULT GETDATE(),
+                        UpdatedBy NVARCHAR(MAX)
+                    )");
             }
             catch (Exception ex)
             {
@@ -117,7 +176,27 @@ namespace HMS.Core.AppLogic.Services
                 InsuranceClaims = uow.InsuranceClaims.GetAll().ToList();
                 BillingStaff = uow.BillingStaff.GetAll().ToList();
                 Bills = uow.Bills.GetAll().ToList();
+                PatientVitals = uow.PatientVitals.GetAll().ToList();
             }
+        }
+
+        public static void ReloadInventory()
+        {
+            using (var uow = CreateUnitOfWork())
+            {
+                Inventory = uow.InventoryItems.GetAll().ToList();
+            }
+        }
+
+        public static void AddInventoryItem(InventoryItem item)
+        {
+            using (var uow = CreateUnitOfWork())
+            {
+                uow.InventoryItems.Add(item);
+                uow.Complete();
+            }
+            // Reload so the new item appears with its DB-generated Id
+            ReloadInventory();
         }
 
         public static void SeedClinicalData()
@@ -200,7 +279,7 @@ namespace HMS.Core.AppLogic.Services
 
         public static User AuthenticateUser(string username, string password)
         {
-            var user = Users.FirstOrDefault(u => u.Username == username);
+            var user = Users.FirstOrDefault(u => u.Email != null && u.Email.ToLower() == email.Trim().ToLower());
             if (user != null && PasswordHasher.VerifyPassword(password, user.Password))
             {
                 CurrentUser = user;
@@ -258,7 +337,7 @@ namespace HMS.Core.AppLogic.Services
                 SavePatients(); 
                 if (patient.Id != 0 && !Users.Any(u => u.PatientId == patient.Id))
                 {
-                    var newUser = new User { Username = patient.Phone, Password = PasswordHasher.HashPassword(patient.Password ?? "1234"), Role = "Patient", PatientId = patient.Id, IsActive = true };
+                    var newUser = new User { Email = string.IsNullOrWhiteSpace(patient.Email) ? $"{patient.Phone}@patient.local" : patient.Email, Password = PasswordHasher.HashPassword(patient.Password ?? "1234"), Role = "Patient", PatientId = patient.Id, IsActive = true };
                     Users.Add(newUser);
                     SaveUsers();
                 }
@@ -267,7 +346,43 @@ namespace HMS.Core.AppLogic.Services
                     SavePatients();
                 }
             }
-            catch (Exception ex) { LogAudit("System", $"Patient registration failed: {ex.Message}", "Error"); throw; }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Patient registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
+        public static void RegisterDoctor(Doctor doctor)
+        {
+            try 
+            {
+                if (!Doctors.Contains(doctor))
+                {
+                    Doctors.Add(doctor);
+                }
+
+                SaveDoctors();
+
+                if (doctor.Id != 0 && !Users.Any(u => u.Role == "Doctor" && u.DoctorId == doctor.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = string.IsNullOrWhiteSpace(doctor.Email) ? $"doctor{doctor.Id}@hospital.com" : doctor.Email,
+                        Password = PasswordHasher.HashPassword("1234"), // Default password
+                        Role = "Doctor", 
+                        DoctorId = doctor.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Doctor registration failed: {ex.Message}", "Error");
+                throw;
+            }
         }
 
         public static void AddFeedback(Feedback f) { Feedbacks.Add(f); SaveFeedbacks(); }
@@ -292,8 +407,8 @@ namespace HMS.Core.AppLogic.Services
         public static Patient FindPatientByPhone(string phone) => Patients.FirstOrDefault(p => p.Phone == phone);
         public static void MarkNotificationAsRead(int notificationId) { var n = Notifications.FirstOrDefault(x => x.Id == notificationId); if (n != null) n.IsRead = true; }
 
-        public static void LogAudit(string user, string action, string module = "Security") {
-            AuditLogs.Add(new AuditLogEntry { Timestamp = DateTime.Now, Username = user ?? "System", Action = action, Module = module });
+        public static void LogAudit(string userEmail, string action, string module = "Security") {
+            AuditLogs.Add(new AuditLogEntry { Timestamp = DateTime.Now, UserEmail = userEmail ?? "System", Action = action, Module = module });
         }
 
         public static void SaveAllData() { 
@@ -301,6 +416,189 @@ namespace HMS.Core.AppLogic.Services
             SaveMedicalRecords(); SavePrescriptions(); SaveLabTests(); SaveNotifications();
             SaveNurses(); SavePharmacists(); SaveInventory(); SaveLabTechnicians();
             SaveBills(); SavePayments(); SaveInsuranceClaims(); SaveBillingStaff();
+            SavePatientVitals();
+        }
+
+        public static void SaveUsers() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var u in Users) {
+                    if(u.Id == 0) uow.Users.Add(u);
+                    else uow.Users.Update(u);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SaveDoctors() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var d in Doctors) {
+                    if(d.Id == 0) uow.Doctors.Add(d);
+                    else uow.Doctors.Update(d);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SavePatients() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var p in Patients.ToList()) {
+                    if(p.Id == 0) uow.Patients.Add(p);
+                    else uow.Patients.Update(p);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SaveAppointments() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var a in Appointments) {
+                    if(a.Id == 0) uow.Appointments.Add(a);
+                    else uow.Appointments.Update(a);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SaveFeedbacks() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var f in Feedbacks) {
+                    if(f.Id == 0) uow.Feedbacks.Add(f);
+                    else uow.Feedbacks.Update(f);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SaveMedicalRecords() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var m in MedicalRecords) {
+                    if(m.Id == 0) uow.MedicalRecords.Add(m);
+                    else uow.MedicalRecords.Update(m);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SaveDepartments() { /* Not implemented in DB yet */ }
+
+        public static void SavePrescriptions() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var p in Prescriptions) {
+                    if(p.Id == 0) uow.Prescriptions.Add(p);
+                    else uow.Prescriptions.Update(p);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SaveLabTests() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var l in LabTests) {
+                    if(l.Id == 0) uow.LabTests.Add(l);
+                    else uow.LabTests.Update(l);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
+        public static void SaveNurses() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var n in Nurses) {
+                    if(n.Id == 0) uow.Nurses.Add(n);
+                    else uow.Nurses.Update(n);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
+        public static void SavePharmacists() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var p in Pharmacists) {
+                    if(p.Id == 0) uow.Pharmacists.Add(p);
+                    else uow.Pharmacists.Update(p);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
+        public static void SaveInventory() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var i in Inventory) {
+                    if(i.Id == 0) uow.InventoryItems.Add(i);
+                    else uow.InventoryItems.Update(i);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
+        public static void SavePatientVitals() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var v in PatientVitals) {
+                    if(v.Id == 0) uow.PatientVitals.Add(v);
+                    else uow.PatientVitals.Update(v);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SeedPatientVitals()
+        {
+            if (PatientVitals.Any()) return;
+            var rand = new Random(42);
+            foreach (var p in Patients.Take(15))
+            {
+                PatientVitals.Add(new PatientVital
+                {
+                    PatientId = p.Id,
+                    PatientName = p.FullName,
+                    RoomNumber = "Room " + (200 + p.Id % 50),
+                    BloodPressure = $"{rand.Next(110, 145)}/{rand.Next(65, 90)}",
+                    Temperature = $"{(36.0 + rand.NextDouble() * 2.5):F1}°C",
+                    Pulse = $"{rand.Next(60, 100)} bpm",
+                    SPO2 = $"{rand.Next(94, 100)}%",
+                    LastUpdated = DateTime.Now.AddMinutes(-rand.Next(10, 300)),
+                    UpdatedBy = "System"
+                });
+            }
+            SavePatientVitals();
+        }
+ 
+        public static void SeedInventory()
+        {
+            if (Inventory.Any()) return;
+
+            var medicines = new List<InventoryItem>
+            {
+                new InventoryItem { Name = "Amoxicillin 500mg", SKU = "MED-001", Category = "Medicine", UnitType = "Capsules", StockQuantity = 500, SellingUnitPrice = 2.50m, ReorderLevel = 50, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Paracetamol 500mg", SKU = "MED-002", Category = "Medicine", UnitType = "Tablets", StockQuantity = 1000, SellingUnitPrice = 0.80m, ReorderLevel = 100, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Ibuprofen 400mg", SKU = "MED-003", Category = "Medicine", UnitType = "Tablets", StockQuantity = 600, SellingUnitPrice = 1.20m, ReorderLevel = 60, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Metformin 850mg", SKU = "MED-004", Category = "Medicine", UnitType = "Tablets", StockQuantity = 400, SellingUnitPrice = 3.00m, ReorderLevel = 40, ExpiryDate = DateTime.Now.AddMonths(18), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Atorvastatin 20mg", SKU = "MED-005", Category = "Medicine", UnitType = "Tablets", StockQuantity = 300, SellingUnitPrice = 5.50m, ReorderLevel = 30, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Ciprofloxacin 250mg", SKU = "MED-006", Category = "Medicine", UnitType = "Tablets", StockQuantity = 200, SellingUnitPrice = 4.00m, ReorderLevel = 25, ExpiryDate = DateTime.Now.AddYears(1), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Omeprazole 20mg", SKU = "MED-007", Category = "Medicine", UnitType = "Capsules", StockQuantity = 350, SellingUnitPrice = 2.80m, ReorderLevel = 35, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Vitamin D3 1000IU", SKU = "MED-008", Category = "Medicine", UnitType = "Tablets", StockQuantity = 800, SellingUnitPrice = 1.50m, ReorderLevel = 80, ExpiryDate = DateTime.Now.AddYears(3), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Amlodipine 5mg", SKU = "MED-009", Category = "Medicine", UnitType = "Tablets", StockQuantity = 250, SellingUnitPrice = 3.50m, ReorderLevel = 25, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Normal Saline 0.9% 500ml", SKU = "SUP-001", Category = "Medical Supply", UnitType = "Bottles", StockQuantity = 120, SellingUnitPrice = 15.00m, ReorderLevel = 20, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Surgical Gloves (Box)", SKU = "SUP-002", Category = "Medical Supply", UnitType = "Bottles", StockQuantity = 50, SellingUnitPrice = 45.00m, ReorderLevel = 10, LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Insulin Regular 10ml", SKU = "MED-010", Category = "Medicine", UnitType = "Vials", StockQuantity = 8, SellingUnitPrice = 120.00m, ReorderLevel = 10, ExpiryDate = DateTime.Now.AddMonths(6), LastStockUpdate = DateTime.Now, IsActive = true },
+            };
+
+            foreach (var item in medicines)
+            {
+                AddInventoryItem(item);
+            }
         }
 
         public static void SaveUsers() { using (var uow = CreateUnitOfWork()) { foreach(var u in Users) { if(u.Id == 0) uow.Users.Add(u); else uow.Users.Update(u); } uow.Complete(); } }

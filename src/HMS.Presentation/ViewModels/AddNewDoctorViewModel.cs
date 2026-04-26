@@ -81,6 +81,7 @@ namespace HMS.Core.ViewModels
                 _existingDoctor.Department = Department;
                 _existingDoctor.AssignedShift = AssignedShift;
                 _existingDoctor.Address = Address;
+                DataManager.SaveAllData();
             }
             else
             {
@@ -96,10 +97,8 @@ namespace HMS.Core.ViewModels
                     Address = Address,
                     IsActive = true
                 };
-                DataManager.Doctors.Add(newDoctor);
+                DataManager.RegisterDoctor(newDoctor);
             }
-
-            DataManager.SaveAllData();
             DialogHost.CloseDialogCommand.Execute(true, null);
             
             MessageBox.Show($"Staff records for {FullName} have been updated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

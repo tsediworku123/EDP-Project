@@ -30,6 +30,7 @@ namespace HMS.Core.Persistence.Repositories
             InsuranceClaims = new Repository<InsuranceClaim>(_context);
             BillingStaff = new Repository<BillingStaff>(_context);
             Bills = new Repository<Bill>(_context);
+            PatientVitals = new Repository<PatientVital>(_context);
         }
 
         public IRepository<User> Users { get; private set; }
@@ -50,6 +51,7 @@ namespace HMS.Core.Persistence.Repositories
         public IRepository<InsuranceClaim> InsuranceClaims { get; private set; }
         public IRepository<BillingStaff> BillingStaff { get; private set; }
         public IRepository<Bill> Bills { get; private set; }
+        public IRepository<PatientVital> PatientVitals { get; private set; }
 
         public int Complete()
         {

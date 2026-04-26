@@ -48,18 +48,18 @@ namespace HMS.Core.ViewModels
             });
 
             NavVitalsCommand = new RelayCommand(() => {
-                ActivePageTitle = "PATIENT VITALS MONITOR";
+                ActivePageTitle = "VITALS MONITOR";
                 CurrentView = new NurseVitalsView();
             });
 
             NavPatientsCommand = new RelayCommand(() => {
                 ActivePageTitle = "PATIENT RECORDS";
-                // CurrentView = new NursePatientsView();
+                CurrentView = new NursePatientsView();
             });
 
             NavAdmissionsCommand = new RelayCommand(() => {
-                ActivePageTitle = "ADMISSIONS & DISCHARGES";
-                // CurrentView = new NurseAdmissionsView();
+                ActivePageTitle = "ADMISSIONS";
+                CurrentView = new NurseAdmissionsView();
             });
 
             NavLogoutCommand = new RelayCommand(() => {

@@ -11,7 +11,6 @@ namespace HMS.Core.Domain.Entities
         public const string LabTechnician = "LabTechnician";
 
         public int Id { get; set; }
-        public string Username { get; set; }
         public string Password { get; set; }
         public string Role { get; set; } // Admin, Doctor, Patient, Receptionist, Nurse, Pharmacist
         public string Email { get; set; }
