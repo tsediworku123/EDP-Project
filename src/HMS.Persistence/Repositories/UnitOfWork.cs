@@ -25,6 +25,7 @@ namespace HMS.Core.Persistence.Repositories
             Nurses = new Repository<Nurse>(_context);
             Pharmacists = new Repository<Pharmacist>(_context);
             InventoryItems = new Repository<InventoryItem>(_context);
+            PatientVitals = new Repository<PatientVital>(_context);
         }
 
         public IRepository<User> Users { get; private set; }
@@ -40,6 +41,7 @@ namespace HMS.Core.Persistence.Repositories
         public IRepository<Nurse> Nurses { get; private set; }
         public IRepository<Pharmacist> Pharmacists { get; private set; }
         public IRepository<InventoryItem> InventoryItems { get; private set; }
+        public IRepository<PatientVital> PatientVitals { get; private set; }
 
         public int Complete()
         {

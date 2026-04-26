@@ -29,6 +29,7 @@ namespace HMS.Core.Persistence.Context
         public DbSet<Nurse> Nurses { get; set; }
         public DbSet<Pharmacist> Pharmacists { get; set; }
         public DbSet<InventoryItem> Inventory { get; set; }
+        public DbSet<PatientVital> PatientVitals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

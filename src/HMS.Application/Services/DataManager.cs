@@ -27,6 +27,7 @@ namespace HMS.Core.AppLogic.Services
         public static List<Nurse> Nurses { get; set; } = new List<Nurse>();
         public static List<Pharmacist> Pharmacists { get; set; } = new List<Pharmacist>();
         public static List<InventoryItem> Inventory { get; set; } = new List<InventoryItem>();
+        public static List<PatientVital> PatientVitals { get; set; } = new List<PatientVital>();
         private static bool isInitialized = false;
 
         public static User CurrentUser { get; set; }
@@ -60,6 +61,7 @@ namespace HMS.Core.AppLogic.Services
             if (Doctors.Count < 5) SeedClinicalData();
             if (!Nurses.Any()) SeedNurses();
             if (!Pharmacists.Any()) SeedPharmacists();
+            if (!PatientVitals.Any()) SeedPatientVitals();
         }
 
         private static void RunMigrations(HMSDbContext context)
@@ -117,6 +119,22 @@ namespace HMS.Core.AppLogic.Services
                         SupplierName NVARCHAR(MAX),
                         IsActive BIT NOT NULL DEFAULT 1
                     )");
+
+                // Ensure PatientVitals table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('PatientVitals') AND type = 'U')
+                    CREATE TABLE PatientVitals (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        PatientId INT NOT NULL,
+                        PatientName NVARCHAR(MAX),
+                        RoomNumber NVARCHAR(MAX),
+                        BloodPressure NVARCHAR(MAX),
+                        Temperature NVARCHAR(MAX),
+                        Pulse NVARCHAR(MAX),
+                        SPO2 NVARCHAR(MAX),
+                        LastUpdated DATETIME2 NOT NULL DEFAULT GETDATE(),
+                        UpdatedBy NVARCHAR(MAX)
+                    )");
             }
             catch (Exception ex)
             {
@@ -143,6 +161,7 @@ namespace HMS.Core.AppLogic.Services
                 Nurses = uow.Nurses.GetAll().ToList();
                 Pharmacists = uow.Pharmacists.GetAll().ToList();
                 Inventory = uow.InventoryItems.GetAll().ToList();
+                PatientVitals = uow.PatientVitals.GetAll().ToList();
             }
         }
 
@@ -367,6 +386,7 @@ namespace HMS.Core.AppLogic.Services
             SaveNurses();
             SavePharmacists();
             SaveInventory();
+            SavePatientVitals();
         }
 
         public static void SaveUsers() { 
@@ -490,6 +510,39 @@ namespace HMS.Core.AppLogic.Services
                 }
                 uow.Complete(); 
             }
+        }
+ 
+        public static void SavePatientVitals() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var v in PatientVitals) {
+                    if(v.Id == 0) uow.PatientVitals.Add(v);
+                    else uow.PatientVitals.Update(v);
+                }
+                uow.Complete(); 
+            }
+        }
+
+        public static void SeedPatientVitals()
+        {
+            if (PatientVitals.Any()) return;
+            var rand = new Random(42);
+            foreach (var p in Patients.Take(15))
+            {
+                PatientVitals.Add(new PatientVital
+                {
+                    PatientId = p.Id,
+                    PatientName = p.FullName,
+                    RoomNumber = "Room " + (200 + p.Id % 50),
+                    BloodPressure = $"{rand.Next(110, 145)}/{rand.Next(65, 90)}",
+                    Temperature = $"{(36.0 + rand.NextDouble() * 2.5):F1}°C",
+                    Pulse = $"{rand.Next(60, 100)} bpm",
+                    SPO2 = $"{rand.Next(94, 100)}%",
+                    LastUpdated = DateTime.Now.AddMinutes(-rand.Next(10, 300)),
+                    UpdatedBy = "System"
+                });
+            }
+            SavePatientVitals();
         }
  
         public static void BackupData() { LastBackupTime = DateTime.Now; }
