@@ -6,7 +6,7 @@ namespace HMS.Core.Domain.Entities
     {
         public int Id { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.Now;
-        public string Username { get; set; }
+        public string UserEmail { get; set; }
         public string Action { get; set; }
         public string Module { get; set; }
     }

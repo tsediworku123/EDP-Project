@@ -26,6 +26,10 @@ namespace HMS.Core.Persistence.Context
         public DbSet<Bill> Bills { get; set; }
         public DbSet<BillItem> BillItems { get; set; }
         public DbSet<DashboardActivity> DashboardActivities { get; set; }
+        public DbSet<Nurse> Nurses { get; set; }
+        public DbSet<Pharmacist> Pharmacists { get; set; }
+        public DbSet<InventoryItem> Inventory { get; set; }
+        public DbSet<PatientVital> PatientVitals { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

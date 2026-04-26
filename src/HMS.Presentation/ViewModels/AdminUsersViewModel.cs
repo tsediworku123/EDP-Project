@@ -91,10 +91,10 @@ namespace HMS.Core.ViewModels
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 string search = SearchText.ToLower();
-                query = query.Where(u => u.Username.ToLower().Contains(search) || (u.Email != null && u.Email.ToLower().Contains(search)));
+                query = query.Where(u => u.Email != null && u.Email.ToLower().Contains(search));
             }
 
-            FilteredUsers = new ObservableCollection<User>(query.OrderBy(u => u.Username));
+            FilteredUsers = new ObservableCollection<User>(query.OrderBy(u => u.Email));
         }
 
         private void ToggleUserStatus(User user)
@@ -102,7 +102,7 @@ namespace HMS.Core.ViewModels
             if (user == null) return;
             
             string action = user.IsActive ? "deactivate" : "activate";
-            var result = MessageBox.Show($"Are you sure you want to {action} user '{user.Username}'?", 
+            var result = MessageBox.Show($"Are you sure you want to {action} user '{user.Email}'?", 
                                        "Confirm Action", 
                                        MessageBoxButton.YesNo, 
                                        MessageBoxImage.Warning);
@@ -119,7 +119,7 @@ namespace HMS.Core.ViewModels
         {
             if (user == null) return;
 
-            var result = MessageBox.Show($"Are you sure you want to reset the password for '{user.Username}' to 'Welcome123'?", 
+            var result = MessageBox.Show($"Are you sure you want to reset the password for '{user.Email}' to 'Welcome123'?", 
                                        "Confirm Password Reset", 
                                        MessageBoxButton.YesNo, 
                                        MessageBoxImage.Question);
@@ -128,7 +128,7 @@ namespace HMS.Core.ViewModels
             {
                 user.Password = PasswordHasher.HashPassword("Welcome123");
                 DataManager.SaveUsers();
-                MessageBox.Show($"Password for '{user.Username}' has been reset to: Welcome123", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Password for '{user.Email}' has been reset to: Welcome123", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

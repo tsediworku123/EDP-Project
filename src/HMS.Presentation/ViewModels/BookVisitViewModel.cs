@@ -13,19 +13,23 @@ namespace HMS.Core.ViewModels
     {
         private string _selectedSpecialty = "All Specialties";
         private string _searchText = "";
-        private Doctor _selectedDoctor;
+        private DoctorAvailabilityInfo _selectedDoctorInfo;
         private DateTime _selectedDate = DateTime.Today.AddDays(1);
         private DateTime _selectedTime;
         private string _reason;
 
         public ObservableCollection<string> Specialties { get; } = new ObservableCollection<string>();
-        public ObservableCollection<Doctor> FilteredDoctors { get; } = new ObservableCollection<Doctor>();
+        public ObservableCollection<DoctorAvailabilityInfo> FilteredDoctors { get; } = new ObservableCollection<DoctorAvailabilityInfo>();
         public ObservableCollection<TimeSlot> AvailableSlots { get; } = new ObservableCollection<TimeSlot>();
 
         public string SelectedSpecialty { get => _selectedSpecialty; set { if (SetProperty(ref _selectedSpecialty, value)) UpdateDoctors(); } }
         public string SearchText { get => _searchText; set { if (SetProperty(ref _searchText, value)) UpdateDoctors(); } }
-        public Doctor SelectedDoctor { get => _selectedDoctor; set { if (SetProperty(ref _selectedDoctor, value)) LoadSlots(); } }
-        public DateTime SelectedDate { get => _selectedDate; set { if (SetProperty(ref _selectedDate, value)) LoadSlots(); } }
+        public DoctorAvailabilityInfo SelectedDoctorInfo
+        {
+            get => _selectedDoctorInfo;
+            set { if (SetProperty(ref _selectedDoctorInfo, value)) LoadSlots(); }
+        }
+        public DateTime SelectedDate { get => _selectedDate; set { if (SetProperty(ref _selectedDate, value)) { UpdateDoctors(); LoadSlots(); } } }
         public DateTime SelectedTime { get => _selectedTime; set => SetProperty(ref _selectedTime, value); }
         public string Reason { get => _reason; set => SetProperty(ref _reason, value); }
 
@@ -33,7 +37,7 @@ namespace HMS.Core.ViewModels
 
         public BookVisitViewModel()
         {
-            ConfirmCommand = new RelayCommand(ConfirmBooking, () => SelectedDoctor != null && SelectedTime != DateTime.MinValue);
+            ConfirmCommand = new RelayCommand(ConfirmBooking, () => SelectedDoctorInfo != null && SelectedTime != DateTime.MinValue);
             InitialLoad();
         }
 
@@ -51,23 +55,81 @@ namespace HMS.Core.ViewModels
             var query = DataManager.Doctors.Where(d => d.IsActive && !d.IsOnLeave);
             if (SelectedSpecialty != "All Specialties") query = query.Where(d => d.Department == SelectedSpecialty);
             if (!string.IsNullOrWhiteSpace(SearchText)) query = query.Where(d => d.FullName.ToLower().Contains(SearchText.ToLower()));
-            
-            foreach (var d in query) FilteredDoctors.Add(d);
+
+            foreach (var d in query)
+            {
+                // Check if doctor works on selected date
+                var dayName = SelectedDate.DayOfWeek.ToString().Substring(0, 3);
+                bool worksToday = d.WorkingDays != null && d.WorkingDays.Contains(dayName);
+
+                // Count booked appointments for this doctor on selected date
+                int bookedToday = DataManager.Appointments.Count(a =>
+                    a.DoctorId == d.Id &&
+                    a.AppointmentDate.Date == SelectedDate.Date &&
+                    a.Status != "Cancelled");
+
+                // Calculate total possible slots
+                var totalMinutes = (d.WorkingHoursEnd - d.WorkingHoursStart).TotalMinutes;
+                var breakMinutes = (d.BreakTimeEnd - d.BreakTimeStart).TotalMinutes;
+                int totalSlots = (int)((totalMinutes - breakMinutes) / (d.SlotDurationMinutes > 0 ? d.SlotDurationMinutes : 30));
+                if (totalSlots < 1) totalSlots = 1;
+                int slotsRemaining = Math.Max(0, totalSlots - bookedToday);
+
+                // Next available date if fully booked or not working today
+                string nextAvailDate = "";
+                if (!worksToday || slotsRemaining == 0)
+                {
+                    var checkDate = SelectedDate.AddDays(1);
+                    for (int i = 0; i < 30; i++)
+                    {
+                        var dn = checkDate.DayOfWeek.ToString().Substring(0, 3);
+                        if (d.WorkingDays != null && d.WorkingDays.Contains(dn))
+                        {
+                            int booked = DataManager.Appointments.Count(a =>
+                                a.DoctorId == d.Id &&
+                                a.AppointmentDate.Date == checkDate.Date &&
+                                a.Status != "Cancelled");
+                            if (booked < totalSlots)
+                            {
+                                nextAvailDate = checkDate.ToString("MMM dd, yyyy");
+                                break;
+                            }
+                        }
+                        checkDate = checkDate.AddDays(1);
+                    }
+                }
+
+                FilteredDoctors.Add(new DoctorAvailabilityInfo
+                {
+                    Doctor = d,
+                    FullName = d.FullName,
+                    Specialty = d.Specialization,
+                    WorkingHours = $"{d.WorkingHoursStart:hh\\:mm} - {d.WorkingHoursEnd:hh\\:mm}",
+                    WorksOnSelectedDate = worksToday,
+                    BookedSlots = bookedToday,
+                    TotalSlots = totalSlots,
+                    SlotsRemaining = slotsRemaining,
+                    IsFull = worksToday && slotsRemaining == 0,
+                    NextAvailableDate = nextAvailDate,
+                    AvailabilityText = !worksToday ? "Not working this day"
+                                     : slotsRemaining == 0 ? "FULLY BOOKED"
+                                     : $"{slotsRemaining}/{totalSlots} slots open"
+                });
+            }
         }
 
         private void LoadSlots()
         {
             AvailableSlots.Clear();
             SelectedTime = DateTime.MinValue;
-            if (SelectedDoctor == null) return;
-            var slots = DataManager.GetAvailableTimeSlots(SelectedDoctor.Id, SelectedDate);
-            foreach (var s in slots) 
+            if (SelectedDoctorInfo == null) return;
+            var slots = DataManager.GetAvailableTimeSlots(SelectedDoctorInfo.Doctor.Id, SelectedDate);
+            foreach (var s in slots)
             {
                 var slot = new TimeSlot { Time = s };
                 slot.SelectionChanged += (obj, isSelected) => {
                     if (isSelected) {
                         SelectedTime = slot.Time;
-                        // Deselect others
                         foreach (var other in AvailableSlots) if (other != slot) other.IsSelected = false;
                     }
                 };
@@ -82,7 +144,7 @@ namespace HMS.Core.ViewModels
 
             var success = DataManager.AddAppointment(new Appointment {
                 PatientId = patient.Id,
-                DoctorId = SelectedDoctor.Id,
+                DoctorId = SelectedDoctorInfo.Doctor.Id,
                 AppointmentDate = SelectedTime,
                 Status = "Scheduled",
                 Reason = Reason
@@ -90,10 +152,27 @@ namespace HMS.Core.ViewModels
 
             if (success) {
                 MessageBox.Show("Visit successfully scheduled!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                UpdateDoctors(); // Refresh availability after booking
+                LoadSlots();
             } else {
                 MessageBox.Show("Could not schedule visit. Please try another slot.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+    }
+
+    public class DoctorAvailabilityInfo
+    {
+        public Doctor Doctor { get; set; }
+        public string FullName { get; set; }
+        public string Specialty { get; set; }
+        public string WorkingHours { get; set; }
+        public bool WorksOnSelectedDate { get; set; }
+        public int BookedSlots { get; set; }
+        public int TotalSlots { get; set; }
+        public int SlotsRemaining { get; set; }
+        public bool IsFull { get; set; }
+        public string NextAvailableDate { get; set; }
+        public string AvailabilityText { get; set; }
     }
 
     public class TimeSlot : ObservableObject
@@ -102,13 +181,13 @@ namespace HMS.Core.ViewModels
         private bool _isSelected;
 
         public DateTime Time { get => _time; set => SetProperty(ref _time, value); }
-        public bool IsSelected 
-        { 
-            get => _isSelected; 
-            set { 
-                if (SetProperty(ref _isSelected, value)) 
-                    SelectionChanged?.Invoke(this, value); 
-            } 
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set {
+                if (SetProperty(ref _isSelected, value))
+                    SelectionChanged?.Invoke(this, value);
+            }
         }
 
         public event Action<TimeSlot, bool> SelectionChanged;

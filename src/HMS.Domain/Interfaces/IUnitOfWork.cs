@@ -15,6 +15,10 @@ namespace HMS.Core.Domain.Interfaces
         IRepository<LabTest> LabTests { get; }
         IRepository<AuditLogEntry> AuditLogs { get; }
         IRepository<Notification> Notifications { get; }
+        IRepository<Nurse> Nurses { get; }
+        IRepository<Pharmacist> Pharmacists { get; }
+        IRepository<InventoryItem> InventoryItems { get; }
+        IRepository<PatientVital> PatientVitals { get; }
         
         int Complete();
     }

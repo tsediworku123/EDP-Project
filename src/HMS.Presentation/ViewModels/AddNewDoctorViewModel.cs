@@ -81,13 +81,13 @@ namespace HMS.Core.ViewModels
                 _existingDoctor.Department = Department;
                 _existingDoctor.AssignedShift = AssignedShift;
                 _existingDoctor.Address = Address;
+                DataManager.SaveAllData();
             }
             else
             {
                 // Create New
                 var newDoctor = new Doctor
                 {
-                    Id = DataManager.Doctors.Any() ? DataManager.Doctors.Max(d => d.Id) + 1 : 1,
                     FullName = FullName,
                     Specialization = Specialty,
                     PhoneNumber = Phone,
@@ -97,10 +97,8 @@ namespace HMS.Core.ViewModels
                     Address = Address,
                     IsActive = true
                 };
-                DataManager.Doctors.Add(newDoctor);
+                DataManager.RegisterDoctor(newDoctor);
             }
-
-            DataManager.SaveAllData();
             DialogHost.CloseDialogCommand.Execute(true, null);
             
             MessageBox.Show($"Staff records for {FullName} have been updated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

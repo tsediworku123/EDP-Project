@@ -33,10 +33,21 @@
                 <TextBlock Text="Manage and review your patient appointments." 
                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6"/>
             </StackPanel>
-            <Button Content="REFRESH" Command="{Binding RefreshCommand}"
-                    Style="{DynamicResource MaterialDesignOutlinedButton}"
-                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                    Foreground="#64748B" BorderBrush="#CBD5E1"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Content="REFRESH" Command="{Binding RefreshCommand}"
+                        Style="{DynamicResource MaterialDesignOutlinedButton}"
+                        Foreground="#64748B" BorderBrush="#CBD5E1" Margin="0,0,10,0"/>
+                
+                <Button Command="{Binding AddNewAppointmentCommand}"
+                        Style="{DynamicResource MaterialDesignRaisedButton}"
+                        Background="#10B981" BorderBrush="#10B981"
+                        materialDesign:ButtonAssist.CornerRadius="5" Padding="15,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="ADD APPOINTMENT" VerticalAlignment="Center" FontWeight="Bold" FontSize="12"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- ===== FILTERS ROW ===== -->

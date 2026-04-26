@@ -22,6 +22,10 @@ namespace HMS.Core.Persistence.Repositories
             LabTests = new Repository<LabTest>(_context);
             AuditLogs = new Repository<AuditLogEntry>(_context);
             Notifications = new Repository<Notification>(_context);
+            Nurses = new Repository<Nurse>(_context);
+            Pharmacists = new Repository<Pharmacist>(_context);
+            InventoryItems = new Repository<InventoryItem>(_context);
+            PatientVitals = new Repository<PatientVital>(_context);
         }
 
         public IRepository<User> Users { get; private set; }
@@ -34,6 +38,10 @@ namespace HMS.Core.Persistence.Repositories
         public IRepository<LabTest> LabTests { get; private set; }
         public IRepository<AuditLogEntry> AuditLogs { get; private set; }
         public IRepository<Notification> Notifications { get; private set; }
+        public IRepository<Nurse> Nurses { get; private set; }
+        public IRepository<Pharmacist> Pharmacists { get; private set; }
+        public IRepository<InventoryItem> InventoryItems { get; private set; }
+        public IRepository<PatientVital> PatientVitals { get; private set; }
 
         public int Complete()
         {

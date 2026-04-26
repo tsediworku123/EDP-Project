@@ -41,6 +41,7 @@ namespace HMS.Core.ViewModels
         public ICommand EditDoctorCommand { get; }
         public ICommand DeleteDoctorCommand { get; }
         public ICommand RefreshCommand { get; }
+        public ICommand BulkImportCommand { get; }
 
         public AdminDoctorsViewModel()
         {
@@ -51,6 +52,7 @@ namespace HMS.Core.ViewModels
             EditDoctorCommand = new RelayCommand<Doctor>(EditDoctor);
             DeleteDoctorCommand = new RelayCommand<Doctor>(DeleteDoctor);
             RefreshCommand = new RelayCommand(RefreshData);
+            BulkImportCommand = new RelayCommand(BulkImport);
         }
 
         private void RefreshData()
@@ -113,6 +115,15 @@ namespace HMS.Core.ViewModels
                 RefreshData();
                 OnPropertyChanged(nameof(TotalActiveDoctors));
             }
+        }
+
+        private async void BulkImport()
+        {
+            var dialog = new BulkImportDoctorsDialog();
+            await DialogHost.Show(dialog, "MainDialogHost");
+            RefreshData();
+            OnPropertyChanged(nameof(TotalActiveDoctors));
+            OnPropertyChanged(nameof(TotalSpecialties));
         }
     }
 }

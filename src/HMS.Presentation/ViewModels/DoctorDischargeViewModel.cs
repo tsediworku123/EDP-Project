@@ -127,7 +127,6 @@ namespace HMS.Core.ViewModels
             var patient = DataManager.Patients.FirstOrDefault(p => p.Id == appt.PatientId);
             DataManager.MedicalRecords.Add(new MedicalRecord
             {
-                Id = DataManager.MedicalRecords.Any() ? DataManager.MedicalRecords.Max(r => r.Id) + 1 : 1,
                 PatientId = appt.PatientId,
                 DoctorId = _doctor.Id,
                 Title = $"Discharge Summary – {DateTime.Today:dd MMM yyyy}",

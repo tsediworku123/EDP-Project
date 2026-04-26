@@ -16,8 +16,8 @@ namespace HMS.Core.ViewModels.Auth
     {
         private readonly AuthService _authService;
 
-        private string _username;
-        public string Username { get => _username; set => SetProperty(ref _username, value); }
+        private string _email;
+        public string Email { get => _email; set => SetProperty(ref _email, value); }
 
         private string _errorMessage;
         public string ErrorMessage { get => _errorMessage; set => SetProperty(ref _errorMessage, value); }
@@ -42,9 +42,9 @@ namespace HMS.Core.ViewModels.Auth
             HasError     = false;
             ErrorMessage = "";
 
-            if (string.IsNullOrWhiteSpace(Username))
+            if (string.IsNullOrWhiteSpace(Email))
             {
-                ShowError("Please enter your username.");
+                ShowError("Please enter your email.");
                 return;
             }
             if (string.IsNullOrWhiteSpace(password))
@@ -54,19 +54,21 @@ namespace HMS.Core.ViewModels.Auth
             }
 
             IsLoading = true;
-            var user  = _authService.Login(Username, password);
+            var user  = _authService.Login(Email, password);
             IsLoading = false;
 
             if (user == null)
             {
-                ShowError("Invalid username or password. Please try again.");
+                ShowError("Invalid email or password. Please try again.");
                 return;
             }
 
             DataManager.EnsureLoaded();
             var doctor  = user.Role == UserRole.Doctor.ToString()  ? DataManager.Doctors.FirstOrDefault(d => d.Id == user.DoctorId) : null;
             var patient = user.Role == UserRole.Patient.ToString() ? DataManager.Patients.FirstOrDefault(p => p.Id == user.PatientId) : null;
-            CurrentSession.Instance.StartSession(user, doctor, patient);
+            var nurse   = user.Role == UserRole.Nurse.ToString()   ? DataManager.Nurses.FirstOrDefault(n => n.Id == user.NurseId) : null;
+            var pharmacist = user.Role == UserRole.Pharmacist.ToString() ? DataManager.Pharmacists.FirstOrDefault(p => p.Id == user.PharmacistId) : null;
+            CurrentSession.Instance.StartSession(user, doctor, patient, nurse, pharmacist);
 
             OpenShellForRole(user.Role);
         }
@@ -95,6 +97,12 @@ namespace HMS.Core.ViewModels.Auth
                         break;
                     case "Patient":
                         shell = new Views.PatientShellView();
+                        break;
+                    case "Nurse":
+                        shell = new Views.NurseShellView();
+                        break;
+                    case "Pharmacist":
+                        shell = new Views.PharmacistShellView();
                         break;
                     default:
                         ShowError("Unknown role.");
