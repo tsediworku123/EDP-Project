@@ -14,292 +14,182 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- Header + Stats -->
-            <RowDefinition Height="Auto"/>  <!-- Toolbar -->
-            <RowDefinition Height="Auto"/>  <!-- Status Banner -->
-            <RowDefinition Height="*"/>     <!-- Content -->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ════════════════════════════════════════════════════════
-             ROW 0 – PAGE HEADER + STATS CARDS
-             ════════════════════════════════════════════════════════ -->
-        <Border Grid.Row="0" Padding="40,32,40,28" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Left: title -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                        <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="32" Height="32"
-                                                 Foreground="#3B82F6" VerticalAlignment="Center" Margin="0,0,12,0"/>
-                        <TextBlock Text="Medical Records"
-                                   FontSize="28" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
-                    </StackPanel>
-                    <TextBlock Text="View, add and manage patient medical records and clinical notes."
-                               FontSize="14" Foreground="#64748B"/>
-                </StackPanel>
-
-                <!-- Right: stat pills -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                    <!-- Total Records -->
-                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20,12" Margin="0,0,12,0">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding TotalRecords}" FontSize="26" FontWeight="Bold"
-                                       Foreground="#1E293B" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Total Records" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                    <!-- Patients -->
-                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20,12" Margin="0,0,12,0">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding TotalPatients}" FontSize="26" FontWeight="Bold"
-                                       Foreground="#1E293B" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Patients" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                    <!-- Latest -->
-                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20,12">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding LatestDate}" FontSize="16" FontWeight="Bold"
-                                       Foreground="#1E293B" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Latest Entry" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- ════════════════════════════════════════════════════════
-             ROW 1 – TOOLBAR  (Search · Filters · Add Button)
-             ════════════════════════════════════════════════════════ -->
-        <Border Grid.Row="1" Background="White" Padding="32,16" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="180"/>
-                    <ColumnDefinition Width="180"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Search -->
-                <Border Grid.Column="0" Background="#F8FAFC" CornerRadius="10" BorderBrush="#E2E8F0" BorderThickness="1" Margin="0,0,12,0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Grid.Column="0" Kind="Magnify" Width="18" Height="18"
-                                                 Foreground="#94A3B8" VerticalAlignment="Center" Margin="12,0,6,0"/>
-                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-                                 BorderThickness="0" Background="Transparent" VerticalAlignment="Center"
-                                 FontSize="13" Padding="4,8"
-                                 materialDesign:HintAssist.Hint="Search by patient, title, diagnosis..."/>
-                        <Button Grid.Column="2" Command="{Binding ClearSearchCommand}"
-                                Style="{StaticResource MaterialDesignIconButton}" Width="32" Height="32"
-                                ToolTip="Clear search" Margin="0,0,4,0">
-                            <materialDesign:PackIcon Kind="Close" Width="14" Height="14" Foreground="#94A3B8"/>
-                        </Button>
-                    </Grid>
-                </Border>
-
-                <!-- Patient filter -->
-                <ComboBox Grid.Column="1" ItemsSource="{Binding PatientFilter}"
-                          SelectedItem="{Binding FilterPatient}"
-                          Style="{StaticResource MaterialDesignComboBox}"
-                          materialDesign:HintAssist.Hint="Patient"
-                          Margin="0,0,12,0" FontSize="13"/>
-
-                <!-- Diagnosis filter -->
-                <ComboBox Grid.Column="2" ItemsSource="{Binding DiagnosisFilter}"
-                          SelectedItem="{Binding FilterDiagnosis}"
-                          Style="{StaticResource MaterialDesignComboBox}"
-                          materialDesign:HintAssist.Hint="Diagnosis"
-                          Margin="0,0,16,0" FontSize="13"/>
-
-                <!-- Add button -->
-                <Button Grid.Column="3" Command="{Binding AddNewCommand}"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
+        <!-- ===== HEADER ===== -->
+        <Grid Grid.Row="0" Margin="0,0,0,25">
+            <StackPanel>
+                <TextBlock Text="MEDICAL RECORDS" Style="{DynamicResource MaterialDesignHeadline5TextBlock}"
+                           FontWeight="Bold" Foreground="#1E293B"/>
+                <TextBlock Text="Comprehensive history of patient consultations, diagnoses, and prescriptions." 
+                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Content="REFRESH" Command="{Binding RefreshCommand}"
+                        Style="{DynamicResource MaterialDesignOutlinedButton}"
+                        Foreground="#64748B" BorderBrush="#CBD5E1" Margin="0,0,10,0"/>
+                
+                <Button Command="{Binding AddNewCommand}"
+                        Style="{DynamicResource MaterialDesignRaisedButton}"
                         Background="#10B981" BorderBrush="#10B981"
-                        materialDesign:ButtonAssist.CornerRadius="10"
-                        Padding="16,10">
+                        materialDesign:ButtonAssist.CornerRadius="5" Padding="15,0">
                     <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                        <TextBlock Text="Add Record" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="ADD RECORD" VerticalAlignment="Center" FontWeight="Bold" FontSize="12"/>
                     </StackPanel>
                 </Button>
-            </Grid>
-        </Border>
+            </StackPanel>
+        </Grid>
 
-        <!-- ════════════════════════════════════════════════════════
-             ROW 2 – STATUS BANNER
-             ════════════════════════════════════════════════════════ -->
-        <Border Grid.Row="2" Padding="32,0">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding HasStatusMsg}" Value="True">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <Border CornerRadius="10" Padding="16,10" Margin="0,12,0,0">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="#FEF2F2"/>
-                        <Setter Property="BorderBrush" Value="#FCA5A5"/>
-                        <Setter Property="BorderThickness" Value="1"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsSuccess}" Value="True">
-                                <Setter Property="Background" Value="#F0FDF4"/>
-                                <Setter Property="BorderBrush" Value="#86EFAC"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
+        <!-- ===== STATS & FILTERS ROW ===== -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Patient Filter -->
+            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="10,0"
+                    materialDesign:ElevationAssist.Elevation="Dp1" MinWidth="160" Margin="0,0,12,0">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <materialDesign:PackIcon Grid.Column="0" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,10,0">
-                        <materialDesign:PackIcon.Style>
-                            <Style TargetType="materialDesign:PackIcon">
-                                <Setter Property="Kind" Value="AlertCircleOutline"/>
-                                <Setter Property="Foreground" Value="#EF4444"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsSuccess}" Value="True">
-                                        <Setter Property="Kind" Value="CheckCircleOutline"/>
-                                        <Setter Property="Foreground" Value="#22C55E"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </materialDesign:PackIcon.Style>
-                    </materialDesign:PackIcon>
-                    <TextBlock Grid.Column="1" Text="{Binding StatusMsg}" VerticalAlignment="Center" FontSize="13">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="#DC2626"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsSuccess}" Value="True">
-                                        <Setter Property="Foreground" Value="#16A34A"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                    <Button Grid.Column="2" Command="{Binding DismissBannerCommand}"
-                            Style="{StaticResource MaterialDesignIconButton}" Width="28" Height="28">
-                        <materialDesign:PackIcon Kind="Close" Width="14" Height="14" Foreground="#94A3B8"/>
-                    </Button>
+                    <materialDesign:PackIcon Kind="AccountFilter" VerticalAlignment="Center" 
+                                            Foreground="#64748B" Margin="0,0,8,0" Width="18" Height="18"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding PatientFilter}"
+                              SelectedItem="{Binding FilterPatient}"
+                              materialDesign:HintAssist.Hint="Patient"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                              BorderThickness="0" VerticalAlignment="Center" FontWeight="SemiBold"/>
                 </Grid>
             </Border>
-        </Border>
+
+            <!-- Diagnosis Filter -->
+            <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="10,0"
+                    materialDesign:ElevationAssist.Elevation="Dp1" MinWidth="160">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="FilterVariant" VerticalAlignment="Center" 
+                                            Foreground="#64748B" Margin="0,0,8,0" Width="18" Height="18"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding DiagnosisFilter}"
+                              SelectedItem="{Binding FilterDiagnosis}"
+                              materialDesign:HintAssist.Hint="Diagnosis"
+                              materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                              BorderThickness="0" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                </Grid>
+            </Border>
+
+            <!-- Search box -->
+            <Border Grid.Column="3" Background="White" CornerRadius="20" Padding="15,0"
+                    materialDesign:ElevationAssist.Elevation="Dp1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="Search" VerticalAlignment="Center" 
+                                            Foreground="#94A3B8" Width="18" Height="18"/>
+                    <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                             materialDesign:TextFieldAssist.DecorationVisibility="Collapsed"
+                             BorderThickness="0" VerticalAlignment="Center" Margin="10,0,0,0"
+                             materialDesign:HintAssist.Hint="Search by patient or diagnosis..."/>
+                </Grid>
+            </Border>
+
+            <!-- Count badge -->
+            <Border Grid.Column="5" Background="White" CornerRadius="8" Padding="15,10"
+                    materialDesign:ElevationAssist.Elevation="Dp1">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ClipboardText" Foreground="#3B82F6" 
+                                            Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock VerticalAlignment="Center">
+                        <Run Text="Records:" Foreground="#64748B" FontSize="11"/>
+                        <Run Text="{Binding TotalRecords, Mode=OneWay}" FontWeight="Bold" FontSize="13"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Grid>
 
         <!-- ════════════════════════════════════════════════════════
-             ROW 3 – MAIN CONTENT  (Table | Slide-in Form)
+             ROW 2 – STATUS BANNER
              ════════════════════════════════════════════════════════ -->
-        <Grid Grid.Row="3" Margin="32,16,32,24">
+        <!-- ===== MAIN CONTENT ===== -->
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition>
-                    <ColumnDefinition.Style>
-                        <Style TargetType="ColumnDefinition">
-                            <Setter Property="Width" Value="0"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ShowForm}" Value="True">
-                                    <Setter Property="Width" Value="400"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ColumnDefinition.Style>
-                </ColumnDefinition>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ─── LEFT: DataGrid ─────────────────────────────── -->
-            <materialDesign:Card Grid.Column="0" UniformCornerRadius="14" materialDesign:ElevationAssist.Elevation="Dp1"
-                                 Margin="0,0,12,0">
+            <!-- Table Card -->
+            <materialDesign:Card Grid.Column="0" UniformCornerRadius="15" materialDesign:ElevationAssist.Elevation="Dp1" Margin="0,0,15,0">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <DataGrid Grid.Row="0"
-                              ItemsSource="{Binding FilteredRecords}"
-                              SelectedItem="{Binding SelectedRecord}"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              CanUserDeleteRows="False"
-                              IsReadOnly="True"
-                              SelectionMode="Single"
-                              materialDesign:DataGridAssist.ColumnHeaderPadding="12,10"
-                              HeadersVisibility="Column"
-                              GridLinesVisibility="Horizontal"
-                              HorizontalGridLinesBrush="#F1F5F9"
-                              BorderThickness="0" Background="White"
-                              RowHeight="58">
-
-                        <DataGrid.ColumnHeaderStyle>
+                    <DataGrid ItemsSource="{Binding FilteredRecords}"
+                              SelectedItem="{Binding SelectedRecord, Mode=TwoWay}"
+                              AutoGenerateColumns="False" IsReadOnly="True"
+                              CanUserAddRows="False" SelectionMode="Single"
+                              Background="Transparent" BorderThickness="0"
+                              HeadersVisibility="Column" GridLinesVisibility="None">
+                        <DataGrid.Resources>
                             <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
                                 <Setter Property="Background" Value="#F8FAFC"/>
+                                <Setter Property="Height" Value="48"/>
+                                <Setter Property="Padding" Value="15,0"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
                                 <Setter Property="Foreground" Value="#475569"/>
-                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                <Setter Property="FontSize" Value="12"/>
-                                <Setter Property="Padding" Value="16,10"/>
+                                <Setter Property="FontSize" Value="11"/>
                             </Style>
-                        </DataGrid.ColumnHeaderStyle>
-
-                        <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
-                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Height" Value="62"/>
+                                <Setter Property="Cursor" Value="Hand"/>
                                 <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F1F5F9"/>
+                                    </Trigger>
                                     <Trigger Property="IsSelected" Value="True">
                                         <Setter Property="Background" Value="#EFF6FF"/>
                                     </Trigger>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#F8FAFC"/>
-                                    </Trigger>
                                 </Style.Triggers>
                             </Style>
-                        </DataGrid.RowStyle>
+                        </DataGrid.Resources>
 
                         <DataGrid.Columns>
                             <!-- Date -->
-                            <DataGridTemplateColumn Header="DATE" Width="120" SortMemberPath="Source.Date">
+                            <DataGridTemplateColumn Header="DATE" Width="120">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel VerticalAlignment="Center" Margin="16,0,8,0">
-                                            <TextBlock Text="{Binding DateDisplay}" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B"/>
-                                        </StackPanel>
+                                        <TextBlock Text="{Binding DateDisplay}" VerticalAlignment="Center" Margin="15,0"
+                                                   FontWeight="SemiBold" Foreground="#1E293B"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
                             <!-- Patient -->
-                            <DataGridTemplateColumn Header="PATIENT" Width="*" SortMemberPath="PatientName">
+                            <DataGridTemplateColumn Header="PATIENT" Width="180">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,8,0">
-                                            <Border Width="36" Height="36" CornerRadius="18" Background="#EFF6FF" Margin="0,0,10,0">
-                                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                           FontWeight="Bold" FontSize="13" Foreground="#3B82F6">
-                                                    <TextBlock.Text>
-                                                        <Binding Path="PatientName" StringFormat="{}{0}"/>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
+                                        <StackPanel Orientation="Horizontal" Margin="5,0">
+                                            <Border Width="32" Height="32" CornerRadius="16" Background="#DBEAFE" Margin="0,0,10,0">
+                                                <materialDesign:PackIcon Kind="Account" Foreground="#3B82F6"
+                                                                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <StackPanel VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding PatientName}" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B"/>
-                                                <TextBlock Text="{Binding Source.Title}" FontSize="11" Foreground="#94A3B8"/>
+                                                <TextBlock Text="{Binding PatientName}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                                <TextBlock Text="{Binding Source.Title}" FontSize="10" Foreground="#94A3B8"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
@@ -307,51 +197,35 @@
                             </DataGridTemplateColumn>
 
                             <!-- Diagnosis -->
-                            <DataGridTemplateColumn Header="DIAGNOSIS" Width="160" SortMemberPath="Source.Diagnosis">
+                            <DataGridTemplateColumn Header="DIAGNOSIS" Width="*">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Border CornerRadius="6" Padding="8,4" Margin="16,0" VerticalAlignment="Center"
-                                                Background="#EFF6FF" HorizontalAlignment="Left">
-                                            <TextBlock Text="{Binding Source.Diagnosis}" FontSize="12" Foreground="#2563EB" FontWeight="SemiBold"/>
+                                        <Border HorizontalAlignment="Left" CornerRadius="4" Padding="8,4" Background="#F0FDF4" Margin="5,0">
+                                            <TextBlock Text="{Binding Source.Diagnosis}" FontSize="11" FontWeight="Bold" Foreground="#16A34A"/>
                                         </Border>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
                             <!-- Prescription -->
-                            <DataGridTemplateColumn Header="PRESCRIPTION" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Source.Prescription}" FontSize="12" Foreground="#64748B"
-                                                   VerticalAlignment="Center" Margin="16,0" TextTrimming="CharacterEllipsis"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-
-                            <!-- Test Results -->
-                            <DataGridTemplateColumn Header="TESTS" Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Source.TestResults}" FontSize="12" Foreground="#64748B"
-                                                   VerticalAlignment="Center" Margin="16,0" TextTrimming="CharacterEllipsis"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="PRESCRIPTION" Binding="{Binding Source.Prescription}" Width="150"/>
 
                             <!-- Actions -->
-                            <DataGridTemplateColumn Header="ACTIONS" Width="110">
+                            <DataGridTemplateColumn Header="ACTIONS" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Style="{DynamicResource MaterialDesignIconButton}"
+                                                    Width="32" Height="32" Padding="0" ToolTip="Edit Record"
                                                     Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    Width="32" Height="32" ToolTip="Edit Record">
-                                                <materialDesign:PackIcon Kind="Pencil" Width="16" Height="16" Foreground="#3B82F6"/>
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="Pencil" Width="15" Height="15" Foreground="#3B82F6"/>
                                             </Button>
-                                            <Button Style="{StaticResource MaterialDesignIconButton}"
+                                            <Button Style="{DynamicResource MaterialDesignIconButton}"
+                                                    Width="32" Height="32" Padding="0" ToolTip="Delete Record"
                                                     Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    Width="32" Height="32" ToolTip="Delete Record" Margin="4,0,0,0">
-                                                <materialDesign:PackIcon Kind="TrashCanOutline" Width="16" Height="16" Foreground="#EF4444"/>
+                                                    CommandParameter="{Binding}">
+                                                <materialDesign:PackIcon Kind="Delete" Width="15" Height="15" Foreground="#EF4444"/>
                                             </Button>
                                         </StackPanel>
                                     </DataTemplate>
@@ -360,10 +234,10 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <!-- Empty state -->
-                    <Border Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Border.Style>
-                            <Style TargetType="Border">
+                    <!-- Empty State -->
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding FilteredRecords.Count}" Value="0">
@@ -371,204 +245,106 @@
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Border.Style>
-                        <StackPanel HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="FileDocumentOutline" Width="56" Height="56"
-                                                     Foreground="#CBD5E1" HorizontalAlignment="Center"/>
-                            <TextBlock Text="No records found" FontSize="16" FontWeight="SemiBold"
-                                       Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,12,0,4"/>
-                            <TextBlock Text="Try adjusting your filters or add a new record."
-                                       FontSize="13" Foreground="#CBD5E1" HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Inline action bar (shown when row selected) -->
-                    <Border Grid.Row="1" Background="#F8FAFC" Padding="16,10" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding HasSelection}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CheckCircle" Width="16" Height="16" Foreground="#3B82F6" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <TextBlock VerticalAlignment="Center" FontSize="12" Foreground="#475569">
-                                <Run Text="Selected: "/>
-                                <Run Text="{Binding SelectedRecord.PatientName}" FontWeight="SemiBold"/>
-                                <Run Text=" — "/>
-                                <Run Text="{Binding SelectedRecord.Source.Title}"/>
-                            </TextBlock>
-                            <Button Command="{Binding EditCommand}" Margin="20,0,8,0"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    materialDesign:ButtonAssist.CornerRadius="8"
-                                    Height="30" FontSize="11" Padding="10,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="Pencil" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                    <TextBlock Text="Edit"/>
-                                </StackPanel>
-                            </Button>
-                            <Button Command="{Binding DeleteCommand}"
-                                    Background="#FEF2F2" BorderBrush="#FCA5A5" Foreground="#DC2626"
-                                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                                    materialDesign:ButtonAssist.CornerRadius="8"
-                                    Height="30" FontSize="11" Padding="10,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="TrashCanOutline" Width="14" Height="14" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                    <TextBlock Text="Delete"/>
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
-                    </Border>
+                        </StackPanel.Style>
+                        <materialDesign:PackIcon Kind="ClipboardOffOutline" Width="48" Height="48" Foreground="#CBD5E1" HorizontalAlignment="Center"/>
+                        <TextBlock Text="No medical records found" FontSize="14" Foreground="#94A3B8" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                    </StackPanel>
                 </Grid>
             </materialDesign:Card>
 
-            <!-- ─── RIGHT: Add/Edit Form Panel ────────────────── -->
-            <materialDesign:Card Grid.Column="1" UniformCornerRadius="14" materialDesign:ElevationAssist.Elevation="Dp2"
-                                 Margin="0" Padding="0">
+            <!-- Detail Side Panel -->
+            <materialDesign:Card Grid.Column="1" UniformCornerRadius="15" materialDesign:ElevationAssist.Elevation="Dp1" Width="330">
                 <materialDesign:Card.Style>
                     <Style TargetType="materialDesign:Card">
-                        <Setter Property="Visibility" Value="Collapsed"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ShowForm}" Value="True">
-                                <Setter Property="Visibility" Value="Visible"/>
+                            <DataTrigger Binding="{Binding HasSelection}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </materialDesign:Card.Style>
 
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel>
-                        <!-- Form header -->
-                        <Border Padding="20,18" CornerRadius="14,14,0,0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
-                            <Grid>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding FormHeader}" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
-                                    <TextBlock Text="Fill in the fields below and save." FontSize="12" Foreground="#64748B" Margin="0,4,0,0"/>
+                    <StackPanel Margin="20">
+                        <!-- Panel Header -->
+                        <Grid Margin="0,0,0,20">
+                            <TextBlock Text="RECORD DETAILS" FontWeight="Bold" FontSize="13" Foreground="#1E293B" VerticalAlignment="Center"/>
+                            <Button Command="{Binding ClearSelectionCommand}" Style="{DynamicResource MaterialDesignIconButton}"
+                                    HorizontalAlignment="Right" Width="30" Height="30" Padding="0" ToolTip="Close">
+                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#94A3B8"/>
+                            </Button>
+                        </Grid>
+
+                        <!-- Patient Info Header -->
+                        <Border Background="#F8FAFC" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Border Width="42" Height="42" CornerRadius="21" Background="#DBEAFE" Margin="0,0,12,0">
+                                        <materialDesign:PackIcon Kind="Account" Foreground="#3B82F6" Width="22" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding SelectedRecord.PatientName}" FontWeight="Bold" FontSize="15" Foreground="#1E293B"/>
+                                        <TextBlock Text="{Binding SelectedRecord.DateDisplay}" FontSize="11" Foreground="#64748B"/>
+                                    </StackPanel>
                                 </StackPanel>
-                                <Button HorizontalAlignment="Right" VerticalAlignment="Top"
-                                        Command="{Binding CancelFormCommand}"
-                                        Style="{StaticResource MaterialDesignIconButton}" Width="32" Height="32">
-                                    <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#94A3B8"/>
-                                </Button>
-                            </Grid>
+                                <Separator Margin="0,5"/>
+                                <TextBlock Text="TITLE" FontSize="10" Foreground="#94A3B8" FontWeight="Bold" Margin="0,5,0,2"/>
+                                <TextBlock Text="{Binding SelectedRecord.Source.Title}" FontSize="13" Foreground="#1E293B" FontWeight="SemiBold"/>
+                            </StackPanel>
                         </Border>
 
-                        <!-- Form body -->
-                        <StackPanel Margin="20,20,20,0">
+                        <!-- Diagnosis -->
+                        <TextBlock Text="DIAGNOSIS" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedRecord.Source.Diagnosis}" FontSize="13" Foreground="#334155" FontWeight="SemiBold" Margin="0,0,0,15"/>
 
-                            <!-- Patient dropdown (add mode only) -->
-                            <StackPanel>
-                                <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
-                                        <Setter Property="Visibility" Value="Collapsed"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsEditing}" Value="False">
-                                                <Setter Property="Visibility" Value="Visible"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </StackPanel.Style>
-                                <TextBlock Text="Patient *" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                                <ComboBox ItemsSource="{Binding Patients}"
-                                          SelectedItem="{Binding FormPatient}"
-                                          Style="{StaticResource MaterialDesignComboBox}"
-                                          materialDesign:HintAssist.Hint="Select patient"
-                                          Margin="0,0,0,14">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding FullName}" FontSize="13"/>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                            </StackPanel>
+                        <!-- Treatment -->
+                        <TextBlock Text="TREATMENT / RECOMMENDATION" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedRecord.Source.Treatment}" FontSize="13" Foreground="#334155" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                            <!-- Title -->
-                            <TextBlock Text="Title *" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding FormTitle, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="e.g. Routine Checkup"
-                                     FontSize="13" Margin="0,0,0,14"/>
+                        <!-- Prescription -->
+                        <TextBlock Text="PRESCRIPTION" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedRecord.Source.Prescription}" FontSize="13" Foreground="#334155" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                            <!-- Date -->
-                            <TextBlock Text="Date *" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <DatePicker SelectedDate="{Binding FormDate}"
-                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}"
-                                        materialDesign:HintAssist.Hint="Visit date"
-                                        FontSize="13" Margin="0,0,0,14"/>
+                        <!-- Tests -->
+                        <TextBlock Text="TEST RESULTS" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedRecord.Source.TestResults}" FontSize="13" Foreground="#334155" TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                            <!-- Diagnosis -->
-                            <TextBlock Text="Diagnosis *" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding FormDiagnosis, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="e.g. Chronic Migraine"
-                                     FontSize="13" Margin="0,0,0,14"/>
+                        <!-- Notes -->
+                        <TextBlock Text="CLINICAL NOTES" FontSize="10" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding SelectedRecord.Source.MedicalNotes}" FontSize="13" Foreground="#334155" TextWrapping="Wrap" Margin="0,0,0,20"/>
 
-                            <!-- Treatment -->
-                            <TextBlock Text="Treatment / Recommendation" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding FormTreatment, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="Treatment plan or recommendation"
-                                     FontSize="13" Margin="0,0,0,14"
-                                     TextWrapping="Wrap" AcceptsReturn="True" Height="70"
-                                     VerticalScrollBarVisibility="Auto"/>
+                        <Separator Margin="0,0,0,15"/>
 
-                            <!-- Prescription -->
-                            <TextBlock Text="Prescription" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding FormPrescription, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="e.g. Paracetamol 500mg, twice daily"
-                                     FontSize="13" Margin="0,0,0,14"
-                                     TextWrapping="Wrap" AcceptsReturn="True" Height="70"
-                                     VerticalScrollBarVisibility="Auto"/>
-
-                            <!-- Test Results -->
-                            <TextBlock Text="Test Results" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding FormTestResults, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="e.g. CBC Normal, None"
-                                     FontSize="13" Margin="0,0,0,14"/>
-
-                            <!-- Clinical Notes -->
-                            <TextBlock Text="Clinical Notes" FontSize="12" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding FormNotes, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                     materialDesign:HintAssist.Hint="Additional notes for this visit"
-                                     FontSize="13" Margin="0,0,0,20"
-                                     TextWrapping="Wrap" AcceptsReturn="True" Height="80"
-                                     VerticalScrollBarVisibility="Auto"/>
-
-                            <!-- Buttons -->
-                            <Grid Margin="0,0,0,20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Command="{Binding CancelFormCommand}"
-                                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                                        materialDesign:ButtonAssist.CornerRadius="10"
-                                        Margin="0,0,6,0" Height="42">
-                                    <TextBlock Text="Cancel"/>
-                                </Button>
-                                <Button Grid.Column="1" Command="{Binding SaveFormCommand}"
-                                        Style="{StaticResource MaterialDesignRaisedButton}"
-                                        Background="#1E293B" BorderBrush="#1E293B"
-                                        materialDesign:ButtonAssist.CornerRadius="10"
-                                        Margin="6,0,0,0" Height="42">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="ContentSaveOutline" Width="16" Height="16"
-                                                                 VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                        <TextBlock Text="Save Record" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
+                        <!-- Action Buttons -->
+                        <UniformGrid Columns="2">
+                            <Button Content="EDIT RECORD" Command="{Binding EditCommand}" CommandParameter="{Binding SelectedRecord}"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" Background="#3B82F6" BorderBrush="#3B82F6"
+                                    Height="36" FontSize="11" FontWeight="Bold" Margin="0,0,5,0" materialDesign:ButtonAssist.CornerRadius="8"/>
+                            <Button Content="DELETE" Command="{Binding DeleteCommand}" CommandParameter="{Binding SelectedRecord}"
+                                    Style="{DynamicResource MaterialDesignRaisedButton}" Background="#FEE2E2" Foreground="#DC2626" BorderBrush="#FEE2E2"
+                                    Height="36" FontSize="11" FontWeight="Bold" Margin="5,0,0,0" materialDesign:ButtonAssist.CornerRadius="8"/>
+                        </UniformGrid>
                     </StackPanel>
                 </ScrollViewer>
             </materialDesign:Card>
+
+            <!-- Empty Selection Placeholder -->
+            <Border Grid.Column="1" Width="330" CornerRadius="15" Background="White" materialDesign:ElevationAssist.Elevation="Dp1">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasSelection}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="ClipboardSearchOutline" Width="48" Height="48" Foreground="#CBD5E1" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                    <TextBlock Text="Select a record" FontSize="14" Foreground="#94A3B8" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                    <TextBlock Text="to view full clinical details" FontSize="12" Foreground="#CBD5E1" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>
