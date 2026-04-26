@@ -1,7 +1,6 @@
 using System;
 using System.Windows;
 using HMS.Core.Domain.Entities;
-using HMS.Core.Infrastructure.Repositories.Json;
 
 namespace HMS.Core.Views
 {

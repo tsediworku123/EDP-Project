@@ -30,7 +30,7 @@ namespace HMS.Core.ViewModels
         {
             DataManager.EnsureLoaded();
             var doctor = CurrentSession.Instance.LoggedInDoctor;
-            DoctorName = doctor != null ? $"DR. {doctor.FullName.ToUpper()}" : "DOCTOR";
+            DoctorName = doctor != null ? doctor.FullName.ToUpper() : "DOCTOR";
 
             // Set initial view
             ActivePageTitle = "DASHBOARD";

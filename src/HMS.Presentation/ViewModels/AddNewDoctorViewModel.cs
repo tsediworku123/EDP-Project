@@ -87,7 +87,6 @@ namespace HMS.Core.ViewModels
                 // Create New
                 var newDoctor = new Doctor
                 {
-                    Id = DataManager.Doctors.Any() ? DataManager.Doctors.Max(d => d.Id) + 1 : 1,
                     FullName = FullName,
                     Specialization = Specialty,
                     PhoneNumber = Phone,

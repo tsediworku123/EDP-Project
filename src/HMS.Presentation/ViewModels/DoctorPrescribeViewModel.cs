@@ -150,7 +150,6 @@ namespace HMS.Core.ViewModels
 
             var prescription = new Prescription
             {
-                Id = DataManager.Prescriptions.Any() ? DataManager.Prescriptions.Max(p => p.Id) + 1 : 1,
                 PatientId = _selectedAppointment.Source.PatientId,
                 DoctorId = _doctor.Id,
                 AppointmentId = _selectedAppointment.Source.Id,

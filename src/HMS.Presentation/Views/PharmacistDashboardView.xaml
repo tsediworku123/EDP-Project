@@ -1,0 +1,112 @@
+<UserControl x:Class="HMS.Core.Views.PharmacistDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Stats Row -->
+        <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,25">
+            <!-- Pending Prescriptions -->
+            <materialDesign:Card Margin="0,0,15,0" Padding="25" UniformCornerRadius="15">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="ClipboardTextOutline" Foreground="#8B5CF6" Width="32" Height="32"/>
+                    <TextBlock Text="{Binding PendingPrescriptionsCount}" FontSize="32" FontWeight="Bold" Foreground="#1E293B" Margin="0,15,0,0"/>
+                    <TextBlock Text="Pending Prescriptions" Foreground="#64748B" FontWeight="SemiBold"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Low Stock Alerts -->
+            <materialDesign:Card Margin="7,0,7,0" Padding="25" UniformCornerRadius="15">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="#EF4444" Width="32" Height="32"/>
+                    <TextBlock Text="{Binding LowStockItemsCount}" FontSize="32" FontWeight="Bold" Foreground="#1E293B" Margin="0,15,0,0"/>
+                    <TextBlock Text="Low Stock Items" Foreground="#64748B" FontWeight="SemiBold"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Dispensed Today -->
+            <materialDesign:Card Margin="15,0,0,0" Padding="25" UniformCornerRadius="15">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="#10B981" Width="32" Height="32"/>
+                    <TextBlock Text="{Binding MedicinesDispensedToday}" FontSize="32" FontWeight="Bold" Foreground="#1E293B" Margin="0,15,0,0"/>
+                    <TextBlock Text="Meds Dispensed Today" Foreground="#64748B" FontWeight="SemiBold"/>
+                </StackPanel>
+            </materialDesign:Card>
+        </UniformGrid>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Recent Prescriptions -->
+            <materialDesign:Card Grid.Column="0" Margin="0,0,15,0" UniformCornerRadius="15" Padding="25">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="RECENT PRESCRIPTIONS" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,20"/>
+                    
+                    <ItemsControl Grid.Row="1">
+                        <!-- Placeholder for schedule items -->
+                        <Border Background="#F8FAFC" Padding="15" CornerRadius="10" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Width="40" Height="40" Background="#EDE9FE" CornerRadius="20">
+                                    <materialDesign:PackIcon Kind="ClipboardTextOutline" Foreground="#8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Column="1" Margin="15,0">
+                                    <TextBlock Text="Amoxicillin 500mg (Patient: John Doe)" FontWeight="Bold" Foreground="#1E293B"/>
+                                    <TextBlock Text="Prescribed by Dr. Smith • Today, 09:30 AM" Foreground="#64748B" FontSize="11" Margin="0,3,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedButton}" Content="DISPENSE" Foreground="#8B5CF6" BorderBrush="#8B5CF6"/>
+                            </Grid>
+                        </Border>
+                    </ItemsControl>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Audit Log / Activity -->
+            <materialDesign:Card Grid.Column="1" Margin="15,0,0,0" UniformCornerRadius="15" Padding="25">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="RECENT ACTIVITY" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,20"/>
+                    
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding RecentActivities}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,15">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="8" Height="8" CornerRadius="4" Background="#8B5CF6" VerticalAlignment="Top" Margin="0,5,12,0"/>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Foreground="#334155" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding Time}" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -89,6 +89,7 @@ namespace HMS.Core.ViewModels
         public ICommand UpdateStatusCommand { get; }
         public ICommand EditAppointmentCommand { get; }
         public ICommand DeleteAppointmentCommand { get; }
+        public ICommand AddNewAppointmentCommand { get; }
 
         public DoctorAppointmentsViewModel()
         {
@@ -101,6 +102,21 @@ namespace HMS.Core.ViewModels
             UpdateStatusCommand = new RelayCommand<string>(UpdateStatus);
             EditAppointmentCommand = new RelayCommand<AppointmentDisplayItem>(EditAppointment);
             DeleteAppointmentCommand = new RelayCommand<AppointmentDisplayItem>(DeleteAppointment);
+            AddNewAppointmentCommand = new RelayCommand(AddNewAppointment);
+        }
+
+        private async void AddNewAppointment()
+        {
+            var vm = new AddAppointmentViewModel();
+            var dialog = new AddAppointmentDialog { DataContext = vm };
+            var result = await DialogHost.Show(dialog, "MainDialogHost");
+            
+            if (result is bool success && success)
+            {
+                DataManager.EnsureLoaded();
+                LoadAllAppointments();
+                ApplyFilters();
+            }
         }
 
         private async void EditAppointment(AppointmentDisplayItem item)
