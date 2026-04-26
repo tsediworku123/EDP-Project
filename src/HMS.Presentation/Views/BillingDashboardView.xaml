@@ -1,0 +1,125 @@
+<UserControl x:Class="HMS.Core.Views.BillingDashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,10,0,30">
+            <!-- Header Section -->
+            <Grid Margin="0,0,0,30">
+                <StackPanel>
+                    <TextBlock Text="FINANCIAL OVERVIEW" FontSize="24" FontWeight="ExtraBold" Foreground="#0F172A"/>
+                    <TextBlock Text="Tracking hospital revenue and outstanding balances." FontSize="14" Foreground="#64748B" Margin="0,5,0,0"/>
+                </StackPanel>
+                <Button Style="{StaticResource MaterialDesignRaisedButton}" HorizontalAlignment="Right"
+                        Background="#3B82F6" BorderThickness="0" Height="45" Padding="20,0" materialDesign:ButtonAssist.CornerRadius="12">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="ChartBar" Margin="0,0,8,0"/>
+                        <TextBlock Text="GENERATE REPORT" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Stats Grid -->
+            <UniformGrid Columns="4" Margin="0,0,0,35">
+                <!-- Daily Revenue -->
+                <materialDesign:Card Margin="0,0,15,0" Padding="20" Style="{StaticResource PremiumCard}" Background="#EFF6FF">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="CashMultiple" Foreground="#3B82F6" Width="28" Height="28"/>
+                        <TextBlock Text="DAILY REVENUE" FontSize="11" FontWeight="Bold" Foreground="#60A5FA" Margin="0,15,0,5"/>
+                        <TextBlock Text="{Binding DailyRevenue, StringFormat='{}{0:C}'}" FontSize="24" FontWeight="Black" Foreground="#1E40AF"/>
+                        <TextBlock Text="+12% from yesterday" FontSize="11" Foreground="#3B82F6" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Monthly Revenue -->
+                <materialDesign:Card Margin="7,0,7,0" Padding="20" Style="{StaticResource PremiumCard}" Background="#F0FDF4">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="TrendingUp" Foreground="#10B981" Width="28" Height="28"/>
+                        <TextBlock Text="MONTHLY REVENUE" FontSize="11" FontWeight="Bold" Foreground="#34D399" Margin="0,15,0,5"/>
+                        <TextBlock Text="{Binding MonthlyRevenue, StringFormat='{}{0:C}'}" FontSize="24" FontWeight="Black" Foreground="#065F46"/>
+                        <TextBlock Text="Target: $120k" FontSize="11" Foreground="#10B981" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Pending Invoices -->
+                <materialDesign:Card Margin="7,0,7,0" Padding="20" Style="{StaticResource PremiumCard}" Background="#FFFBEB">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="ClockOutline" Foreground="#F59E0B" Width="28" Height="28"/>
+                        <TextBlock Text="PENDING INVOICES" FontSize="11" FontWeight="Bold" Foreground="#FBBF24" Margin="0,15,0,5"/>
+                        <TextBlock Text="{Binding PendingInvoicesCount}" FontSize="24" FontWeight="Black" Foreground="#92400E"/>
+                        <TextBlock Text="Requires follow-up" FontSize="11" Foreground="#F59E0B" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Insurance Claims -->
+                <materialDesign:Card Margin="15,0,0,0" Padding="20" Style="{StaticResource PremiumCard}" Background="#FEF2F2">
+                    <StackPanel>
+                        <materialDesign:PackIcon Kind="ShieldAlert" Foreground="#EF4444" Width="28" Height="28"/>
+                        <TextBlock Text="PENDING CLAIMS" FontSize="11" FontWeight="Bold" Foreground="#F87171" Margin="0,15,0,5"/>
+                        <TextBlock Text="{Binding PendingClaimsCount}" FontSize="24" FontWeight="Black" Foreground="#991B1B"/>
+                        <TextBlock Text="High priority" FontSize="11" Foreground="#EF4444" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </materialDesign:Card>
+            </UniformGrid>
+
+            <!-- Bottom Section -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="350" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Recent Payments Table -->
+                <materialDesign:Card Grid.Column="0" Margin="0,0,25,0" Padding="25" Style="{StaticResource PremiumCard}" Background="White">
+                    <StackPanel>
+                        <TextBlock Text="RECENT PAYMENTS" FontSize="16" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
+                        <DataGrid ItemsSource="{Binding RecentPayments}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                                  Background="Transparent" BorderThickness="0" HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="TRANSACTION ID" Binding="{Binding TransactionId}" Width="*" />
+                                <DataGridTextColumn Header="DATE" Binding="{Binding PaymentDate, StringFormat='{}{0:MMM dd, HH:mm}'}" Width="*" />
+                                <DataGridTextColumn Header="AMOUNT" Binding="{Binding Amount, StringFormat='{}{0:C}'}" Width="*" FontWeight="Bold" Foreground="#10B981"/>
+                                <DataGridTextColumn Header="METHOD" Binding="{Binding PaymentMethod}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <!-- Action List / Unpaid Bills -->
+                <materialDesign:Card Grid.Column="1" Padding="25" Style="{StaticResource PremiumCard}" Background="White">
+                    <StackPanel>
+                        <TextBlock Text="UNPAID INVOICES" FontSize="16" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,20"/>
+                        <ItemsControl ItemsSource="{Binding UnpaidBills}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#F1F5F9" BorderThickness="0,0,0,1" Padding="0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding InvoiceNumber}" FontWeight="Bold" Foreground="#1E293B"/>
+                                                <TextBlock Text="{Binding TotalAmount, StringFormat='{}{0:C}'}" FontSize="12" Foreground="#64748B" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedButton}" 
+                                                    Content="PROCESS" FontSize="10" Height="28" Padding="12,0"
+                                                    BorderBrush="#3B82F6" Foreground="#3B82F6"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}" Content="VIEW ALL INVOICES" 
+                                Foreground="#3B82F6" Margin="0,15,0,0" FontWeight="Bold"/>
+                    </StackPanel>
+                </materialDesign:Card>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
