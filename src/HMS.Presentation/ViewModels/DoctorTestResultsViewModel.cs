@@ -50,6 +50,7 @@ namespace HMS.Core.ViewModels
 
         public ICommand RefreshCommand { get; }
         public ICommand MarkCompletedCommand { get; }
+        public ICommand ViewDetailsCommand { get; }
 
         public DoctorTestResultsViewModel()
         {
@@ -58,7 +59,15 @@ namespace HMS.Core.ViewModels
             FilterStatus = "All";
             RefreshCommand = new RelayCommand(LoadResults);
             MarkCompletedCommand = new RelayCommand(MarkCompleted);
+            ViewDetailsCommand = new RelayCommand(ExecuteViewDetails);
             LoadResults();
+        }
+
+        private async void ExecuteViewDetails()
+        {
+            if (SelectedResult == null) return;
+            var view = new Views.LabTestDetailDialog(SelectedResult.Source);
+            await MaterialDesignThemes.Wpf.DialogHost.Show(view, "MainDialogHost");
         }
 
         private void LoadResults()
