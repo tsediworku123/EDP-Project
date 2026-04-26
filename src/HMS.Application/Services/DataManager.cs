@@ -27,6 +27,7 @@ namespace HMS.Core.AppLogic.Services
         public static List<Nurse> Nurses { get; set; } = new List<Nurse>();
         public static List<Pharmacist> Pharmacists { get; set; } = new List<Pharmacist>();
         public static List<InventoryItem> Inventory { get; set; } = new List<InventoryItem>();
+        public static List<LabTechnician> LabTechnicians { get; set; } = new List<LabTechnician>();
         private static bool isInitialized = false;
 
         public static User CurrentUser { get; set; }
@@ -60,6 +61,9 @@ namespace HMS.Core.AppLogic.Services
             if (Doctors.Count < 5) SeedClinicalData();
             if (!Nurses.Any()) SeedNurses();
             if (!Pharmacists.Any()) SeedPharmacists();
+            if (!Inventory.Any()) SeedInventory();
+            if (!LabTests.Any()) SeedLabTests();
+            if (!LabTechnicians.Any()) SeedLabTechnicians();
         }
 
         private static void RunMigrations(HMSDbContext context)
@@ -71,6 +75,7 @@ namespace HMS.Core.AppLogic.Services
                 // Ensure NurseId and PharmacistId columns in Users table
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'NurseId') ALTER TABLE Users ADD NurseId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'PharmacistId') ALTER TABLE Users ADD PharmacistId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'LabTechnicianId') ALTER TABLE Users ADD LabTechnicianId INT NULL");
 
                 // Ensure Nurses table
                 context.Database.ExecuteSqlRaw(@"
@@ -117,6 +122,20 @@ namespace HMS.Core.AppLogic.Services
                         SupplierName NVARCHAR(MAX),
                         IsActive BIT NOT NULL DEFAULT 1
                     )");
+
+                // Ensure LabTechnicians table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('LabTechnicians') AND type = 'U')
+                    CREATE TABLE LabTechnicians (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        EmployeeCode NVARCHAR(MAX),
+                        Specialization NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        Department NVARCHAR(MAX) DEFAULT 'Laboratory',
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
             }
             catch (Exception ex)
             {
@@ -143,6 +162,7 @@ namespace HMS.Core.AppLogic.Services
                 Nurses = uow.Nurses.GetAll().ToList();
                 Pharmacists = uow.Pharmacists.GetAll().ToList();
                 Inventory = uow.InventoryItems.GetAll().ToList();
+                LabTechnicians = uow.LabTechnicians.GetAll().ToList();
             }
         }
 
@@ -195,6 +215,29 @@ namespace HMS.Core.AppLogic.Services
             SaveNurses();
         }
 
+        public static void SeedInventory()
+        {
+            if (Inventory.Any()) return;
+            Inventory.Add(new InventoryItem { Name = "Paracetamol 500mg", Category = "Analgesics", StockQuantity = 500, ReorderLevel = 100, SellingUnitPrice = 2.50m });
+            Inventory.Add(new InventoryItem { Name = "Amoxicillin 250mg", Category = "Antibiotics", StockQuantity = 200, ReorderLevel = 50, SellingUnitPrice = 15.00m });
+            SaveInventory();
+        }
+
+        public static void SeedLabTests()
+        {
+            if (LabTests.Any()) return;
+            var tests = new List<LabTest>
+            {
+                new LabTest { PatientId = 1, DoctorId = 1, TestName = "Complete Blood Count (CBC)", TestCategory = "Hematology", Status = "Completed", ResultSummary = "Normal", NumericalValue = "14.5", Unit = "g/dL", ReferenceRange = "13.5-17.5", CompletedDate = DateTime.Now.AddDays(-2), LabTechnicianName = "Jane Doe" },
+                new LabTest { PatientId = 2, DoctorId = 1, TestName = "Blood Glucose (Fasting)", TestCategory = "Biochemistry", Status = "Requested", IsUrgent = true, ReferenceRange = "70-100", Unit = "mg/dL" },
+                new LabTest { PatientId = 3, DoctorId = 2, TestName = "Lipid Profile", TestCategory = "Biochemistry", Status = "Sample Collected", ReferenceRange = "< 200", Unit = "mg/dL" },
+                new LabTest { PatientId = 1, DoctorId = 2, TestName = "Liver Function Test (LFT)", TestCategory = "Biochemistry", Status = "In Progress", IsUrgent = true },
+                new LabTest { PatientId = 4, DoctorId = 1, TestName = "Urine Analysis", TestCategory = "Microbiology", Status = "Requested" }
+            };
+            foreach(var t in tests) LabTests.Add(t);
+            SaveLabTests();
+        }
+
         public static void SeedPharmacists()
         {
             if (Pharmacists.Any()) return;
@@ -209,6 +252,23 @@ namespace HMS.Core.AppLogic.Services
             };
             Pharmacists.Add(defaultPharmacist);
             SavePharmacists();
+        }
+
+        public static void SeedLabTechnicians()
+        {
+            if (LabTechnicians.Any()) return;
+
+            var defaultLabTech = new LabTechnician
+            {
+                FullName = "Tech. Alex Smith",
+                EmployeeCode = "LAB-001",
+                Specialization = "Hematology",
+                Phone = "555-0300",
+                Email = "alex.smith@hospital.com",
+                IsActive = true
+            };
+            LabTechnicians.Add(defaultLabTech);
+            SaveLabTechnicians();
         }
 
         public static User AuthenticateUser(string username, string password)
@@ -367,6 +427,7 @@ namespace HMS.Core.AppLogic.Services
             SaveNurses();
             SavePharmacists();
             SaveInventory();
+            SaveLabTechnicians();
         }
 
         public static void SaveUsers() { 
@@ -458,6 +519,17 @@ namespace HMS.Core.AppLogic.Services
                 uow.Complete(); 
             }
         }
+
+        public static void SaveNotifications() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var n in Notifications) {
+                    if(n.Id == 0) uow.Notifications.Add(n);
+                    else uow.Notifications.Update(n);
+                }
+                uow.Complete(); 
+            }
+        }
  
         public static void SaveNurses() { 
             using (var uow = CreateUnitOfWork())
@@ -487,6 +559,17 @@ namespace HMS.Core.AppLogic.Services
                 foreach(var i in Inventory) {
                     if(i.Id == 0) uow.InventoryItems.Add(i);
                     else uow.InventoryItems.Update(i);
+                }
+                uow.Complete(); 
+            }
+        }
+        
+        public static void SaveLabTechnicians() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var l in LabTechnicians) {
+                    if(l.Id == 0) uow.LabTechnicians.Add(l);
+                    else uow.LabTechnicians.Update(l);
                 }
                 uow.Complete(); 
             }
