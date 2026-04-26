@@ -95,10 +95,8 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
-            int nextUserId = users.Any() ? users.Max(u => u.Id) + 1 : 1;
             var newUser = new User
             {
-                Id = nextUserId,
                 Username = Username,
                 Password = PasswordHasher.HashPassword(Password),
                 Role = SelectedRole,

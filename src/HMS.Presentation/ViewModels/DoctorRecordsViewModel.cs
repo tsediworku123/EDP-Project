@@ -267,7 +267,6 @@ namespace HMS.Core.ViewModels
             {
                 var newRecord = new MedicalRecord
                 {
-                    Id           = DataManager.MedicalRecords.Any() ? DataManager.MedicalRecords.Max(x => x.Id) + 1 : 1,
                     PatientId    = FormPatient.Id,
                     DoctorId     = _doctor?.Id ?? 0,
                     Title        = FormTitle.Trim(),
@@ -279,11 +278,12 @@ namespace HMS.Core.ViewModels
                     Date         = FormDate,
                     DoctorName   = _doctor?.FullName,
                 };
+                var patientName = FormPatient.FullName;
                 DataManager.MedicalRecords.Add(newRecord);
                 DataManager.SaveMedicalRecords();
                 CloseForm();
                 LoadRecords();
-                ShowBanner($"Record added for {FormPatient.FullName}.", success: true);
+                ShowBanner($"Record added for {patientName}.", success: true);
             }
         }
 

@@ -125,7 +125,6 @@ namespace HMS.Core.AppLogic.Services
         public static bool AddAppointment(Appointment appointment)
         {
             if (appointment.AppointmentDate < DateTime.Now.AddMinutes(-5)) return false; 
-            appointment.Id = Appointments.Any() ? Appointments.Max(a => a.Id) + 1 : 1;
             Appointments.Add(appointment);
             SaveAppointments();
             return true;

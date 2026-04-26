@@ -144,7 +144,6 @@ namespace HMS.Core.ViewModels
             {
                 DataManager.LabTests.Add(new LabTest
                 {
-                    Id = DataManager.LabTests.Any() ? DataManager.LabTests.Max(t => t.Id) + 1 : 1,
                     PatientId = _selectedAppointment.Source.PatientId,
                     DoctorId = _doctor.Id,
                     AppointmentId = _selectedAppointment.Source.Id,
