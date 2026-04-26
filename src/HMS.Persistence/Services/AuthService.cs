@@ -97,6 +97,32 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
+            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Nurse.ToString()).Any())
+            {
+                _unitOfWork.Users.Add(new User
+                {
+                    Username = "nurse",
+                    Password = PasswordHasher.HashPassword("1234"),
+                    Role = UserRole.Nurse.ToString(),
+                    Email = "nurse@hospital.com",
+                    IsActive = true,
+                    NurseId = 1
+                });
+            }
+
+            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Pharmacist.ToString()).Any())
+            {
+                _unitOfWork.Users.Add(new User
+                {
+                    Username = "pharmacist",
+                    Password = PasswordHasher.HashPassword("1234"),
+                    Role = UserRole.Pharmacist.ToString(),
+                    Email = "pharmacist@hospital.com",
+                    IsActive = true,
+                    PharmacistId = 1
+                });
+            }
+
             _unitOfWork.Complete();
         }
     }

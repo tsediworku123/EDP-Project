@@ -6,6 +6,8 @@ using HMS.Core.Common.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using HMS.Core.Persistence.Context;
 
 namespace HMS.Core.AppLogic.Services
 {
@@ -22,6 +24,9 @@ namespace HMS.Core.AppLogic.Services
         public static List<AuditLogEntry> AuditLogs { get; set; } = new List<AuditLogEntry>();
         public static List<Prescription> Prescriptions { get; set; } = new List<Prescription>();
         public static List<LabTest> LabTests { get; set; } = new List<LabTest>();
+        public static List<Nurse> Nurses { get; set; } = new List<Nurse>();
+        public static List<Pharmacist> Pharmacists { get; set; } = new List<Pharmacist>();
+        public static List<InventoryItem> Inventory { get; set; } = new List<InventoryItem>();
         private static bool isInitialized = false;
 
         public static User CurrentUser { get; set; }
@@ -43,15 +48,82 @@ namespace HMS.Core.AppLogic.Services
             if (isInitialized) return;
             isInitialized = true;
 
-            // Ensure database is created
+            // Ensure database is created and up to date
             using (var context = DatabaseFactory.CreateContext())
             {
                 context.Database.EnsureCreated();
+                RunMigrations(context);
             }
 
             LoadFromDb();
 
             if (Doctors.Count < 5) SeedClinicalData();
+            if (!Nurses.Any()) SeedNurses();
+            if (!Pharmacists.Any()) SeedPharmacists();
+        }
+
+        private static void RunMigrations(HMSDbContext context)
+        {
+            // Simple migration to add missing columns and tables if they don't exist
+            // This is useful when using EnsureCreated() in development
+            try
+            {
+                // Ensure NurseId and PharmacistId columns in Users table
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'NurseId') ALTER TABLE Users ADD NurseId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'PharmacistId') ALTER TABLE Users ADD PharmacistId INT NULL");
+
+                // Ensure Nurses table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Nurses') AND type = 'U')
+                    CREATE TABLE Nurses (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        Specialization NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        Department NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure Pharmacists table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Pharmacists') AND type = 'U')
+                    CREATE TABLE Pharmacists (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        LicenseNumber NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure Inventory table (dbo schema)
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Inventory') AND type = 'U')
+                    CREATE TABLE Inventory (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        Name NVARCHAR(MAX),
+                        Category NVARCHAR(MAX),
+                        SKU NVARCHAR(MAX),
+                        Description NVARCHAR(MAX),
+                        Manufacturer NVARCHAR(MAX),
+                        StockQuantity INT NOT NULL DEFAULT 0,
+                        ReorderLevel INT NOT NULL DEFAULT 10,
+                        PurchaseUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
+                        SellingUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
+                        StorageLocation NVARCHAR(MAX),
+                        ExpiryDate DATETIME2 NULL,
+                        LastStockUpdate DATETIME2 NOT NULL DEFAULT GETDATE(),
+                        SupplierName NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Schema migration failed: {ex.Message}");
+                // We don't throw here to allow the app to try and continue, 
+                // but it will likely fail later with a descriptive error.
+            }
         }
 
         private static void LoadFromDb()
@@ -68,6 +140,9 @@ namespace HMS.Core.AppLogic.Services
                 LabTests = uow.LabTests.GetAll().ToList();
                 Notifications = uow.Notifications.GetAll().ToList();
                 AuditLogs = uow.AuditLogs.GetAll().ToList();
+                Nurses = uow.Nurses.GetAll().ToList();
+                Pharmacists = uow.Pharmacists.GetAll().ToList();
+                Inventory = uow.InventoryItems.GetAll().ToList();
             }
         }
 
@@ -101,6 +176,39 @@ namespace HMS.Core.AppLogic.Services
                 Appointments.Add(new Appointment { PatientId = currentPat.Id, DoctorId = 3, AppointmentDate = DateTime.Now.AddDays(-1), Status = "Completed", Reason = "Cardio checkup.", PatientRating = 0 });
                 Appointments.Add(new Appointment { PatientId = currentPat.Id, DoctorId = 4, AppointmentDate = DateTime.Now.AddDays(3), Status = "Scheduled", Reason = "Annual checkup." });
             }
+        }
+
+        public static void SeedNurses()
+        {
+            if (Nurses.Any()) return;
+
+            var defaultNurse = new Nurse
+            {
+                FullName = "Nurse Sarah Jenkins",
+                Specialization = "Triage and Emergency",
+                Department = "General Ward",
+                Phone = "555-0199",
+                Email = "sarah.nurse@hospital.com",
+                IsActive = true
+            };
+            Nurses.Add(defaultNurse);
+            SaveNurses();
+        }
+
+        public static void SeedPharmacists()
+        {
+            if (Pharmacists.Any()) return;
+
+            var defaultPharmacist = new Pharmacist
+            {
+                FullName = "Pharm. John Doe",
+                LicenseNumber = "PHARM-12345",
+                Phone = "555-0200",
+                Email = "john.pharm@hospital.com",
+                IsActive = true
+            };
+            Pharmacists.Add(defaultPharmacist);
+            SavePharmacists();
         }
 
         public static User AuthenticateUser(string username, string password)
@@ -256,6 +364,9 @@ namespace HMS.Core.AppLogic.Services
             SaveMedicalRecords();
             SavePrescriptions();
             SaveLabTests();
+            SaveNurses();
+            SavePharmacists();
+            SaveInventory();
         }
 
         public static void SaveUsers() { 
@@ -347,7 +458,40 @@ namespace HMS.Core.AppLogic.Services
                 uow.Complete(); 
             }
         }
-
+ 
+        public static void SaveNurses() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var n in Nurses) {
+                    if(n.Id == 0) uow.Nurses.Add(n);
+                    else uow.Nurses.Update(n);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
+        public static void SavePharmacists() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var p in Pharmacists) {
+                    if(p.Id == 0) uow.Pharmacists.Add(p);
+                    else uow.Pharmacists.Update(p);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
+        public static void SaveInventory() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var i in Inventory) {
+                    if(i.Id == 0) uow.InventoryItems.Add(i);
+                    else uow.InventoryItems.Update(i);
+                }
+                uow.Complete(); 
+            }
+        }
+ 
         public static void BackupData() { LastBackupTime = DateTime.Now; }
     }
 }

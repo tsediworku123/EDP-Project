@@ -1,0 +1,155 @@
+<Window x:Class="HMS.Core.Views.NurseShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:HMS.Core.ViewModels"
+        Title="ALPHA CLINIC | Nurse Portal" Height="850" Width="1350"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}">
+
+    <Window.Resources>
+        <Style x:Key="NurseNavButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#CBD5E1" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Margin" Value="10,5" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="RootBorder" Background="{TemplateBinding Background}" CornerRadius="10" Padding="15,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon x:Name="NavIcon" Kind="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                                       Width="22" Height="22" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                       Foreground="{TemplateBinding Foreground}" />
+                                <TextBlock Grid.Column="1" Text="{TemplateBinding Content}" VerticalAlignment="Center"
+                                           FontWeight="Bold" FontSize="13"
+                                           Foreground="{TemplateBinding Foreground}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RootBorder" Property="Background" Value="#334155" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="RootBorder" Property="Background" Value="#1E293B" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NavBtnNurseDashboard" TargetType="Button" BasedOn="{StaticResource NurseNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="DASHBOARD">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnNurseVitals" TargetType="Button" BasedOn="{StaticResource NurseNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="VITALS MONITOR">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnNursePatients" TargetType="Button" BasedOn="{StaticResource NurseNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="PATIENT RECORDS">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnNurseAdmissions" TargetType="Button" BasedOn="{StaticResource NurseNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="ADMISSIONS">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <materialDesign:DialogHost Identifier="NurseDialogHost" CloseOnClickAway="True">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar -->
+            <materialDesign:Card Grid.Column="0" UniformCornerRadius="0">
+                <materialDesign:Card.Background>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Color="#1E3A8A" Offset="0"/>
+                        <GradientStop Color="#1E293B" Offset="1"/>
+                    </LinearGradientBrush>
+                </materialDesign:Card.Background>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Margin="20,30">
+                        <TextBlock Text="ALPHA" Foreground="White" FontSize="32" FontWeight="ExtraBold" />
+                        <TextBlock Text="NURSE PORTAL" Foreground="#93C5FD" FontSize="10" FontWeight="Bold" Margin="2,-4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,10">
+                        <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource NavBtnNurseDashboard}" Tag="ViewDashboard" Content="DASHBOARD" />
+                        <Button Command="{Binding NavVitalsCommand}" Style="{StaticResource NavBtnNurseVitals}" Tag="ClipboardFileOutline" Content="VITALS MONITOR" />
+                        <Button Command="{Binding NavPatientsCommand}" Style="{StaticResource NavBtnNursePatients}" Tag="AccountGroup" Content="PATIENT RECORDS" />
+                        <Button Command="{Binding NavAdmissionsCommand}" Style="{StaticResource NavBtnNurseAdmissions}" Tag="ClipboardTextOutline" Content="ADMISSIONS" />
+                    </StackPanel>
+
+                    <Button Grid.Row="2" Command="{Binding NavLogoutCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Logout" Margin="10,0,10,30">
+                        <TextBlock Text="LOGOUT" Foreground="#EF5350" FontWeight="Bold" />
+                    </Button>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Main Content -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <materialDesign:Card Grid.Row="0" UniformCornerRadius="0" Background="White" MouseLeftButtonDown="DragWindow">
+                    <Grid Margin="40,0,20,0">
+                        <TextBlock Text="{Binding ActivePageTitle}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" FontWeight="ExtraBold" Foreground="#1E293B" VerticalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding NurseName}" Foreground="#1E293B" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,0" />
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="35" Height="35" Padding="0">
+                                <materialDesign:PackIcon Kind="WindowMinimize" Foreground="#1E293B" Width="20" Height="20" />
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MaximizeWindow" Width="35" Height="35" Padding="0">
+                                <materialDesign:PackIcon Kind="WindowMaximize" Foreground="#1E293B" Width="20" Height="20" />
+                            </Button>
+                            <Button Style="{StaticResource MaterialDesignFlatButton}" Click="CloseWindow" Width="35" Height="35" Padding="0">
+                                <materialDesign:PackIcon Kind="Close" Foreground="#EF5350" Width="20" Height="20" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </materialDesign:Card>
+
+                <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+            </Grid>
+        </Grid>
+    </materialDesign:DialogHost>
+</Window>

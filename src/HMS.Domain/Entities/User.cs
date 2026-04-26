@@ -6,14 +6,18 @@ namespace HMS.Core.Domain.Entities
         public const string Doctor = "Doctor";
         public const string Patient = "Patient";
         public const string Receptionist = "Receptionist";
+        public const string Nurse = "Nurse";
+        public const string Pharmacist = "Pharmacist";
 
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; } // Admin, Doctor, Patient, Receptionist
+        public string Role { get; set; } // Admin, Doctor, Patient, Receptionist, Nurse, Pharmacist
         public string Email { get; set; }
         public int? PatientId { get; set; }
         public int? DoctorId { get; set; }
+        public int? NurseId { get; set; }
+        public int? PharmacistId { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }
