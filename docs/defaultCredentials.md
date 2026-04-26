@@ -7,4 +7,7 @@
 | **Receptionist** | `recep` | `1234` |
 | **Patient** | `patient` | `1234` |
 | **Pharmacist** | `pharmacist` | `1234` |
+| **Lab Technician** | `labtech` | `1234` |
+
+
 

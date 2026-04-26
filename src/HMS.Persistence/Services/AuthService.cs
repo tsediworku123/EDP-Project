@@ -123,6 +123,19 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
+            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.LabTechnician.ToString()).Any())
+            {
+                _unitOfWork.Users.Add(new User
+                {
+                    Username = "labtech",
+                    Password = PasswordHasher.HashPassword("1234"),
+                    Role = UserRole.LabTechnician.ToString(),
+                    Email = "labtech@hospital.com",
+                    IsActive = true,
+                    LabTechnicianId = 1
+                });
+            }
+
             _unitOfWork.Complete();
         }
     }

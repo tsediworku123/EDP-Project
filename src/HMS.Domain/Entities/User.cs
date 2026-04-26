@@ -8,6 +8,7 @@ namespace HMS.Core.Domain.Entities
         public const string Receptionist = "Receptionist";
         public const string Nurse = "Nurse";
         public const string Pharmacist = "Pharmacist";
+        public const string LabTechnician = "LabTechnician";
 
         public int Id { get; set; }
         public string Username { get; set; }
@@ -18,6 +19,7 @@ namespace HMS.Core.Domain.Entities
         public int? DoctorId { get; set; }
         public int? NurseId { get; set; }
         public int? PharmacistId { get; set; }
+        public int? LabTechnicianId { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

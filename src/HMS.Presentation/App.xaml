@@ -11,6 +11,8 @@
             </ResourceDictionary.MergedDictionaries>
 
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <converters:FirstLetterConverter x:Key="FirstLetterConverter" />
 
             <!-- Custom Styles for Premium Feel -->
             <Style x:Key="PremiumCard" TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">

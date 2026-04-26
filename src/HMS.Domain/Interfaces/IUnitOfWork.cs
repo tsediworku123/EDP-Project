@@ -18,6 +18,7 @@ namespace HMS.Core.Domain.Interfaces
         IRepository<Nurse> Nurses { get; }
         IRepository<Pharmacist> Pharmacists { get; }
         IRepository<InventoryItem> InventoryItems { get; }
+        IRepository<LabTechnician> LabTechnicians { get; }
         
         int Complete();
     }
