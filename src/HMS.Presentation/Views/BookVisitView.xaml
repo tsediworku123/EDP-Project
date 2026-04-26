@@ -13,6 +13,7 @@
 
     <UserControl.Resources>
         <utils:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
 
     <UserControl.DataContext>
@@ -22,74 +23,71 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="60,40">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" /> <!-- Header -->
-                <RowDefinition Height="Auto" /> <!-- Specialty Chips area -->
-                <RowDefinition Height="*" />    <!-- Main multi-column layout -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <!-- 1. TITLE & SUBTITLE SECTION -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,45">
+            <!-- 1. TITLE -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,35">
                 <TextBlock Text="SCHEDULE A NEW VISIT" 
                            Style="{StaticResource MaterialDesignHeadline3TextBlock}" 
                            FontWeight="Bold" Foreground="#2196F3" />
-                <TextBlock Text="Quickly find your preferred physician and secure a timeslot that fits your schedule." 
+                <TextBlock Text="Find your preferred physician, check availability, and secure a timeslot." 
                            Style="{StaticResource MaterialDesignSubtitle1TextBlock}" 
                            Opacity="0.6" Margin="4,12,0,0" />
             </StackPanel>
 
-            <!-- 2. SPECIALTY SELECTION (ENHANCED CHIPS) -->
-            <StackPanel Grid.Row="1" Margin="0,0,0,50">
-                <TextBlock Text="FILTER BY CLINICAL SPECIALTY" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
+            <!-- 2. SPECIALTY CHIPS -->
+            <StackPanel Grid.Row="1" Margin="0,0,0,40">
+                <TextBlock Text="FILTER BY SPECIALTY" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
                            FontWeight="Bold" Foreground="#1E293B" Opacity="0.6" Margin="5,0,0,15" />
                 <ListBox ItemsSource="{Binding Specialties}" SelectedItem="{Binding SelectedSpecialty}" 
-                         Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineListBox}" 
-                         Padding="0">
+                         Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineListBox}" Padding="0">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                             <Setter Property="Margin" Value="0,0,12,12" />
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
+                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                 </ListBox>
             </StackPanel>
 
-            <!-- 3. DOCTOR & SLOT SELECTION GRID -->
+            <!-- 3. DOCTOR & SLOT SELECTION -->
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.2*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- LEFT: PHYSICIAN SELECTION -->
+                <!-- LEFT: PHYSICIAN LIST WITH AVAILABILITY -->
                 <StackPanel Grid.Column="0" Margin="0,0,45,0">
                     <TextBlock Text="CHOOSE YOUR PHYSICIAN" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
-                               FontWeight="Bold" Opacity="0.5" Margin="0,0,0,25" />
+                               FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20" />
                     
                     <materialDesign:Card UniformCornerRadius="15" Padding="0" materialDesign:ElevationAssist.Elevation="Dp2" ClipToBounds="True">
                         <StackPanel>
                             <!-- Search Bar -->
-                            <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Height="60" Padding="25,0">
+                            <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Height="55" Padding="20,0">
                                 <Grid>
-                                    <materialDesign:PackIcon Kind="Magnify" Width="24" Height="24" Opacity="0.4" VerticalAlignment="Center" />
+                                    <materialDesign:PackIcon Kind="Magnify" Width="22" Height="22" Opacity="0.4" VerticalAlignment="Center" />
                                     <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
                                              materialDesign:TextFieldAssist.PrefixText="       " 
-                                             materialDesign:HintAssist.Hint="Search Physician by Name..." 
+                                             materialDesign:HintAssist.Hint="Search Physician..." 
                                              Style="{StaticResource MaterialDesignFloatingHintTextBox}" 
-                                             BorderThickness="0" VerticalAlignment="Center" FontSize="15" />
+                                             BorderThickness="0" VerticalAlignment="Center" FontSize="14" />
                                 </Grid>
                             </Border>
                             
-                            <!-- Search Results List -->
-                            <ListBox ItemsSource="{Binding FilteredDoctors}" SelectedItem="{Binding SelectedDoctor}" 
-                                     Height="420" Margin="0" BorderThickness="0"
+                            <!-- Doctor List with Availability -->
+                            <ListBox ItemsSource="{Binding FilteredDoctors}" SelectedItem="{Binding SelectedDoctorInfo}" 
+                                     Height="450" Margin="0" BorderThickness="0"
                                      HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Padding="20,15">
+                                        <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Padding="18,12">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
@@ -97,20 +95,113 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 
-                                                <materialDesign:PackIcon Kind="Doctor" Width="40" Height="40" Foreground="#3B82F6" 
-                                                                         VerticalAlignment="Top" Margin="0,4,20,0" />
+                                                <!-- Doctor Icon -->
+                                                <Border Width="44" Height="44" CornerRadius="22" Margin="0,0,14,0" VerticalAlignment="Center">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="#DBEAFE"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsFull}" Value="True">
+                                                                    <Setter Property="Background" Value="#FEE2E2"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding WorksOnSelectedDate}" Value="False">
+                                                                    <Setter Property="Background" Value="#F1F5F9"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <materialDesign:PackIcon Kind="Doctor" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <materialDesign:PackIcon.Style>
+                                                            <Style TargetType="materialDesign:PackIcon">
+                                                                <Setter Property="Foreground" Value="#3B82F6"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsFull}" Value="True">
+                                                                        <Setter Property="Foreground" Value="#EF4444"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding WorksOnSelectedDate}" Value="False">
+                                                                        <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </materialDesign:PackIcon.Style>
+                                                    </materialDesign:PackIcon>
+                                                </Border>
                                                 
+                                                <!-- Doctor Info -->
                                                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding FullName}" FontWeight="Bold" FontSize="16" Foreground="#1E293B" />
+                                                    <TextBlock Text="{Binding FullName}" FontWeight="Bold" FontSize="14" Foreground="#1E293B" />
+                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                        <TextBlock Text="{Binding Specialty}" Foreground="#64748B" FontSize="12"/>
+                                                        <TextBlock Text=" • " Foreground="#CBD5E1" Margin="4,0"/>
+                                                        <materialDesign:PackIcon Kind="Clock" Width="12" Height="12" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                                                        <TextBlock Text="{Binding WorkingHours}" Foreground="#94A3B8" FontSize="11"/>
+                                                    </StackPanel>
+                                                    <!-- Availability row -->
                                                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                                        <materialDesign:PackIcon Kind="Meditation" Width="14" Height="14" Opacity="0.5" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                                        <TextBlock Text="{Binding Specialty}" Opacity="0.6" FontSize="13" VerticalAlignment="Center" />
-                                                        <TextBlock Text=" • " Opacity="0.3" VerticalAlignment="Center" Margin="8,0" />
-                                                        <TextBlock Text="VERIFIED SPECIALIST" Foreground="#3B82F6" FontSize="11" FontWeight="ExtraBold" VerticalAlignment="Center" />
+                                                        <Border CornerRadius="3" Padding="6,2">
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Background" Value="#DCFCE7"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsFull}" Value="True">
+                                                                            <Setter Property="Background" Value="#FEE2E2"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding WorksOnSelectedDate}" Value="False">
+                                                                            <Setter Property="Background" Value="#F1F5F9"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
+                                                            <TextBlock Text="{Binding AvailabilityText}" FontSize="11" FontWeight="SemiBold">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Foreground" Value="#16A34A"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsFull}" Value="True">
+                                                                                <Setter Property="Foreground" Value="#EF4444"/>
+                                                                            </DataTrigger>
+                                                                            <DataTrigger Binding="{Binding WorksOnSelectedDate}" Value="False">
+                                                                                <Setter Property="Foreground" Value="#94A3B8"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </Border>
+                                                        <!-- Next available hint -->
+                                                        <TextBlock Margin="8,0,0,0" FontSize="10" Foreground="#F59E0B" VerticalAlignment="Center"
+                                                                   Text="{Binding NextAvailableDate, StringFormat='Next: {0}'}">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsFull}" Value="True">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
                                                     </StackPanel>
                                                 </StackPanel>
                                                 
-                                                <materialDesign:PackIcon Kind="ChevronRight" Grid.Column="2" VerticalAlignment="Center" Opacity="0.3" Width="24" Height="24" />
+                                                <!-- Booked count badge -->
+                                                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                    <TextBlock HorizontalAlignment="Center" FontSize="18" FontWeight="Bold">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="#3B82F6"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsFull}" Value="True">
+                                                                        <Setter Property="Foreground" Value="#EF4444"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                        <Run Text="{Binding BookedSlots, Mode=OneWay}"/><Run Text="/"/><Run Text="{Binding TotalSlots, Mode=OneWay}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="booked" FontSize="10" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                                                </StackPanel>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -120,51 +211,46 @@
                     </materialDesign:Card>
 
                     <!-- Reason Input -->
-                    <materialDesign:Card UniformCornerRadius="15" Margin="0,35,0,0" Padding="30" materialDesign:ElevationAssist.Elevation="Dp2">
+                    <materialDesign:Card UniformCornerRadius="15" Margin="0,30,0,0" Padding="25" materialDesign:ElevationAssist.Elevation="Dp2">
                         <StackPanel>
                             <TextBlock Text="REASON FOR VISIT" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
-                                       FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20" />
+                                       FontWeight="Bold" Opacity="0.5" Margin="0,0,0,15" />
                             <TextBox Text="{Binding Reason}" Style="{StaticResource MaterialDesignOutlinedTextBox}" 
-                                     materialDesign:HintAssist.Hint="Briefly describe your symptoms OR visit reason..." 
+                                     materialDesign:HintAssist.Hint="Briefly describe your symptoms..." 
                                      AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
-                                     Height="100" Margin="0" FontSize="15" />
+                                     Height="90" FontSize="14" />
                         </StackPanel>
                     </materialDesign:Card>
                 </StackPanel>
 
-                <!-- RIGHT: CALENDAR & TIME SLOTS -->
+                <!-- RIGHT: CALENDAR & SLOTS -->
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="PREFERRED DATE &amp; TIME" Style="{StaticResource MaterialDesignSubtitle2TextBlock}" 
-                               FontWeight="Bold" Opacity="0.5" Margin="0,0,0,25" />
+                               FontWeight="Bold" Opacity="0.5" Margin="0,0,0,20" />
                     
-                    <materialDesign:Card UniformCornerRadius="15" Padding="35" materialDesign:ElevationAssist.Elevation="Dp3">
+                    <materialDesign:Card UniformCornerRadius="15" Padding="30" materialDesign:ElevationAssist.Elevation="Dp3">
                         <StackPanel>
-                            <!-- Date Selection -->
                             <Border BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="1" CornerRadius="12" Padding="15">
-                                <Viewbox Height="260">
+                                <Viewbox Height="250">
                                     <Calendar SelectedDate="{Binding SelectedDate}" DisplayDateStart="{Binding SelectedDate}" 
                                               BorderThickness="0" Style="{StaticResource MaterialDesignCalendarPortrait}" />
                                 </Viewbox>
                             </Border>
 
-                            <Separator Margin="0,35" Opacity="0.2" />
+                            <Separator Margin="0,30" Opacity="0.2" />
 
-                            <!-- Time Slots Selection -->
                             <TextBlock Text="AVAILABLE SESSIONS" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
-                                       FontWeight="Bold" Opacity="0.7" HorizontalAlignment="Center" Margin="0,0,0,25"  />
+                                       FontWeight="Bold" Opacity="0.7" HorizontalAlignment="Center" Margin="0,0,0,20" />
                             
-                            <!-- 12-Hour formatted Slots Grid -->
                             <ItemsControl ItemsSource="{Binding AvailableSlots}">
                                 <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <UniformGrid Columns="2" />
-                                    </ItemsPanelTemplate>
+                                    <ItemsPanelTemplate><UniformGrid Columns="2" /></ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <RadioButton Style="{StaticResource MaterialDesignOutlineButtonRadioButton}" 
                                                      Content="{Binding Time, StringFormat='hh:mm tt'}" 
-                                                     Height="52" Margin="8" Padding="0" Cursor="Hand"
+                                                     Height="48" Margin="6" Padding="0" Cursor="Hand"
                                                      BorderBrush="#2196F3" Foreground="#2196F3"
                                                      IsChecked="{Binding IsSelected}" />
                                     </DataTemplate>
@@ -172,22 +258,22 @@
                             </ItemsControl>
 
                             <StackPanel Visibility="{Binding AvailableSlots.Count, Converter={StaticResource InverseBoolToVisibilityConverter}, ConverterParameter=0}" 
-                                        HorizontalAlignment="Center" Margin="0,20">
-                                <materialDesign:PackIcon Kind="InformationOutline" HorizontalAlignment="Center" Opacity="0.4" Width="30" Height="30" />
-                                <TextBlock Text="No availability for selected physician/date." 
-                                           HorizontalAlignment="Center" Opacity="0.5" FontStyle="Italic" Margin="0,10,0,0" />
+                                        HorizontalAlignment="Center" Margin="0,15">
+                                <materialDesign:PackIcon Kind="InformationOutline" HorizontalAlignment="Center" Opacity="0.4" Width="28" Height="28" />
+                                <TextBlock Text="No slots available. Select a different doctor or date." 
+                                           HorizontalAlignment="Center" Opacity="0.5" FontStyle="Italic" Margin="0,8,0,0" FontSize="12"/>
                             </StackPanel>
                         </StackPanel>
                     </materialDesign:Card>
 
-                    <!-- Large Confirm Button -->
+                    <!-- Confirm Button -->
                     <Button Command="{Binding ConfirmCommand}" 
                             Style="{StaticResource MaterialDesignRaisedButton}" 
-                            Height="70" VerticalAlignment="Bottom" Margin="0,40,0,0" 
+                            Height="65" VerticalAlignment="Bottom" Margin="0,30,0,0" 
                             Background="#3B82F6" BorderBrush="#3B82F6"
-                            materialDesign:ButtonAssist.CornerRadius="35" FontWeight="Bold" FontSize="19" Cursor="Hand">
+                            materialDesign:ButtonAssist.CornerRadius="32" FontWeight="Bold" FontSize="17" Cursor="Hand">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="CalendarCheck" Width="24" Height="24" VerticalAlignment="Center" Margin="0,0,15,0" />
+                            <materialDesign:PackIcon Kind="CalendarCheck" Width="22" Height="22" VerticalAlignment="Center" Margin="0,0,12,0" />
                             <TextBlock Text="SECURE APPOINTMENT" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>

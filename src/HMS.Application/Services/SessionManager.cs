@@ -11,7 +11,7 @@ namespace ClinicAppointmentSystem
 
         public bool RememberMe { get; set; }
         public bool AutoLogin { get; set; }
-        public string SavedUsername { get; set; } = "";
+        public string SavedEmail { get; set; } = "";
         public string SavedPassword { get; set; } = "";
 
         private string settingsFilePath;
@@ -56,7 +56,7 @@ namespace ClinicAppointmentSystem
                             var val = parts[1].Trim();
                             if (key == "RememberMe") RememberMe = bool.TryParse(val, out var b) ? b : false;
                             if (key == "AutoLogin") AutoLogin = bool.TryParse(val, out var a) ? a : false;
-                            if (key == "SavedUsername") SavedUsername = val;
+                            if (key == "SavedEmail") SavedEmail = val;
                             if (key == "SavedPassword") SavedPassword = val;
                         }
                     }
@@ -71,7 +71,7 @@ namespace ClinicAppointmentSystem
             {
                 var content = $"RememberMe={RememberMe}\r\n" +
                               $"AutoLogin={AutoLogin}\r\n" +
-                              $"SavedUsername={SavedUsername}\r\n" +
+                              $"SavedEmail={SavedEmail}\r\n" +
                               $"SavedPassword={SavedPassword}";
                 File.WriteAllText(settingsFilePath, content);
             }

@@ -16,8 +16,8 @@ namespace HMS.Core.ViewModels.Auth
     {
         private readonly AuthService _authService;
 
-        private string _username;
-        public string Username { get => _username; set => SetProperty(ref _username, value); }
+        private string _email;
+        public string Email { get => _email; set => SetProperty(ref _email, value); }
 
         private string _errorMessage;
         public string ErrorMessage { get => _errorMessage; set => SetProperty(ref _errorMessage, value); }
@@ -42,9 +42,9 @@ namespace HMS.Core.ViewModels.Auth
             HasError     = false;
             ErrorMessage = "";
 
-            if (string.IsNullOrWhiteSpace(Username))
+            if (string.IsNullOrWhiteSpace(Email))
             {
-                ShowError("Please enter your username.");
+                ShowError("Please enter your email.");
                 return;
             }
             if (string.IsNullOrWhiteSpace(password))
@@ -54,12 +54,12 @@ namespace HMS.Core.ViewModels.Auth
             }
 
             IsLoading = true;
-            var user  = _authService.Login(Username, password);
+            var user  = _authService.Login(Email, password);
             IsLoading = false;
 
             if (user == null)
             {
-                ShowError("Invalid username or password. Please try again.");
+                ShowError("Invalid email or password. Please try again.");
                 return;
             }
 

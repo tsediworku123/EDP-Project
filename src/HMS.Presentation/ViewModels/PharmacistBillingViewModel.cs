@@ -10,6 +10,13 @@ namespace HMS.Core.ViewModels
 {
     public class PharmacistBillingViewModel : ObservableObject
     {
+        private static System.Collections.Generic.List<PharmacyBillDTO> _allBills = new System.Collections.Generic.List<PharmacyBillDTO>
+        {
+            new PharmacyBillDTO { Id = 1001, PatientName = "John Doe", Date = DateTime.Now.ToString("MMM dd, yyyy"), TotalAmount = 45.50m, Status = "Paid" },
+            new PharmacyBillDTO { Id = 1002, PatientName = "Jane Smith", Date = DateTime.Now.AddDays(-1).ToString("MMM dd, yyyy"), TotalAmount = 120.00m, Status = "Unpaid" },
+            new PharmacyBillDTO { Id = 1003, PatientName = "Michael Scott", Date = DateTime.Now.AddDays(-2).ToString("MMM dd, yyyy"), TotalAmount = 15.75m, Status = "Paid" }
+        };
+
         public ObservableCollection<PharmacyBillDTO> Bills { get; } = new ObservableCollection<PharmacyBillDTO>();
         
         private string _searchText;
@@ -40,15 +47,41 @@ namespace HMS.Core.ViewModels
         {
             Bills.Clear();
             
-            // Dummy bills for UI presentation
-            Bills.Add(new PharmacyBillDTO { Id = 1001, PatientName = "John Doe", Date = DateTime.Now.ToString("MMM dd, yyyy"), TotalAmount = 45.50m, Status = "Paid" });
-            Bills.Add(new PharmacyBillDTO { Id = 1002, PatientName = "Jane Smith", Date = DateTime.Now.AddDays(-1).ToString("MMM dd, yyyy"), TotalAmount = 120.00m, Status = "Unpaid" });
-            Bills.Add(new PharmacyBillDTO { Id = 1003, PatientName = "Michael Scott", Date = DateTime.Now.AddDays(-2).ToString("MMM dd, yyyy"), TotalAmount = 15.75m, Status = "Paid" });
+            var query = _allBills.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(SearchText))
+            {
+                var lowerSearch = SearchText.ToLower();
+                query = query.Where(b => b.PatientName.ToLower().Contains(lowerSearch) || 
+                                         b.InvoiceNumber.ToLower().Contains(lowerSearch));
+            }
+
+            foreach (var bill in query.OrderByDescending(b => b.Id))
+            {
+                Bills.Add(bill);
+            }
         }
 
-        private void GenerateNewBill()
+        private async void GenerateNewBill()
         {
-            System.Windows.MessageBox.Show("Open Generate Pharmacy Bill Dialog", "Generate Bill", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            var vm = new GenerateBillViewModel();
+            var dialog = new HMS.Core.Views.GenerateBillDialog { DataContext = vm };
+            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "PharmacistDialogHost");
+
+            if (result is bool success && success)
+            {
+                if (string.IsNullOrWhiteSpace(vm.PatientName))
+                {
+                    System.Windows.MessageBox.Show("Patient Name is required.", "Validation Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
+                    return;
+                }
+
+                var newBill = vm.GetNewBill();
+                newBill.Id = _allBills.Count > 0 ? _allBills.Max(b => b.Id) + 1 : 1001;
+                
+                _allBills.Add(newBill);
+                LoadBills();
+            }
         }
     }
 

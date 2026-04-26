@@ -26,6 +26,13 @@ namespace HMS.Core.Views.Auth
                 ViewModel?.ExecuteLoginWithPassword(PasswordBox.Password);
         }
 
+        private void CreateAccountButton_Click(object sender, RoutedEventArgs e)
+        {
+            var registerView = new RegisterView();
+            registerView.Show();
+            this.Close();
+        }
+
         // Custom drag-to-move (no window chrome)
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

@@ -18,14 +18,14 @@ namespace HMS.Core.Infrastructure.Repositories.Json
         /// <summary>
         /// Validates credentials. Returns the User on success, null on failure.
         /// </summary>
-        public User Login(string username, string password)
+        public User Login(string email, string password)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 return null;
 
             var users = _data.LoadUsers();
             var user  = users.FirstOrDefault(u =>
-                u.Username.Equals(username.Trim(), System.StringComparison.OrdinalIgnoreCase)
+                u.Email != null && u.Email.Equals(email.Trim(), System.StringComparison.OrdinalIgnoreCase)
                 && u.IsActive);
 
             if (user == null) return null;
@@ -62,7 +62,7 @@ namespace HMS.Core.Infrastructure.Repositories.Json
             users.Add(new User
             {
                 Id       = 1,
-                Username = "admin",
+
                 Password = PasswordHasher.HashPassword("Admin@123"),
                 Role     = UserRole.Admin.ToString(),
                 Email    = "admin@hospital.com",

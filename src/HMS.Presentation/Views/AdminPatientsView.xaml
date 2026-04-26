@@ -19,6 +19,12 @@
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Button Content="REFRESH" Command="{Binding RefreshCommand}" Style="{DynamicResource MaterialDesignOutlinedButton}" Margin="0,0,10,0" Foreground="#64748B" BorderBrush="#CBD5E1"/>
+                <Button Command="{Binding BulkImportCommand}" Style="{DynamicResource MaterialDesignOutlinedButton}" Margin="0,0,10,0" Foreground="#3B82F6" BorderBrush="#3B82F6" Padding="15,7">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileImport" Width="18" Height="18" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="BULK IMPORT" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
                 <Button Command="{Binding AddPatientCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" BorderThickness="0" Padding="20,7">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountPlus" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>

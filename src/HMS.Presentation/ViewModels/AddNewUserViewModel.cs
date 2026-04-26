@@ -13,8 +13,7 @@ namespace HMS.Core.ViewModels
     {
         private readonly Window _window;
 
-        private string _username;
-        public string Username { get => _username; set => SetProperty(ref _username, value); }
+
 
         private string _password;
         public string Password { get => _password; set => SetProperty(ref _password, value); }
@@ -70,7 +69,7 @@ namespace HMS.Core.ViewModels
 
         private void Save()
         {
-            if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(SelectedRole))
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(SelectedRole))
             {
                 MessageBox.Show("Please fill all required fields (*).", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -89,15 +88,14 @@ namespace HMS.Core.ViewModels
             }
 
             var users = DataManager.Users;
-            if (users.Any(u => u.Username.Equals(Username, StringComparison.OrdinalIgnoreCase)))
+            if (users.Any(u => u.Email != null && u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase)))
             {
-                MessageBox.Show("Username already exists.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Email already exists.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             var newUser = new User
             {
-                Username = Username,
                 Password = PasswordHasher.HashPassword(Password),
                 Role = SelectedRole,
                 DoctorId = SelectedRole == "Doctor" ? SelectedDoctor.Id : (int?)null,
@@ -108,7 +106,7 @@ namespace HMS.Core.ViewModels
             users.Add(newUser);
             DataManager.SaveUsers();
 
-            MessageBox.Show($"User '{Username}' created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"User with email '{Email}' created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             _window.DialogResult = true;
             _window.Close();
         }

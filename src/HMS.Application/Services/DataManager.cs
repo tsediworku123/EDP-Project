@@ -62,6 +62,7 @@ namespace HMS.Core.AppLogic.Services
             if (!Nurses.Any()) SeedNurses();
             if (!Pharmacists.Any()) SeedPharmacists();
             if (!PatientVitals.Any()) SeedPatientVitals();
+            if (!Inventory.Any()) SeedInventory();
         }
 
         private static void RunMigrations(HMSDbContext context)
@@ -113,12 +114,16 @@ namespace HMS.Core.AppLogic.Services
                         ReorderLevel INT NOT NULL DEFAULT 10,
                         PurchaseUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
                         SellingUnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
+                        UnitType NVARCHAR(MAX) NULL,
                         StorageLocation NVARCHAR(MAX),
                         ExpiryDate DATETIME2 NULL,
                         LastStockUpdate DATETIME2 NOT NULL DEFAULT GETDATE(),
                         SupplierName NVARCHAR(MAX),
                         IsActive BIT NOT NULL DEFAULT 1
                     )");
+
+                // Ensure UnitType column in Inventory table
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Inventory') AND name = 'UnitType') ALTER TABLE Inventory ADD UnitType NVARCHAR(MAX) NULL");
 
                 // Ensure PatientVitals table
                 context.Database.ExecuteSqlRaw(@"
@@ -163,6 +168,25 @@ namespace HMS.Core.AppLogic.Services
                 Inventory = uow.InventoryItems.GetAll().ToList();
                 PatientVitals = uow.PatientVitals.GetAll().ToList();
             }
+        }
+
+        public static void ReloadInventory()
+        {
+            using (var uow = CreateUnitOfWork())
+            {
+                Inventory = uow.InventoryItems.GetAll().ToList();
+            }
+        }
+
+        public static void AddInventoryItem(InventoryItem item)
+        {
+            using (var uow = CreateUnitOfWork())
+            {
+                uow.InventoryItems.Add(item);
+                uow.Complete();
+            }
+            // Reload so the new item appears with its DB-generated Id
+            ReloadInventory();
         }
 
         public static void SeedClinicalData()
@@ -230,9 +254,9 @@ namespace HMS.Core.AppLogic.Services
             SavePharmacists();
         }
 
-        public static User AuthenticateUser(string username, string password)
+        public static User AuthenticateUser(string email, string password)
         {
-            var user = Users.FirstOrDefault(u => u.Username == username);
+            var user = Users.FirstOrDefault(u => u.Email != null && u.Email.ToLower() == email.Trim().ToLower());
             if (user != null && PasswordHasher.VerifyPassword(password, user.Password))
             {
                 CurrentUser = user;
@@ -307,7 +331,7 @@ namespace HMS.Core.AppLogic.Services
                 {
                     var newUser = new User 
                     { 
-                        Username = patient.Phone, 
+                        Email = string.IsNullOrWhiteSpace(patient.Email) ? $"{patient.Phone}@patient.local" : patient.Email, 
                         Password = PasswordHasher.HashPassword(patient.Password ?? "password123"), 
                         Role = "Patient", 
                         PatientId = patient.Id,
@@ -326,6 +350,38 @@ namespace HMS.Core.AppLogic.Services
             catch (Exception ex)
             {
                 LogAudit("System", $"Patient registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
+        public static void RegisterDoctor(Doctor doctor)
+        {
+            try 
+            {
+                if (!Doctors.Contains(doctor))
+                {
+                    Doctors.Add(doctor);
+                }
+
+                SaveDoctors();
+
+                if (doctor.Id != 0 && !Users.Any(u => u.Role == "Doctor" && u.DoctorId == doctor.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = string.IsNullOrWhiteSpace(doctor.Email) ? $"doctor{doctor.Id}@hospital.com" : doctor.Email,
+                        Password = PasswordHasher.HashPassword("1234"), // Default password
+                        Role = "Doctor", 
+                        DoctorId = doctor.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Doctor registration failed: {ex.Message}", "Error");
                 throw;
             }
         }
@@ -370,8 +426,8 @@ namespace HMS.Core.AppLogic.Services
             if (n != null) n.IsRead = true;
         }
 
-        public static void LogAudit(string user, string action, string module = "Security") {
-            AuditLogs.Add(new AuditLogEntry { Timestamp = DateTime.Now, Username = user ?? "System", Action = action, Module = module });
+        public static void LogAudit(string userEmail, string action, string module = "Security") {
+            AuditLogs.Add(new AuditLogEntry { Timestamp = DateTime.Now, UserEmail = userEmail ?? "System", Action = action, Module = module });
         }
 
         public static void SaveAllData() { 
@@ -545,6 +601,32 @@ namespace HMS.Core.AppLogic.Services
             SavePatientVitals();
         }
  
+        public static void SeedInventory()
+        {
+            if (Inventory.Any()) return;
+
+            var medicines = new List<InventoryItem>
+            {
+                new InventoryItem { Name = "Amoxicillin 500mg", SKU = "MED-001", Category = "Medicine", UnitType = "Capsules", StockQuantity = 500, SellingUnitPrice = 2.50m, ReorderLevel = 50, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Paracetamol 500mg", SKU = "MED-002", Category = "Medicine", UnitType = "Tablets", StockQuantity = 1000, SellingUnitPrice = 0.80m, ReorderLevel = 100, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Ibuprofen 400mg", SKU = "MED-003", Category = "Medicine", UnitType = "Tablets", StockQuantity = 600, SellingUnitPrice = 1.20m, ReorderLevel = 60, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Metformin 850mg", SKU = "MED-004", Category = "Medicine", UnitType = "Tablets", StockQuantity = 400, SellingUnitPrice = 3.00m, ReorderLevel = 40, ExpiryDate = DateTime.Now.AddMonths(18), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Atorvastatin 20mg", SKU = "MED-005", Category = "Medicine", UnitType = "Tablets", StockQuantity = 300, SellingUnitPrice = 5.50m, ReorderLevel = 30, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Ciprofloxacin 250mg", SKU = "MED-006", Category = "Medicine", UnitType = "Tablets", StockQuantity = 200, SellingUnitPrice = 4.00m, ReorderLevel = 25, ExpiryDate = DateTime.Now.AddYears(1), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Omeprazole 20mg", SKU = "MED-007", Category = "Medicine", UnitType = "Capsules", StockQuantity = 350, SellingUnitPrice = 2.80m, ReorderLevel = 35, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Vitamin D3 1000IU", SKU = "MED-008", Category = "Medicine", UnitType = "Tablets", StockQuantity = 800, SellingUnitPrice = 1.50m, ReorderLevel = 80, ExpiryDate = DateTime.Now.AddYears(3), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Amlodipine 5mg", SKU = "MED-009", Category = "Medicine", UnitType = "Tablets", StockQuantity = 250, SellingUnitPrice = 3.50m, ReorderLevel = 25, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Normal Saline 0.9% 500ml", SKU = "SUP-001", Category = "Medical Supply", UnitType = "Bottles", StockQuantity = 120, SellingUnitPrice = 15.00m, ReorderLevel = 20, ExpiryDate = DateTime.Now.AddYears(2), LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Surgical Gloves (Box)", SKU = "SUP-002", Category = "Medical Supply", UnitType = "Bottles", StockQuantity = 50, SellingUnitPrice = 45.00m, ReorderLevel = 10, LastStockUpdate = DateTime.Now, IsActive = true },
+                new InventoryItem { Name = "Insulin Regular 10ml", SKU = "MED-010", Category = "Medicine", UnitType = "Vials", StockQuantity = 8, SellingUnitPrice = 120.00m, ReorderLevel = 10, ExpiryDate = DateTime.Now.AddMonths(6), LastStockUpdate = DateTime.Now, IsActive = true },
+            };
+
+            foreach (var item in medicines)
+            {
+                AddInventoryItem(item);
+            }
+        }
+
         public static void BackupData() { LastBackupTime = DateTime.Now; }
     }
 }
