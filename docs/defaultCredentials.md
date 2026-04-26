@@ -8,6 +8,9 @@
 | **Patient** | `patient` | `1234` |
 | **Pharmacist** | `pharmacist` | `1234` |
 | **Lab Technician** | `labtech` | `1234` |
+| **Billing** | `billing` | `1234` |
+
+
 
 
 
