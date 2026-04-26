@@ -33,7 +33,18 @@ namespace HMS.Core.ViewModels
             public string Description
             {
                 get => Item.Description;
-                set { Item.Description = value; OnPropertyChanged(); }
+                set 
+                { 
+                    Item.Description = value; 
+                    OnPropertyChanged(); 
+                    
+                    // Auto-lookup price from inventory
+                    var invItem = DataManager.Inventory.FirstOrDefault(i => i.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
+                    if (invItem != null)
+                    {
+                        UnitPrice = invItem.SellingUnitPrice;
+                    }
+                }
             }
 
             public decimal UnitPrice

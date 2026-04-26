@@ -20,6 +20,8 @@ namespace HMS.Core.ViewModels
         public int PendingInvoicesCount => DataManager.Bills.Count(b => b.Status == "Unpaid" || b.Status == "Partially Paid");
         public int PendingClaimsCount => DataManager.InsuranceClaims.Count(c => c.Status == "Pending");
 
+        public ObservableCollection<double> RevenuePoints { get; set; } = new ObservableCollection<double> { 45, 60, 55, 80, 75, 95, 85, 110, 100, 120, 115, 140 };
+
         private ObservableCollection<Payment> _recentPayments;
         public ObservableCollection<Payment> RecentPayments
         {

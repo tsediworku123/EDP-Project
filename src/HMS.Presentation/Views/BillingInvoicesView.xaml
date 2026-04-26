@@ -128,7 +128,9 @@
                                         <materialDesign:PackIcon Kind="Eye" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource MaterialDesignIconButton}" Width="32" Height="32" Foreground="#10B981"
-                                            ToolTip="Process Payment">
+                                            ToolTip="Process Payment" 
+                                            Command="{Binding DataContext.ProcessPaymentCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}">
                                         <materialDesign:PackIcon Kind="CreditCardCheck" Width="18" Height="18"/>
                                     </Button>
                                     <Button Style="{StaticResource MaterialDesignIconButton}" Width="32" Height="32" Foreground="#64748B"

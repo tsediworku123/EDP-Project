@@ -29,12 +29,14 @@ namespace HMS.Core.ViewModels
 
         public ICommand CreateInvoiceCommand { get; }
         public ICommand ViewDetailsCommand { get; }
+        public ICommand ProcessPaymentCommand { get; }
 
         public BillingInvoicesViewModel()
         {
             LoadInvoices();
             CreateInvoiceCommand = new RelayCommand(ExecuteCreateInvoice);
             ViewDetailsCommand = new RelayCommand<Bill>(ExecuteViewDetails);
+            ProcessPaymentCommand = new RelayCommand<Bill>(ExecuteProcessPayment);
         }
 
         private void LoadInvoices()
@@ -58,6 +60,14 @@ namespace HMS.Core.ViewModels
         {
             if (bill == null) return;
             // Logic to show details
+        }
+
+        private async void ExecuteProcessPayment(Bill bill)
+        {
+            if (bill == null || bill.Status == "Paid") return;
+            var view = new Views.ProcessPaymentView { DataContext = new ProcessPaymentViewModel(bill) };
+            await MaterialDesignThemes.Wpf.DialogHost.Show(view, "BillingDialogHost");
+            LoadInvoices();
         }
     }
 }

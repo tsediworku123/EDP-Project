@@ -67,6 +67,70 @@
                 </materialDesign:Card>
             </UniformGrid>
 
+            <!-- Revenue Trend Chart -->
+            <materialDesign:Card Margin="0,0,0,35" Padding="30" Style="{StaticResource PremiumCard}" Background="White">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="200" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,20">
+                        <StackPanel>
+                            <TextBlock Text="REVENUE TRENDS" FontSize="16" FontWeight="Bold" Foreground="#0F172A"/>
+                            <TextBlock Text="Total revenue generated over the last 12 months." FontSize="12" Foreground="#64748B" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Border Width="12" Height="12" CornerRadius="3" Background="#3B82F6" Margin="0,0,8,0"/>
+                            <TextBlock Text="Gross Revenue" FontSize="11" Foreground="#64748B"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <!-- Custom Chart Design using Polygon -->
+                        <Polygon Points="0,200 100,160 200,175 300,120 400,135 500,80 600,110 700,50 800,75 900,30 1000,45 1100,10 1100,200"
+                                 Stroke="Transparent">
+                            <Polygon.Fill>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                    <GradientStop Color="#403B82F6" Offset="0"/>
+                                    <GradientStop Color="#003B82F6" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Polygon.Fill>
+                        </Polygon>
+                        <Polyline Points="0,200 100,160 200,175 300,120 400,135 500,80 600,110 700,50 800,75 900,30 1000,45 1100,10"
+                                  Stroke="#3B82F6" StrokeThickness="3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round">
+                            <Polyline.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.3" ShadowDepth="4" Color="#3B82F6"/>
+                            </Polyline.Effect>
+                        </Polyline>
+
+                        <!-- Chart Grid Lines -->
+                        <Canvas IsHitTestVisible="False" Opacity="0.1">
+                            <Line X1="0" Y1="0" X2="1200" Y2="0" Stroke="#64748B" StrokeThickness="1"/>
+                            <Line X1="0" Y1="50" X2="1200" Y2="50" Stroke="#64748B" StrokeThickness="1"/>
+                            <Line X1="0" Y1="100" X2="1200" Y2="100" Stroke="#64748B" StrokeThickness="1"/>
+                            <Line X1="0" Y1="150" X2="1200" Y2="150" Stroke="#64748B" StrokeThickness="1"/>
+                        </Canvas>
+
+                        <!-- X-Axis Labels -->
+                        <UniformGrid Columns="12" VerticalAlignment="Bottom" Margin="0,0,0,-25">
+                            <TextBlock Text="JAN" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="FEB" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="MAR" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="APR" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="MAY" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="JUN" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="JUL" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="AUG" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="SEP" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="OCT" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="NOV" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                            <TextBlock Text="DEC" FontSize="9" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                        </UniformGrid>
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
+
             <!-- Bottom Section -->
             <Grid>
                 <Grid.ColumnDefinitions>
