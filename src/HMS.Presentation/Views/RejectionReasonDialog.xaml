@@ -1,0 +1,26 @@
+<UserControl x:Class="HMS.Core.Views.RejectionReasonDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="400" Padding="30">
+    <StackPanel>
+        <TextBlock Text="REJECT SAMPLE" Style="{DynamicResource MaterialDesignHeadline6TextBlock}" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center" Foreground="#EF4444"/>
+        
+        <TextBlock Text="Please provide a reason for rejecting this sample. This will be visible to the ordering doctor." 
+                   TextWrapping="Wrap" FontSize="13" Foreground="#64748B" Margin="0,0,0,25" TextAlignment="Center" />
+
+        <TextBox x:Name="ReasonTextBox" 
+                 materialDesign:HintAssist.Hint="Rejection Reason" 
+                 Style="{DynamicResource MaterialDesignOutlinedTextBox}" 
+                 Height="100" 
+                 TextWrapping="Wrap" 
+                 VerticalAlignment="Top" 
+                 AcceptsReturn="True" 
+                 VerticalScrollBarVisibility="Auto" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
+            <Button Content="CANCEL" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" CommandParameter="{x:Null}" Style="{DynamicResource MaterialDesignFlatButton}" Margin="0,0,10,0" Foreground="#64748B"/>
+            <Button Content="REJECT" Click="Reject_Click" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#EF4444" BorderBrush="#EF4444" Foreground="White" Width="120" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
