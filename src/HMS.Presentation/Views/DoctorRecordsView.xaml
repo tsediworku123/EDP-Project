@@ -25,14 +25,7 @@
         <!-- ════════════════════════════════════════════════════════
              ROW 0 – PAGE HEADER + STATS CARDS
              ════════════════════════════════════════════════════════ -->
-        <Border Grid.Row="0" Padding="40,32,40,28">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#065F46" Offset="0"/>
-                    <GradientStop Color="#10B981" Offset="0.6"/>
-                    <GradientStop Color="#34D399" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
+        <Border Grid.Row="0" Padding="40,32,40,28" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -43,38 +36,38 @@
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                         <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="32" Height="32"
-                                                 Foreground="White" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                                 Foreground="#3B82F6" VerticalAlignment="Center" Margin="0,0,12,0"/>
                         <TextBlock Text="Medical Records"
-                                   FontSize="28" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                                   FontSize="28" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
                     </StackPanel>
                     <TextBlock Text="View, add and manage patient medical records and clinical notes."
-                               FontSize="14" Foreground="#A7F3D0"/>
+                               FontSize="14" Foreground="#64748B"/>
                 </StackPanel>
 
                 <!-- Right: stat pills -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                    <!-- Total Records (white translucent pill) -->
-                    <Border Background="#FFFFFF28" CornerRadius="12" Padding="20,12" Margin="0,0,12,0">
+                    <!-- Total Records -->
+                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20,12" Margin="0,0,12,0">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding TotalRecords}" FontSize="26" FontWeight="Bold"
-                                       Foreground="White" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Total Records" FontSize="11" Foreground="#A7F3D0" HorizontalAlignment="Center"/>
+                                       Foreground="#1E293B" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Total Records" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                     <!-- Patients -->
-                    <Border Background="#FFFFFF28" CornerRadius="12" Padding="20,12" Margin="0,0,12,0">
+                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20,12" Margin="0,0,12,0">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding TotalPatients}" FontSize="26" FontWeight="Bold"
-                                       Foreground="White" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Patients" FontSize="11" Foreground="#A7F3D0" HorizontalAlignment="Center"/>
+                                       Foreground="#1E293B" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Patients" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                     <!-- Latest -->
-                    <Border Background="#FFFFFF28" CornerRadius="12" Padding="20,12">
+                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20,12">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding LatestDate}" FontSize="16" FontWeight="Bold"
-                                       Foreground="White" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Latest Entry" FontSize="11" Foreground="#A7F3D0" HorizontalAlignment="Center"/>
+                                       Foreground="#1E293B" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Latest Entry" FontSize="11" Foreground="#64748B" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -450,17 +443,11 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel>
                         <!-- Form header -->
-                        <Border Padding="20,18" CornerRadius="14,14,0,0">
-                            <Border.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#065F46" Offset="0"/>
-                                    <GradientStop Color="#10B981" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Border.Background>
+                        <Border Padding="20,18" CornerRadius="14,14,0,0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
                             <Grid>
                                 <StackPanel>
-                                    <TextBlock Text="{Binding FormHeader}" FontSize="16" FontWeight="Bold" Foreground="White"/>
-                                    <TextBlock Text="Fill in the fields below and save." FontSize="12" Foreground="#94A3B8" Margin="0,4,0,0"/>
+                                    <TextBlock Text="{Binding FormHeader}" FontSize="16" FontWeight="Bold" Foreground="#1E293B"/>
+                                    <TextBlock Text="Fill in the fields below and save." FontSize="12" Foreground="#64748B" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <Button HorizontalAlignment="Right" VerticalAlignment="Top"
                                         Command="{Binding CancelFormCommand}"
@@ -568,7 +555,7 @@
                                 </Button>
                                 <Button Grid.Column="1" Command="{Binding SaveFormCommand}"
                                         Style="{StaticResource MaterialDesignRaisedButton}"
-                                        Background="#10B981" BorderBrush="#10B981"
+                                        Background="#1E293B" BorderBrush="#1E293B"
                                         materialDesign:ButtonAssist.CornerRadius="10"
                                         Margin="6,0,0,0" Height="42">
                                     <StackPanel Orientation="Horizontal">
