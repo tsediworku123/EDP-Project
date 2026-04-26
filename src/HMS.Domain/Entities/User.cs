@@ -20,6 +20,7 @@ namespace HMS.Core.Domain.Entities
         public int? NurseId { get; set; }
         public int? PharmacistId { get; set; }
         public int? LabTechnicianId { get; set; }
+        public int? BillingStaffId { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

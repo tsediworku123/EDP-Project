@@ -19,6 +19,10 @@ namespace HMS.Core.Domain.Interfaces
         IRepository<Pharmacist> Pharmacists { get; }
         IRepository<InventoryItem> InventoryItems { get; }
         IRepository<LabTechnician> LabTechnicians { get; }
+        IRepository<Payment> Payments { get; }
+        IRepository<InsuranceClaim> InsuranceClaims { get; }
+        IRepository<BillingStaff> BillingStaff { get; }
+        IRepository<Bill> Bills { get; }
         
         int Complete();
     }
