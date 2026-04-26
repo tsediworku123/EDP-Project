@@ -26,6 +26,10 @@ namespace HMS.Core.Persistence.Repositories
             Pharmacists = new Repository<Pharmacist>(_context);
             InventoryItems = new Repository<InventoryItem>(_context);
             LabTechnicians = new Repository<LabTechnician>(_context);
+            Payments = new Repository<Payment>(_context);
+            InsuranceClaims = new Repository<InsuranceClaim>(_context);
+            BillingStaff = new Repository<BillingStaff>(_context);
+            Bills = new Repository<Bill>(_context);
         }
 
         public IRepository<User> Users { get; private set; }
@@ -42,6 +46,10 @@ namespace HMS.Core.Persistence.Repositories
         public IRepository<Pharmacist> Pharmacists { get; private set; }
         public IRepository<InventoryItem> InventoryItems { get; private set; }
         public IRepository<LabTechnician> LabTechnicians { get; private set; }
+        public IRepository<Payment> Payments { get; private set; }
+        public IRepository<InsuranceClaim> InsuranceClaims { get; private set; }
+        public IRepository<BillingStaff> BillingStaff { get; private set; }
+        public IRepository<Bill> Bills { get; private set; }
 
         public int Complete()
         {

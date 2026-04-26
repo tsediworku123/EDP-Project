@@ -30,6 +30,9 @@ namespace HMS.Core.Persistence.Context
         public DbSet<Pharmacist> Pharmacists { get; set; }
         public DbSet<InventoryItem> Inventory { get; set; }
         public DbSet<LabTechnician> LabTechnicians { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<InsuranceClaim> InsuranceClaims { get; set; }
+        public DbSet<BillingStaff> BillingStaff { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

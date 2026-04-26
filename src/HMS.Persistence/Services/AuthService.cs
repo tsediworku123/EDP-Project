@@ -136,6 +136,19 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
+            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Billing.ToString()).Any())
+            {
+                _unitOfWork.Users.Add(new User
+                {
+                    Username = "billing",
+                    Password = PasswordHasher.HashPassword("1234"),
+                    Role = UserRole.Billing.ToString(),
+                    Email = "billing@hospital.com",
+                    IsActive = true,
+                    BillingStaffId = 1
+                });
+            }
+
             _unitOfWork.Complete();
         }
     }
