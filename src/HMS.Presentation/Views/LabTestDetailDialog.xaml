@@ -1,0 +1,111 @@
+<UserControl x:Class="HMS.Core.Views.LabTestDetailDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="600" Background="Transparent">
+    
+    <Border CornerRadius="20" Background="White" BorderBrush="#E2E8F0" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="30" ShadowDepth="5" Opacity="0.1" />
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="#F8FAFC" CornerRadius="20,20,0,0" Padding="25,20" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                <Grid>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Test.TestName}" FontSize="20" FontWeight="ExtraBold" Foreground="#0F172A" />
+                        <TextBlock Text="{Binding Test.TestCategory}" FontSize="13" Foreground="#3B82F6" FontWeight="SemiBold" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <Button HorizontalAlignment="Right" Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                            Foreground="#94A3B8" Width="36" Height="36" VerticalAlignment="Top">
+                        <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <Border Padding="30,25">
+                    <StackPanel>
+                    <!-- Status & Dates -->
+                    <Grid Grid.Column="0" Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="STATUS" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" />
+                            <Border Background="#DCFCE7" Padding="10,4" CornerRadius="6" HorizontalAlignment="Left" Margin="0,5,0,0">
+                                <TextBlock Text="{Binding Test.Status}" Foreground="#16A34A" FontWeight="Bold" FontSize="12" />
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="COMPLETED DATE" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" />
+                            <TextBlock Text="{Binding Test.CompletedDate, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}" 
+                                       FontSize="14" FontWeight="SemiBold" Foreground="#1E293B" Margin="0,5,0,0" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Separator Background="#F1F5F9" Margin="0,0,0,25" />
+
+                    <!-- Numerical Findings -->
+                    <TextBlock Text="CLINICAL FINDINGS" FontSize="16" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,15" />
+                    
+                    <Border Background="#F8FAFC" CornerRadius="12" Padding="20" BorderBrush="#E2E8F0" BorderThickness="1" Margin="0,0,0,25">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="RESULT VALUE" FontSize="11" FontWeight="Bold" Foreground="#64748B" />
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <TextBlock Text="{Binding Test.NumericalValue}" FontSize="24" FontWeight="Black" Foreground="#0F172A" />
+                                    <TextBlock Text="{Binding Test.Unit}" FontSize="14" Foreground="#64748B" Margin="8,0,0,5" VerticalAlignment="Bottom" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="REFERENCE RANGE" FontSize="11" FontWeight="Bold" Foreground="#64748B" />
+                                <TextBlock Text="{Binding Test.ReferenceRange}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" Margin="0,5,0,0" />
+                                <TextBlock Text="Normal Values" FontSize="11" Foreground="#94A3B8" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Summary & Details -->
+                    <TextBlock Text="RESULT SUMMARY" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5" />
+                    <TextBlock Text="{Binding Test.ResultSummary}" FontSize="15" Foreground="#1E293B" FontWeight="SemiBold" Margin="0,0,0,20" />
+
+                    <TextBlock Text="DETAILED OBSERVATIONS" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5" />
+                    <Border Background="#F1F5F9" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+                        <TextBlock Text="{Binding Test.ResultDetails}" FontSize="14" Foreground="#334155" TextWrapping="Wrap" />
+                    </Border>
+
+                    <TextBlock Text="TECHNICIAN NOTES" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="0,0,0,5" />
+                    <TextBlock Text="{Binding Test.ClinicalNotes}" FontSize="14" Foreground="#64748B" FontStyle="Italic" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+
+            <!-- Footer -->
+            <Border Grid.Row="2" Background="#F8FAFC" CornerRadius="0,0,20,20" Padding="25,15" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="AccountTieOutline" Width="20" Height="20" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <TextBlock Text="Verified by: " FontSize="13" Foreground="#94A3B8" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Test.LabTechnicianName}" FontSize="13" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Button HorizontalAlignment="Right" Content="DISMISS" Style="{StaticResource MaterialDesignFlatButton}" 
+                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" Foreground="#64748B" FontWeight="Bold" />
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

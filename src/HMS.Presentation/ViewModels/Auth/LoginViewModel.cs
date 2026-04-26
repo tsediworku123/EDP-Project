@@ -68,7 +68,9 @@ namespace HMS.Core.ViewModels.Auth
             var patient = user.Role == UserRole.Patient.ToString() ? DataManager.Patients.FirstOrDefault(p => p.Id == user.PatientId) : null;
             var nurse   = user.Role == UserRole.Nurse.ToString()   ? DataManager.Nurses.FirstOrDefault(n => n.Id == user.NurseId) : null;
             var pharmacist = user.Role == UserRole.Pharmacist.ToString() ? DataManager.Pharmacists.FirstOrDefault(p => p.Id == user.PharmacistId) : null;
-            CurrentSession.Instance.StartSession(user, doctor, patient, nurse, pharmacist);
+            var labTech = user.Role == UserRole.LabTechnician.ToString() ? DataManager.LabTechnicians.FirstOrDefault(l => l.Id == user.LabTechnicianId) : null;
+            var billingStaff = user.Role == UserRole.Billing.ToString() ? DataManager.BillingStaff.FirstOrDefault(s => s.Id == user.BillingStaffId) : null;
+            CurrentSession.Instance.StartSession(user, doctor, patient, nurse, pharmacist, labTech, billingStaff);
 
             OpenShellForRole(user.Role);
         }
@@ -103,6 +105,12 @@ namespace HMS.Core.ViewModels.Auth
                         break;
                     case "Pharmacist":
                         shell = new Views.PharmacistShellView();
+                        break;
+                    case "LabTechnician":
+                        shell = new Views.LabTechnicianShellView();
+                        break;
+                    case "Billing":
+                        shell = new Views.BillingShellView();
                         break;
                     default:
                         ShowError("Unknown role.");

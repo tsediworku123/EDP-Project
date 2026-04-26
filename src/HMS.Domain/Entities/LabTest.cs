@@ -17,5 +17,13 @@ namespace HMS.Core.Domain.Entities
         public string ResultDetails { get; set; }
         public string LabTechnicianName { get; set; }
         public string ClinicalNotes { get; set; }
+        public bool IsUrgent { get; set; } = false;
+        public bool IsCriticalValue { get; set; } = false;
+        public string CriticalValueNote { get; set; }
+        public string PatientName { get; set; }
+        public string RejectionReason { get; set; }
+        public string ReferenceRange { get; set; }
+        public string NumericalValue { get; set; }
+        public string Unit { get; set; } // mg/dL, g/L, etc.
     }
 }

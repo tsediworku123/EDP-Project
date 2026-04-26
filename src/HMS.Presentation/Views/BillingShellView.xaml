@@ -1,0 +1,161 @@
+<Window x:Class="HMS.Core.Views.BillingShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewmodels="clr-namespace:HMS.Core.ViewModels"
+        xmlns:views="clr-namespace:HMS.Core.Views"
+        mc:Ignorable="d" 
+        Title="ALPHA CLINIC | Billing &amp; Accounts" Height="860" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
+        Background="Transparent">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:BillingDashboardViewModel}">
+            <views:BillingDashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:BillingInvoicesViewModel}">
+            <views:BillingInvoicesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:BillingPaymentsViewModel}">
+            <views:BillingPaymentsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:BillingInsuranceViewModel}">
+            <views:BillingInsuranceView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <materialDesign:DialogHost Identifier="BillingDialogHost">
+        <Border CornerRadius="20" Background="White" ClipToBounds="True" Margin="10">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Opacity="0.2" ShadowDepth="0" Color="Black"/>
+            </Border.Effect>
+            <Grid Background="#F8FAFC">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="280" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Sidebar Navigation -->
+                <Border Grid.Column="0" Background="#1E293B" CornerRadius="20,0,0,20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="120" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Brand/Logo -->
+                        <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="30,0" MouseLeftButtonDown="DragWindow" Background="Transparent" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Finance" Foreground="#3B82F6" Width="32" Height="32" VerticalAlignment="Center"/>
+                                <TextBlock Text="ACCOUNTS" FontSize="20" FontWeight="Black" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="Hospital Billing System" FontSize="11" Foreground="#94A3B8" Margin="44,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Navigation Links -->
+                        <StackPanel Grid.Row="1" Margin="15,20,15,0">
+                            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                         Command="{Binding ShowDashboardCommand}"
+                                         IsChecked="True"
+                                         Height="55" Margin="0,5"
+                                         materialDesign:ButtonAssist.CornerRadius="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="ViewDashboard" Width="22" Height="22" Margin="15,0,12,0"/>
+                                    <TextBlock Text="Dashboard" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                         Command="{Binding ShowInvoicesCommand}"
+                                         Height="55" Margin="0,5"
+                                         materialDesign:ButtonAssist.CornerRadius="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="FileInvoice" Width="22" Height="22" Margin="15,0,12,0"/>
+                                    <TextBlock Text="Invoices &amp; Billing" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                         Command="{Binding ShowPaymentsCommand}"
+                                         Height="55" Margin="0,5"
+                                         materialDesign:ButtonAssist.CornerRadius="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="CreditCard" Width="22" Height="22" Margin="15,0,12,0"/>
+                                    <TextBlock Text="Payment History" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource MaterialDesignTabRadioButton}"
+                                         Command="{Binding ShowInsuranceCommand}"
+                                         Height="55" Margin="0,5"
+                                         materialDesign:ButtonAssist.CornerRadius="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="ShieldCheck" Width="22" Height="22" Margin="15,0,12,0"/>
+                                    <TextBlock Text="Insurance Claims" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+
+                        <!-- User Profile & Logout -->
+                        <Border Grid.Row="2" Background="#0F172A" CornerRadius="0,0,0,20" Padding="25">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="45" Height="45" CornerRadius="12" Background="#3B82F6">
+                                        <TextBlock Text="SL" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="12,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding StaffName}" Foreground="White" FontWeight="Bold" FontSize="14"/>
+                                        <TextBlock Text="{Binding StaffPosition}" Foreground="#94A3B8" FontSize="11"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Command="{Binding LogoutCommand}"
+                                        Foreground="#F87171" HorizontalAlignment="Left" Padding="10,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Logout" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Sign Out" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Main Content Area -->
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="64"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Bar -->
+                    <Border Grid.Row="0" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                        <Grid Margin="30,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="40" Height="40" Padding="0" Foreground="#64748B">
+                                    <materialDesign:PackIcon Kind="WindowMinimize" Width="20" Height="20"/>
+                                </Button>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MaximizeWindow" Width="40" Height="40" Padding="0" Foreground="#3B82F6">
+                                    <materialDesign:PackIcon Kind="WindowMaximize" Width="20" Height="20"/>
+                                </Button>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" Click="CloseWindow" Width="40" Height="40" Padding="0" Foreground="#EF5350">
+                                    <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ContentControl Grid.Row="1" Content="{Binding CurrentView}" Margin="30"/>
+                </Grid>
+            </Grid>
+        </Border>
+    </materialDesign:DialogHost>
+</Window>

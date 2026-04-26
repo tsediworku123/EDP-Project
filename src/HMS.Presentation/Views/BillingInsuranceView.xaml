@@ -1,0 +1,44 @@
+<UserControl x:Class="HMS.Core.Views.BillingInsuranceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,25">
+            <TextBlock Text="INSURANCE CLAIMS" FontSize="22" FontWeight="ExtraBold" Foreground="#0F172A"/>
+            <TextBlock Text="Track insurance submissions and approval status." FontSize="14" Foreground="#64748B" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <materialDesign:Card Grid.Row="1" Style="{StaticResource PremiumCard}" Background="White">
+            <DataGrid ItemsSource="{Binding Claims}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                      Background="Transparent" BorderThickness="0" HeadersVisibility="Column" RowHeight="60">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="CLAIM #" Binding="{Binding ClaimNumber}" Width="1.2*" FontWeight="Bold"/>
+                    <DataGridTextColumn Header="PROVIDER" Binding="{Binding InsuranceProvider}" Width="1.5*" />
+                    <DataGridTextColumn Header="BILL ID" Binding="{Binding BillId}" Width="0.7*" />
+                    <DataGridTextColumn Header="SUBMITTED" Binding="{Binding SubmittedDate, StringFormat='{}{0:MMM dd, yyyy}'}" Width="1.2*" />
+                    <DataGridTextColumn Header="CLAIM AMT" Binding="{Binding ClaimAmount, StringFormat='{}{0:C}'}" Width="1*" />
+                    <DataGridTextColumn Header="APPROVED" Binding="{Binding ApprovedAmount, StringFormat='{}{0:C}'}" Width="1*" FontWeight="Bold" Foreground="#3B82F6"/>
+                    <DataGridTemplateColumn Header="STATUS" Width="1.2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="8" Padding="10,4" HorizontalAlignment="Left" Background="#F1F5F9">
+                                    <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>
