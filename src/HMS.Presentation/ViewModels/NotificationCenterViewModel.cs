@@ -23,7 +23,7 @@ namespace HMS.Core.ViewModels
             if (user == null) return;
 
             // In a real app we'd fetch from DB, here we mock some for the UI
-            Notifications.Add(new Notification { Title = "Welcome", Message = $"Hello {user.Username}, welcome back to the HMS portal.", Timestamp = System.DateTime.Now.AddMinutes(-5) });
+            Notifications.Add(new Notification { Title = "Welcome", Message = $"Hello {user.Email}, welcome back to the HMS portal.", Timestamp = System.DateTime.Now.AddMinutes(-5) });
             
             if (user.Role == "Doctor")
             {

@@ -103,7 +103,6 @@ namespace HMS.Core.Views
                         Address = row.Address?.Trim(),
                         BloodGroup = row.BloodType?.Trim() ?? "Unknown",
                         PatientCode = "PAT-PENDING",
-                        Password = "password123",
                         IsActive = true
                     };
 

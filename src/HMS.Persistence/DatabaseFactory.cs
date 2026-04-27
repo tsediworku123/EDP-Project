@@ -5,7 +5,7 @@ namespace HMS.Core.Persistence
 {
     public static class DatabaseFactory
     {
-        public static string ConnectionString { get; set; } = @"Data Source=(localdb)\MAPToolkit;Initial Catalog=HMSDatabase;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=True;Application Name=""SQL Server Management Studio""";
+        public static string ConnectionString { get; set; } = @"Data Source=(localdb)\MAPToolkit;Initial Catalog=HospitalHMS_DB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=False;TrustServerCertificate=True;Application Name=""SQL Server Management Studio""";
 
         public static HMSDbContext CreateContext()
         {

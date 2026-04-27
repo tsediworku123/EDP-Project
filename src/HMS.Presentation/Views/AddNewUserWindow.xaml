@@ -16,16 +16,53 @@
                       Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
 
             <materialDesign:TransitioningContent OpeningEffect="{materialDesign:TransitionEffect FadeIn}">
-                <ComboBox materialDesign:HintAssist.Hint="Link to Doctor *" 
-                          ItemsSource="{Binding Doctors}"
-                          SelectedItem="{Binding SelectedDoctor}"
-                          DisplayMemberPath="FullName"
-                          Visibility="{Binding IsDoctorRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
-                          Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+                <StackPanel>
+                    <ComboBox materialDesign:HintAssist.Hint="Link to Doctor *" 
+                              ItemsSource="{Binding Doctors}"
+                              SelectedItem="{Binding SelectedDoctor}"
+                              DisplayMemberPath="FullName"
+                              Visibility="{Binding IsDoctorRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Link to Patient *" 
+                              ItemsSource="{Binding Patients}"
+                              SelectedItem="{Binding SelectedPatient}"
+                              DisplayMemberPath="FullName"
+                              Visibility="{Binding IsPatientRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Link to Nurse *" 
+                              ItemsSource="{Binding Nurses}"
+                              SelectedItem="{Binding SelectedNurse}"
+                              DisplayMemberPath="FullName"
+                              Visibility="{Binding IsNurseRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Link to Pharmacist *" 
+                              ItemsSource="{Binding Pharmacists}"
+                              SelectedItem="{Binding SelectedPharmacist}"
+                              DisplayMemberPath="FullName"
+                              Visibility="{Binding IsPharmacistRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Link to Lab Technician *" 
+                              ItemsSource="{Binding LabTechs}"
+                              SelectedItem="{Binding SelectedLabTech}"
+                              DisplayMemberPath="FullName"
+                              Visibility="{Binding IsLabTechRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+
+                    <ComboBox materialDesign:HintAssist.Hint="Link to Receptionist/Billing Staff *" 
+                              ItemsSource="{Binding BillingStaffs}"
+                              SelectedItem="{Binding SelectedBillingStaff}"
+                              DisplayMemberPath="FullName"
+                              Visibility="{Binding IsReceptionistRoleSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Style="{StaticResource MaterialDesignFloatingHintComboBox}" Margin="0,8"/>
+                </StackPanel>
             </materialDesign:TransitioningContent>
 
-            <TextBox materialDesign:HintAssist.Hint="Username *" 
-                     Text="{Binding Username}" 
+            <TextBox materialDesign:HintAssist.Hint="Email *" 
+                     Text="{Binding Email}" 
                      Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,8"/>
 
             <PasswordBox materialDesign:HintAssist.Hint="Password *" 
@@ -36,9 +73,7 @@
                          x:Name="ConfirmPassBox"
                          Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" Margin="0,8"/>
 
-            <TextBox materialDesign:HintAssist.Hint="Email (Optional)" 
-                     Text="{Binding Email}" 
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" Margin="0,8"/>
+
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,32,0,0">
                 <Button Style="{StaticResource MaterialDesignFlatButton}" Content="CANCEL" Command="{Binding CancelCommand}" Margin="0,0,8,0"/>

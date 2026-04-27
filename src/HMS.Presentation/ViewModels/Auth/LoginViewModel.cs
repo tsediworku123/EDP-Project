@@ -32,9 +32,9 @@ namespace HMS.Core.ViewModels.Auth
 
         public LoginViewModel()
         {
-            var unitOfWork = new UnitOfWork(DatabaseFactory.CreateContext());
-            _authService = new AuthService(unitOfWork);
             LoginCommand = new RelayCommand(ExecuteLogin);
+            // NOTE: Do NOT create a shared AuthService here.
+            // A fresh context must be created on every login to avoid EF caching stale passwords.
         }
 
         public void ExecuteLoginWithPassword(string password)
@@ -54,7 +54,19 @@ namespace HMS.Core.ViewModels.Auth
             }
 
             IsLoading = true;
-            var user  = _authService.Login(Email, password);
+            var cleanEmail    = Email.Trim();
+            var cleanPassword = password.Trim();
+
+            // CRITICAL: Create a brand-new UnitOfWork + DbContext for EVERY login.
+            // The old shared context cached the user entity, so even after a DB password
+            // update, EF returned the stale cached entity with the old password.
+            User user;
+            using (var freshUow = new UnitOfWork(DatabaseFactory.CreateContext()))
+            {
+                var freshAuth = new AuthService(freshUow);
+                user = freshAuth.Login(cleanEmail, cleanPassword);
+            }
+
             IsLoading = false;
 
             if (user == null)
@@ -71,6 +83,7 @@ namespace HMS.Core.ViewModels.Auth
             var labTech = user.Role == UserRole.LabTechnician.ToString() ? DataManager.LabTechnicians.FirstOrDefault(l => l.Id == user.LabTechnicianId) : null;
             var billingStaff = user.Role == UserRole.Billing.ToString() ? DataManager.BillingStaff.FirstOrDefault(s => s.Id == user.BillingStaffId) : null;
             CurrentSession.Instance.StartSession(user, doctor, patient, nurse, pharmacist, labTech, billingStaff);
+            DataManager.CurrentUser = user;
 
             OpenShellForRole(user.Role);
         }

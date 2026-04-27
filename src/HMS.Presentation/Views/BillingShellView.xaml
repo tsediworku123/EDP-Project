@@ -27,7 +27,7 @@
         </DataTemplate>
     </Window.Resources>
 
-    <materialDesign:DialogHost Identifier="BillingDialogHost">
+    <materialDesign:DialogHost Identifier="MainDialogHost">
         <Border CornerRadius="20" Background="White" ClipToBounds="True" Margin="10">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Opacity="0.2" ShadowDepth="0" Color="Black"/>
@@ -140,6 +140,9 @@
                     <Border Grid.Row="0" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
                         <Grid Margin="30,0">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <Button Command="{Binding NavChangePasswordCommand}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Change Password" Width="40" Height="40" Padding="0" Margin="0,0,10,0">
+                                    <materialDesign:PackIcon Kind="KeyVariant" Foreground="#64748B" Width="20" Height="20" />
+                                </Button>
                                 <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="40" Height="40" Padding="0" Foreground="#64748B">
                                     <materialDesign:PackIcon Kind="WindowMinimize" Width="20" Height="20"/>
                                 </Button>

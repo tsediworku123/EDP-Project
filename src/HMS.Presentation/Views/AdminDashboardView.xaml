@@ -69,7 +69,7 @@
                         <TextBlock Grid.Row="0" Text="RECENT SYSTEM LOGINS" FontWeight="Bold" FontSize="16" Margin="0,0,0,20" />
                         <DataGrid Grid.Row="1" ItemsSource="{Binding RecentUsers}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent" BorderThickness="0">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="USERNAME" Binding="{Binding Username}" Width="*" />
+                                <DataGridTextColumn Header="EMAIL" Binding="{Binding Email}" Width="*" />
                                 <DataGridTextColumn Header="ROLE" Binding="{Binding Role}" Width="*" />
                                 <DataGridTextColumn Header="STATUS" Binding="{Binding IsActive}" Width="100" />
                             </DataGrid.Columns>

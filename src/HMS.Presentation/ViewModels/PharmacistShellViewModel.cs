@@ -4,6 +4,8 @@ using HMS.Core.Views;
 using HMS.Core.Views.Auth;
 using System.Windows;
 using System.Windows.Input;
+using HMS.Core.ViewModels.Auth;
+using MaterialDesignThemes.Wpf;
 
 namespace HMS.Core.ViewModels
 {
@@ -23,6 +25,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavPrescriptionsCommand { get; }
         public ICommand NavInventoryCommand { get; }
         public ICommand NavBillingCommand { get; }
+        public ICommand NavChangePasswordCommand { get; }
         public ICommand NavLogoutCommand { get; }
 
         public PharmacistShellViewModel()
@@ -35,7 +38,8 @@ namespace HMS.Core.ViewModels
             }
             else
             {
-                PharmacistName = "PHARMACIST USER";
+                var email = CurrentSession.Instance.LoggedInUser?.Email ?? "PHARMACIST USER";
+                PharmacistName = email.Split('@')[0].ToUpper();
             }
 
             // Set initial view
@@ -60,6 +64,11 @@ namespace HMS.Core.ViewModels
             NavBillingCommand = new RelayCommand(() => {
                 ActivePageTitle = "PHARMACY BILLING";
                 CurrentView = new PharmacistBillingView();
+            });
+
+            NavChangePasswordCommand = new RelayCommand(async () => {
+                var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
             });
 
             NavLogoutCommand = new RelayCommand(() => {

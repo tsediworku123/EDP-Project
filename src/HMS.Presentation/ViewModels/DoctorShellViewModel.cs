@@ -4,6 +4,8 @@ using HMS.Core.Views;
 using HMS.Core.Views.Auth;
 using System.Windows;
 using System.Windows.Input;
+using HMS.Core.ViewModels.Auth;
+using MaterialDesignThemes.Wpf;
 
 namespace HMS.Core.ViewModels
 {
@@ -24,6 +26,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavPatientsCommand { get; }
         public ICommand NavRecordsCommand { get; }
         public ICommand NavProfileCommand { get; }
+        public ICommand NavChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public DoctorShellViewModel()
@@ -59,6 +62,11 @@ namespace HMS.Core.ViewModels
             NavProfileCommand = new RelayCommand(() => {
                 ActivePageTitle = "MY PROFILE";
                 CurrentView = new DoctorProfileView();
+            });
+
+            NavChangePasswordCommand = new RelayCommand(async () => {
+                var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
             });
 
             LogoutCommand = new RelayCommand(() => {

@@ -71,7 +71,7 @@ namespace HMS.Core.ViewModels
             }
 
             DataManager.SaveLabTests();
-            DataManager.LogAudit(CurrentSession.Instance.LoggedInUser?.Username, $"Uploaded results for test: {Test.TestName}", "Laboratory");
+            DataManager.LogAudit(CurrentSession.Instance.LoggedInUser?.Email, $"Uploaded results for test: {Test.TestName}", "Laboratory");
             
             // Send notification to Patient
             DataManager.Notifications.Add(new Notification

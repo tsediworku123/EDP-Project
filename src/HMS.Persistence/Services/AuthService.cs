@@ -4,6 +4,7 @@ using HMS.Core.Domain.Entities;
 using HMS.Core.Common.Utils;
 using HMS.Core.Domain.Interfaces;
 using HMS.Core.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace HMS.Core.Persistence.Services
 {
@@ -22,14 +23,19 @@ namespace HMS.Core.Persistence.Services
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 return null;
 
-            var user = _unitOfWork.Users.Find(u =>
-                u.Email != null && u.Email.ToLower() == email.Trim().ToLower()
-                && u.IsActive).FirstOrDefault();
+            // Use a completely fresh DbContext for every login check.
+            // This guarantees EF's change-tracking cache cannot serve a stale (old) password.
+            using (var freshContext = DatabaseFactory.CreateContext())
+            {
+                var user = freshContext.Users.AsNoTracking()
+                    .FirstOrDefault(u => u.Email != null
+                        && u.Email.ToLower() == email.Trim().ToLower()
+                        && u.IsActive);
 
-            if (user == null) return null;
+                if (user == null) return null;
 
-            bool valid = PasswordHasher.VerifyPassword(password, user.Password);
-            return valid ? user : null;
+                return PasswordHasher.VerifyPassword(password.Trim(), user.Password) ? user : null;
+            }
         }
 
         public bool ChangePassword(int userId, string oldPassword, string newPassword)
@@ -39,15 +45,34 @@ namespace HMS.Core.Persistence.Services
 
             if (!PasswordHasher.VerifyPassword(oldPassword, user.Password)) return false;
 
-            user.Password = PasswordHasher.HashPassword(newPassword);
-            _unitOfWork.Users.Update(user);
-            _unitOfWork.Complete();
-            return true;
+            string hashedNew = PasswordHasher.HashPassword(newPassword);
+            
+            using (var context = DatabaseFactory.CreateContext())
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        // Use direct SQL to ensure no EF caching/tracking issues
+                        context.Database.ExecuteSqlRaw(
+                            "UPDATE Users SET Password = {0} WHERE Id = {1}", 
+                            hashedNew, userId);
+                        
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+                }
+            }
         }
 
         private void EnsureDefaultAdminExists()
         {
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Admin.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "admin@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
@@ -58,7 +83,7 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Doctor.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "doctor@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
@@ -70,7 +95,7 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Receptionist.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "recep@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
@@ -81,7 +106,7 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Patient.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "patient@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
@@ -93,7 +118,7 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Nurse.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "nurse@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
@@ -105,7 +130,7 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Pharmacist.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "pharmacist@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
@@ -117,11 +142,10 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.LabTechnician.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "labtech@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "labtech",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.LabTechnician.ToString(),
                     Email = "labtech@hospital.com",
@@ -130,11 +154,10 @@ namespace HMS.Core.Persistence.Services
                 });
             }
 
-            if (!_unitOfWork.Users.Find(u => u.Role == UserRole.Billing.ToString()).Any())
+            if (!_unitOfWork.Users.Find(u => u.Email.ToLower() == "billing@hospital.com").Any())
             {
                 _unitOfWork.Users.Add(new User
                 {
-                    Username = "billing",
                     Password = PasswordHasher.HashPassword("1234"),
                     Role = UserRole.Billing.ToString(),
                     Email = "billing@hospital.com",

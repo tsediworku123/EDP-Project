@@ -7,6 +7,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using MaterialDesignThemes.Wpf;
+using System.Text.RegularExpressions;
 
 namespace HMS.Core.ViewModels
 {
@@ -35,6 +36,16 @@ namespace HMS.Core.ViewModels
 
         private string _assignedShift = "Morning";
         public string AssignedShift { get => _assignedShift; set => SetProperty(ref _assignedShift, value); }
+
+        // Login credential fields — only for new registration
+        private string _password;
+        public string Password { get => _password; set => SetProperty(ref _password, value); }
+
+        private string _confirmPassword;
+        public string ConfirmPassword { get => _confirmPassword; set => SetProperty(ref _confirmPassword, value); }
+
+        // Controls whether credential section is visible in the dialog
+        public bool ShowCredentialSection => !_isEditing;
 
         public string DialogTitle => _isEditing ? $"EDIT: {FullName}" : "ADD NEW MEDICAL STAFF";
         public string ActionButtonText => _isEditing ? "SAVE CHANGES" : "REGISTER DOCTOR";
@@ -71,6 +82,41 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
+            // For new doctors, validate login credentials
+            if (!_isEditing)
+            {
+                if (string.IsNullOrWhiteSpace(Email))
+                {
+                    MessageBox.Show("Email is required for new doctor registration.\nThis will be used as the doctor's login credential.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!Regex.IsMatch(Email.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    MessageBox.Show("Please enter a valid email address.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Password) || Password.Length < 4)
+                {
+                    MessageBox.Show("Password is required and must be at least 4 characters.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (Password != ConfirmPassword)
+                {
+                    MessageBox.Show("Passwords do not match.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Check if email is already taken
+                if (DataManager.Users.Any(u => u.Email != null && u.Email.Equals(Email.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageBox.Show("This email is already associated with an existing user account.\nPlease use a different email.", "Duplicate Email", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+
             if (_isEditing && _existingDoctor != null)
             {
                 // Update Existing
@@ -85,7 +131,7 @@ namespace HMS.Core.ViewModels
             }
             else
             {
-                // Create New
+                // Create New Doctor + linked User account
                 var newDoctor = new Doctor
                 {
                     FullName = FullName,
@@ -97,11 +143,13 @@ namespace HMS.Core.ViewModels
                     Address = Address,
                     IsActive = true
                 };
-                DataManager.RegisterDoctor(newDoctor);
+                DataManager.RegisterDoctor(newDoctor, Password);
             }
             DialogHost.CloseDialogCommand.Execute(true, null);
             
-            MessageBox.Show($"Staff records for {FullName} have been updated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Staff records for {FullName} have been updated." +
+                          (!_isEditing ? $"\nLogin account created with email: {Email?.Trim()}" : ""), 
+                          "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

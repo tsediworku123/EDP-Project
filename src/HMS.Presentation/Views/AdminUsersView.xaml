@@ -84,7 +84,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <materialDesign:PackIcon Kind="Search" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Search by username or email..." BorderThickness="0" Background="Transparent" VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" materialDesign:HintAssist.Hint="Search by name or email..." BorderThickness="0" Background="Transparent" VerticalAlignment="Center"/>
                     </Grid>
                 </materialDesign:ColorZone>
 
@@ -131,7 +131,7 @@
                                         <materialDesign:PackIcon Kind="Account" Foreground="#64748B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                     <StackPanel VerticalAlignment="Center" Margin="12,0,0,0">
-                                        <TextBlock Text="{Binding Username}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                        <TextBlock Text="{Binding Converter={StaticResource UserToNameConverter}}" FontWeight="SemiBold" Foreground="#1E293B"/>
                                         <TextBlock Text="{Binding Email}" FontSize="11" Foreground="#64748B"/>
                                     </StackPanel>
                                 </StackPanel>

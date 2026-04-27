@@ -4,6 +4,8 @@ using HMS.Core.Views;
 using HMS.Core.Views.Auth;
 using System.Windows;
 using System.Windows.Input;
+using HMS.Core.ViewModels.Auth;
+using MaterialDesignThemes.Wpf;
 
 namespace HMS.Core.ViewModels
 {
@@ -23,6 +25,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavVitalsCommand { get; }
         public ICommand NavPatientsCommand { get; }
         public ICommand NavAdmissionsCommand { get; }
+        public ICommand NavChangePasswordCommand { get; }
         public ICommand NavLogoutCommand { get; }
 
         public NurseShellViewModel()
@@ -35,7 +38,8 @@ namespace HMS.Core.ViewModels
             }
             else
             {
-                NurseName = "NURSE USER";
+                var email = CurrentSession.Instance.LoggedInUser?.Email ?? "NURSE USER";
+                NurseName = email.Split('@')[0].ToUpper();
             }
 
             // Set initial view
@@ -60,6 +64,11 @@ namespace HMS.Core.ViewModels
             NavAdmissionsCommand = new RelayCommand(() => {
                 ActivePageTitle = "ADMISSIONS";
                 CurrentView = new NurseAdmissionsView();
+            });
+
+            NavChangePasswordCommand = new RelayCommand(async () => {
+                var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
             });
 
             NavLogoutCommand = new RelayCommand(() => {

@@ -8,7 +8,19 @@ namespace HMS.Core.Views
         public AddNewUserWindow()
         {
             InitializeComponent();
-            DataContext = new AddNewUserViewModel(this);
+            var vm = new AddNewUserViewModel(this);
+            vm.PropertyChanged += Vm_PropertyChanged;
+            DataContext = vm;
+        }
+
+        private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Password")
+            {
+                var vm = (AddNewUserViewModel)sender;
+                PassBox.Password = vm.Password;
+                ConfirmPassBox.Password = vm.ConfirmPassword;
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)

@@ -105,7 +105,7 @@ namespace HMS.Core.ViewModels
 
                 DataManager.SaveLabTests();
                 DataManager.SaveNotifications();
-                DataManager.LogAudit(CurrentSession.Instance.LoggedInUser?.Username, $"Rejected sample for {SelectedTest.TestName}. Reason: {reason}", "Laboratory");
+                DataManager.LogAudit(CurrentSession.Instance.LoggedInUser?.Email, $"Rejected sample for {SelectedTest.TestName}. Reason: {reason}", "Laboratory");
                 LoadQueue();
             }
         }

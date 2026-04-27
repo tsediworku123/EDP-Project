@@ -1,13 +1,10 @@
 using HMS.Core.AppLogic.Services;
 using HMS.Core.Common.Utils;
 using HMS.Core.Domain.Entities;
-using HMS.Core.Views;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
-using MaterialDesignThemes.Wpf;
 
 namespace HMS.Core.ViewModels
 {
@@ -44,9 +41,6 @@ namespace HMS.Core.ViewModels
         public int ActivePatientsCount => Patients?.Count(p => p.IsActive) ?? 0;
 
         public ICommand RefreshCommand { get; }
-        public ICommand AddPatientCommand { get; }
-        public ICommand EditPatientCommand { get; }
-        public ICommand DeletePatientCommand { get; }
 
         public DoctorPatientsViewModel()
         {
@@ -54,30 +48,28 @@ namespace HMS.Core.ViewModels
             RefreshData();
 
             RefreshCommand = new RelayCommand(RefreshData);
-            DeletePatientCommand = new RelayCommand<Patient>(DeletePatient);
-            AddPatientCommand = new RelayCommand(AddPatient);
-            EditPatientCommand = new RelayCommand<Patient>(EditPatient);
-        }
-
-        private async void AddPatient()
-        {
-            var view = new AddPatientDialog { DataContext = new AddPatientViewModel() };
-            await DialogHost.Show(view, "MainDialogHost");
-            RefreshData();
-        }
-
-        private async void EditPatient(Patient patient)
-        {
-            if (patient == null) return;
-            var view = new AddPatientDialog { DataContext = new AddPatientViewModel(patient) };
-            await DialogHost.Show(view, "MainDialogHost");
-            RefreshData();
         }
 
         private void RefreshData()
         {
             if (DataManager.Patients != null)
-                Patients = new ObservableCollection<Patient>(DataManager.Patients);
+            {
+                var currentDoctor = CurrentSession.Instance.LoggedInDoctor;
+                if (currentDoctor != null)
+                {
+                    var patientIds = DataManager.Appointments
+                        .Where(a => a.DoctorId == currentDoctor.Id)
+                        .Select(a => a.PatientId)
+                        .Distinct();
+                    
+                    var myPatients = DataManager.Patients.Where(p => patientIds.Contains(p.Id)).ToList();
+                    Patients = new ObservableCollection<Patient>(myPatients);
+                }
+                else
+                {
+                    Patients = new ObservableCollection<Patient>(DataManager.Patients);
+                }
+            }
         }
 
         private void FilterPatients()
@@ -88,25 +80,25 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
+            var currentDoctor = CurrentSession.Instance.LoggedInDoctor;
+            var source = DataManager.Patients.AsEnumerable();
+            
+            if (currentDoctor != null)
+            {
+                var patientIds = DataManager.Appointments
+                    .Where(a => a.DoctorId == currentDoctor.Id)
+                    .Select(a => a.PatientId)
+                    .Distinct();
+                source = source.Where(p => patientIds.Contains(p.Id));
+            }
+
             var query = SearchText.ToLower();
-            var filtered = DataManager.Patients?.Where(p => 
+            var filtered = source.Where(p => 
                 (p.FullName != null && p.FullName.ToLower().Contains(query)) || 
                 (p.PatientCode != null && p.PatientCode.ToLower().Contains(query))
             ).ToList();
 
             Patients = new ObservableCollection<Patient>(filtered ?? new List<Patient>());
-        }
-
-        private void DeletePatient(Patient patient)
-        {
-            if (patient == null) return;
-            var res = MessageBox.Show($"Delete records for {patient.FullName}?", "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (res == MessageBoxResult.Yes)
-            {
-                DataManager.Patients.Remove(patient);
-                DataManager.SaveAllData();
-                RefreshData();
-            }
         }
     }
 }

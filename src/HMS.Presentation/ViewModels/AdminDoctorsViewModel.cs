@@ -80,6 +80,7 @@ namespace HMS.Core.ViewModels
 
         private async void AddDoctor()
         {
+            if (DialogHost.IsDialogOpen("MainDialogHost")) return;
             var view = new AddDoctorDialog
             {
                 DataContext = new AddNewDoctorViewModel()
@@ -92,6 +93,7 @@ namespace HMS.Core.ViewModels
         private async void EditDoctor(Doctor doctor)
         {
             if (doctor == null) return;
+            if (DialogHost.IsDialogOpen("MainDialogHost")) return;
             
             var view = new AddDoctorDialog
             {

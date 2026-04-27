@@ -109,7 +109,10 @@
                                 <TextBlock Text="{Binding ActivePageTitle}" FontSize="18" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding TodayDate}" Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                <TextBlock Text="{Binding TodayDate}" Foreground="#64748B" FontSize="12" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <Button Command="{Binding NavChangePasswordCommand}" Style="{DynamicResource MaterialDesignFlatButton}" ToolTip="Change Password" Width="36" Height="36" Padding="0" Margin="0,0,10,0">
+                                    <materialDesign:PackIcon Kind="KeyVariant" Foreground="#64748B" Width="18" Height="18"/>
+                                </Button>
                                 <Button Style="{DynamicResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="40" Height="40" Padding="0" Foreground="#64748B">
                                     <materialDesign:PackIcon Kind="WindowMinimize" Width="20" Height="20"/>
                                 </Button>

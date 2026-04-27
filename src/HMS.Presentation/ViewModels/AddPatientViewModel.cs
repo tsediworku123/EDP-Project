@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using MaterialDesignThemes.Wpf;
+using System.Text.RegularExpressions;
 
 namespace HMS.Core.ViewModels
 {
@@ -62,6 +63,18 @@ namespace HMS.Core.ViewModels
         private string _preferredLanguage;
         public string PreferredLanguage { get => _preferredLanguage; set => SetProperty(ref _preferredLanguage, value); }
 
+        // Login credential fields — only required for new registration, not editing
+        private string _loginEmail;
+        public string LoginEmail { get => _loginEmail; set => SetProperty(ref _loginEmail, value); }
+
+        private string _password;
+        public string Password { get => _password; set => SetProperty(ref _password, value); }
+
+        private string _confirmPassword;
+        public string ConfirmPassword { get => _confirmPassword; set => SetProperty(ref _confirmPassword, value); }
+
+        // Controls whether credential section is visible in the dialog
+        public bool ShowCredentialSection => !_isEditing;
 
         public string DialogTitle => _isEditing ? $"UPDATE RECORD: {FullName}" : "NEW PATIENT REGISTRATION";
         public string ActionButtonText => _isEditing ? "SAVE UPDATES" : "REGISTER PATIENT";
@@ -104,6 +117,41 @@ namespace HMS.Core.ViewModels
                 return;
             }
 
+            // For new patients, validate login credentials
+            if (!_isEditing)
+            {
+                if (string.IsNullOrWhiteSpace(LoginEmail))
+                {
+                    MessageBox.Show("Login Email is required for new patient registration.\nThis will be used as the patient's login credential.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (!Regex.IsMatch(LoginEmail.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+                {
+                    MessageBox.Show("Please enter a valid email address.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(Password) || Password.Length < 4)
+                {
+                    MessageBox.Show("Password is required and must be at least 4 characters.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (Password != ConfirmPassword)
+                {
+                    MessageBox.Show("Passwords do not match.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Check if email is already taken
+                if (DataManager.Users.Any(u => u.Email != null && u.Email.Equals(LoginEmail.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    MessageBox.Show("This email is already associated with an existing user account.\nPlease use a different email.", "Duplicate Email", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+
             if (_isEditing && _existingPatient != null)
             {
                 _existingPatient.FullName = FullName;
@@ -135,7 +183,7 @@ namespace HMS.Core.ViewModels
                     Phone = Phone,
                     Address = Address,
                     Gender = Gender,
-                    Email = Email,
+                    Email = LoginEmail?.Trim(),
                     AllergiesOrChronicConditions = AllergiesOrChronicConditions,
                     EmergencyContactName = EmergencyName,
                     EmergencyContactPhone = EmergencyPhone,
@@ -145,15 +193,17 @@ namespace HMS.Core.ViewModels
                     CurrentMedications = CurrentMedications,
                     ChronicConditions = ChronicConditions,
                     PreferredLanguage = PreferredLanguage,
-                    IsActive = true,
-                    Password = "password123" // Default password or should be from UI
+                    IsActive = true
                 };
                 
-                DataManager.RegisterPatient(newPatient);
+                // RegisterPatient saves the patient and auto-creates the linked User account
+                DataManager.RegisterPatientWithCredentials(newPatient, LoginEmail.Trim(), Password);
             }
 
             DialogHost.CloseDialogCommand.Execute(true, null);
-            MessageBox.Show($"Registry records for {FullName} have been processed.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show($"Registry records for {FullName} have been processed.\n" +
+                          (!_isEditing ? $"Login account created with email: {LoginEmail?.Trim()}" : ""), 
+                          "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

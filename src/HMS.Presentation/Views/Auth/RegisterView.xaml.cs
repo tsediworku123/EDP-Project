@@ -23,6 +23,12 @@ namespace HMS.Core.Views.Auth
                 MessageBox.Show("Please fill out all required fields (Name, Email, Password).", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+            
+            if (PasswordBox.Password != ConfirmPasswordBox.Password)
+            {
+                MessageBox.Show("Passwords do not match. Please try again.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             try
             {
@@ -31,7 +37,6 @@ namespace HMS.Core.Views.Auth
                     FullName = NameBox.Text.Trim(),
                     Email = EmailBox.Text.Trim(),
                     Phone = PhoneBox.Text.Trim(),
-                    Password = PasswordBox.Password,
                     DateOfBirth = DateTime.Now.AddYears(-20), // Default
                     Gender = "Male", // Default
                     Address = "Not Provided",

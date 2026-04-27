@@ -4,6 +4,8 @@ using HMS.Core.Views;
 using HMS.Core.Views.Auth;
 using System.Windows;
 using System.Windows.Input;
+using HMS.Core.ViewModels.Auth;
+using MaterialDesignThemes.Wpf;
 
 namespace HMS.Core.ViewModels
 {
@@ -23,6 +25,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavDashboardCommand { get; }
         public ICommand NavQueueCommand { get; }
         public ICommand NavHistoryCommand { get; }
+        public ICommand NavChangePasswordCommand { get; }
         public ICommand NavLogoutCommand { get; }
 
         public LabTechnicianShellViewModel()
@@ -35,7 +38,8 @@ namespace HMS.Core.ViewModels
             }
             else
             {
-                LabTechName = "LAB TECHNICIAN";
+                var email = CurrentSession.Instance.LoggedInUser?.Email ?? "LAB TECHNICIAN";
+                LabTechName = email.Split('@')[0].ToUpper();
             }
 
             // Set initial view
@@ -55,6 +59,11 @@ namespace HMS.Core.ViewModels
             NavHistoryCommand = new RelayCommand(() => {
                 ActivePageTitle = "TEST HISTORY";
                 CurrentView = new LabTechHistoryView();
+            });
+
+            NavChangePasswordCommand = new RelayCommand(async () => {
+                var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
             });
 
             NavLogoutCommand = new RelayCommand(() => {

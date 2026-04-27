@@ -28,7 +28,7 @@ namespace HMS.Core.Persistence.Context
         public DbSet<DashboardActivity> DashboardActivities { get; set; }
         public DbSet<Nurse> Nurses { get; set; }
         public DbSet<Pharmacist> Pharmacists { get; set; }
-        public DbSet<InventoryItem> Inventory { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<LabTechnician> LabTechnicians { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<InsuranceClaim> InsuranceClaims { get; set; }
@@ -49,6 +49,9 @@ namespace HMS.Core.Persistence.Context
                           .Select(t => DateTime.Parse(t))
                           .ToList()
                 );
+
+            modelBuilder.Entity<InventoryItem>()
+                .ToTable("InventoryItems");
 
             // Add other configurations if needed
         }

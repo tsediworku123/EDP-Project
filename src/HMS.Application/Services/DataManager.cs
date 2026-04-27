@@ -61,13 +61,12 @@ namespace HMS.Core.AppLogic.Services
                 RunMigrations(context);
             }
 
-            LoadFromDb();
+            ReloadAllData();
 
             if (Doctors.Count < 5) SeedClinicalData();
             if (!Nurses.Any()) SeedNurses();
             if (!Pharmacists.Any()) SeedPharmacists();
             if (!PatientVitals.Any()) SeedPatientVitals();
-            if (!Inventory.Any()) SeedInventory();
             if (!Inventory.Any()) SeedInventory();
             if (!LabTests.Any()) SeedLabTests();
             if (!LabTechnicians.Any()) SeedLabTechnicians();
@@ -81,10 +80,12 @@ namespace HMS.Core.AppLogic.Services
             {
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'NurseId') ALTER TABLE Users ADD NurseId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'PharmacistId') ALTER TABLE Users ADD PharmacistId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'LabTechnicianId') ALTER TABLE Users ADD LabTechnicianId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'BillingStaffId') ALTER TABLE Users ADD BillingStaffId INT NULL");
 
                 // Ensure Nurses table
                 context.Database.ExecuteSqlRaw(@"
-                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Nurses') AND type = 'U')
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Nurses')
                     CREATE TABLE Nurses (
                         Id INT PRIMARY KEY IDENTITY(1,1),
                         FullName NVARCHAR(MAX),
@@ -97,7 +98,7 @@ namespace HMS.Core.AppLogic.Services
 
                 // Ensure Pharmacists table
                 context.Database.ExecuteSqlRaw(@"
-                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Pharmacists') AND type = 'U')
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Pharmacists')
                     CREATE TABLE Pharmacists (
                         Id INT PRIMARY KEY IDENTITY(1,1),
                         FullName NVARCHAR(MAX),
@@ -107,10 +108,10 @@ namespace HMS.Core.AppLogic.Services
                         IsActive BIT NOT NULL DEFAULT 1
                     )");
 
-                // Ensure Inventory table (dbo schema)
+                // Ensure InventoryItems table
                 context.Database.ExecuteSqlRaw(@"
-                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('Inventory') AND type = 'U')
-                    CREATE TABLE Inventory (
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'InventoryItems')
+                    CREATE TABLE InventoryItems (
                         Id INT PRIMARY KEY IDENTITY(1,1),
                         Name NVARCHAR(MAX),
                         Category NVARCHAR(MAX),
@@ -129,12 +130,108 @@ namespace HMS.Core.AppLogic.Services
                         IsActive BIT NOT NULL DEFAULT 1
                     )");
 
-                // Ensure UnitType column in Inventory table
-                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Inventory') AND name = 'UnitType') ALTER TABLE Inventory ADD UnitType NVARCHAR(MAX) NULL");
+                // Ensure LabTechnicians table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'LabTechnicians')
+                    CREATE TABLE LabTechnicians (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        Specialization NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure BillingStaff table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BillingStaff')
+                    CREATE TABLE BillingStaff (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        FullName NVARCHAR(MAX),
+                        Position NVARCHAR(MAX),
+                        Phone NVARCHAR(MAX),
+                        Email NVARCHAR(MAX),
+                        IsActive BIT NOT NULL DEFAULT 1
+                    )");
+
+                // Ensure Bills table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Bills')
+                    CREATE TABLE Bills (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        PatientId INT NOT NULL,
+                        PatientName NVARCHAR(MAX),
+                        BillDate DATETIME2 NOT NULL,
+                        DueDate DATETIME2 NOT NULL,
+                        TotalAmount DECIMAL(18,2) NOT NULL,
+                        PaidAmount DECIMAL(18,2) NOT NULL,
+                        Status NVARCHAR(MAX),
+                        PaymentMethod NVARCHAR(MAX),
+                        InsuranceProvider NVARCHAR(MAX),
+                        InsuranceClaimNumber NVARCHAR(MAX),
+                        Notes NVARCHAR(MAX)
+                    )");
+
+                // Ensure BillItems table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'BillItems')
+                    CREATE TABLE BillItems (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        BillId INT NOT NULL,
+                        Description NVARCHAR(MAX),
+                        UnitPrice DECIMAL(18,2) NOT NULL,
+                        Quantity INT NOT NULL,
+                        TotalPrice DECIMAL(18,2) NOT NULL,
+                        ItemType NVARCHAR(MAX)
+                    )");
+
+                // Ensure Payments table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Payments')
+                    CREATE TABLE Payments (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        BillId INT NOT NULL,
+                        PatientId INT NOT NULL,
+                        Amount DECIMAL(18,2) NOT NULL,
+                        PaymentDate DATETIME2 NOT NULL,
+                        PaymentMethod NVARCHAR(MAX),
+                        TransactionReference NVARCHAR(MAX),
+                        Status NVARCHAR(MAX),
+                        HandledBy NVARCHAR(MAX)
+                    )");
+
+                // Ensure InsuranceClaims table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'InsuranceClaims')
+                    CREATE TABLE InsuranceClaims (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        BillId INT NOT NULL,
+                        PatientId INT NOT NULL,
+                        InsuranceProvider NVARCHAR(MAX),
+                        PolicyNumber NVARCHAR(MAX),
+                        ClaimNumber NVARCHAR(MAX),
+                        ClaimAmount DECIMAL(18,2) NOT NULL,
+                        Status NVARCHAR(MAX),
+                        SubmittedDate DATETIME2 NOT NULL,
+                        LastUpdated DATETIME2 NOT NULL
+                    )");
+
+                // Ensure PrescriptionItems table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PrescriptionItems')
+                    CREATE TABLE PrescriptionItems (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        PrescriptionId INT NOT NULL,
+                        MedicationName NVARCHAR(MAX),
+                        Dosage NVARCHAR(MAX),
+                        Frequency NVARCHAR(MAX),
+                        Duration NVARCHAR(MAX),
+                        Instructions NVARCHAR(MAX)
+                    )");
 
                 // Ensure PatientVitals table
                 context.Database.ExecuteSqlRaw(@"
-                    IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID('PatientVitals') AND type = 'U')
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'PatientVitals')
                     CREATE TABLE PatientVitals (
                         Id INT PRIMARY KEY IDENTITY(1,1),
                         PatientId INT NOT NULL,
@@ -147,14 +244,85 @@ namespace HMS.Core.AppLogic.Services
                         LastUpdated DATETIME2 NOT NULL DEFAULT GETDATE(),
                         UpdatedBy NVARCHAR(MAX)
                     )");
+
+                // Ensure LabTests table
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'LabTests')
+                    CREATE TABLE LabTests (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        PatientId INT NOT NULL,
+                        DoctorId INT NOT NULL,
+                        AppointmentId INT NOT NULL,
+                        TestName NVARCHAR(MAX),
+                        TestCategory NVARCHAR(MAX),
+                        RequestedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+                        CompletedDate DATETIME2 NULL,
+                        Status NVARCHAR(MAX),
+                        ResultSummary NVARCHAR(MAX),
+                        ResultDetails NVARCHAR(MAX),
+                        LabTechnicianName NVARCHAR(MAX),
+                        ClinicalNotes NVARCHAR(MAX),
+                        IsUrgent BIT NOT NULL DEFAULT 0,
+                        IsCriticalValue BIT NOT NULL DEFAULT 0,
+                        CriticalValueNote NVARCHAR(MAX),
+                        PatientName NVARCHAR(MAX),
+                        RejectionReason NVARCHAR(MAX),
+                        ReferenceRange NVARCHAR(MAX),
+                        NumericalValue NVARCHAR(MAX),
+                        Unit NVARCHAR(MAX)
+                    )");
+
+                // Ensure new LabTests columns
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'IsUrgent') ALTER TABLE LabTests ADD IsUrgent BIT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'IsCriticalValue') ALTER TABLE LabTests ADD IsCriticalValue BIT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'CriticalValueNote') ALTER TABLE LabTests ADD CriticalValueNote NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'PatientName') ALTER TABLE LabTests ADD PatientName NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'RejectionReason') ALTER TABLE LabTests ADD RejectionReason NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'ReferenceRange') ALTER TABLE LabTests ADD ReferenceRange NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'NumericalValue') ALTER TABLE LabTests ADD NumericalValue NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('LabTests') AND name = 'Unit') ALTER TABLE LabTests ADD Unit NVARCHAR(MAX) NULL");
+
+                // Ensure Notifications columns
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'PatientId') ALTER TABLE Notifications ADD PatientId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'DoctorId') ALTER TABLE Notifications ADD DoctorId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'UserId') ALTER TABLE Notifications ADD UserId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'Type') ALTER TABLE Notifications ADD Type NVARCHAR(MAX) NULL");
+
+                // Ensure Appointments columns
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'ConsultationFee') ALTER TABLE Appointments ADD ConsultationFee DECIMAL(18,2) NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'IsPaid') ALTER TABLE Appointments ADD IsPaid BIT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'CompletionTime') ALTER TABLE Appointments ADD CompletionTime DATETIME2 NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'WaitTimeMinutes') ALTER TABLE Appointments ADD WaitTimeMinutes INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'NoShowReason') ALTER TABLE Appointments ADD NoShowReason NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'IsEmergency') ALTER TABLE Appointments ADD IsEmergency BIT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'ClinicalNotes') ALTER TABLE Appointments ADD ClinicalNotes NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'AppointmentType') ALTER TABLE Appointments ADD AppointmentType NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'CheckInTime') ALTER TABLE Appointments ADD CheckInTime DATETIME2 NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Diagnosis') ALTER TABLE Appointments ADD Diagnosis NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Prescription') ALTER TABLE Appointments ADD Prescription NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'QueueNumber') ALTER TABLE Appointments ADD QueueNumber NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Priority') ALTER TABLE Appointments ADD Priority NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'ConsultationNote') ALTER TABLE Appointments ADD ConsultationNote NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Recommendation') ALTER TABLE Appointments ADD Recommendation NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'PatientRating') ALTER TABLE Appointments ADD PatientRating INT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'PatientFeedback') ALTER TABLE Appointments ADD PatientFeedback NVARCHAR(MAX) NULL");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Schema migration failed: {ex.Message}");
+                throw new Exception("CRITICAL: Schema migration failed. The database might be corrupted or inaccessible.", ex);
             }
         }
 
-        private static void LoadFromDb()
+        public static void ReloadUsers()
+        {
+            using (var uow = CreateUnitOfWork())
+            {
+                Users = uow.Users.GetAll().ToList();
+            }
+        }
+
+        public static void ReloadAllData()
         {
             using (var uow = CreateUnitOfWork())
             {
@@ -220,13 +388,7 @@ namespace HMS.Core.AppLogic.Services
             SaveNurses();
         }
 
-        public static void SeedInventory()
-        {
-            if (Inventory.Any()) return;
-            Inventory.Add(new InventoryItem { Name = "Paracetamol 500mg", Category = "Analgesics", StockQuantity = 500, SellingUnitPrice = 2.50m });
-            Inventory.Add(new InventoryItem { Name = "Amoxicillin 250mg", Category = "Antibiotics", StockQuantity = 200, SellingUnitPrice = 15.00m });
-            SaveInventory();
-        }
+
 
         public static void SeedLabTests()
         {
@@ -277,7 +439,7 @@ namespace HMS.Core.AppLogic.Services
             SavePayments();
         }
 
-        public static User AuthenticateUser(string username, string password)
+        public static User AuthenticateUser(string email, string password)
         {
             var user = Users.FirstOrDefault(u => u.Email != null && u.Email.ToLower() == email.Trim().ToLower());
             if (user != null && PasswordHasher.VerifyPassword(password, user.Password))
@@ -337,7 +499,7 @@ namespace HMS.Core.AppLogic.Services
                 SavePatients(); 
                 if (patient.Id != 0 && !Users.Any(u => u.PatientId == patient.Id))
                 {
-                    var newUser = new User { Email = string.IsNullOrWhiteSpace(patient.Email) ? $"{patient.Phone}@patient.local" : patient.Email, Password = PasswordHasher.HashPassword(patient.Password ?? "1234"), Role = "Patient", PatientId = patient.Id, IsActive = true };
+                    var newUser = new User { Email = string.IsNullOrWhiteSpace(patient.Email) ? $"{patient.Phone}@patient.local" : patient.Email, Password = PasswordHasher.HashPassword("password123"), Role = "Patient", PatientId = patient.Id, IsActive = true };
                     Users.Add(newUser);
                     SaveUsers();
                 }
@@ -353,7 +515,52 @@ namespace HMS.Core.AppLogic.Services
             }
         }
 
-        public static void RegisterDoctor(Doctor doctor)
+        /// <summary>
+        /// Registers a new patient AND creates a linked User login account atomically.
+        /// The admin provides explicit email + password for the patient's login credentials.
+        /// </summary>
+        public static void RegisterPatientWithCredentials(Patient patient, string loginEmail, string password)
+        {
+            try 
+            {
+                if (!Patients.Contains(patient)) Patients.Add(patient);
+                if (string.IsNullOrEmpty(patient.PatientCode)) patient.PatientCode = "PAT-PENDING"; 
+                SavePatients(); 
+
+                // Create the linked User account with the admin-provided credentials
+                if (patient.Id != 0 && !Users.Any(u => u.PatientId == patient.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = loginEmail,
+                        Password = PasswordHasher.HashPassword(password),
+                        Role = "Patient", 
+                        PatientId = patient.Id, 
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+
+                // Generate patient code
+                if (patient.PatientCode == "PAT-PENDING" && patient.Id != 0) 
+                {
+                    patient.PatientCode = $"PAT-{patient.Id:D5}";
+                    SavePatients();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Patient registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Registers a new doctor AND creates a linked User login account atomically.
+        /// Accepts an optional explicit password; defaults to "Doctor@123" if not provided.
+        /// </summary>
+        public static void RegisterDoctor(Doctor doctor, string password = null)
         {
             try 
             {
@@ -369,7 +576,7 @@ namespace HMS.Core.AppLogic.Services
                     var newUser = new User 
                     { 
                         Email = string.IsNullOrWhiteSpace(doctor.Email) ? $"doctor{doctor.Id}@hospital.com" : doctor.Email,
-                        Password = PasswordHasher.HashPassword("1234"), // Default password
+                        Password = PasswordHasher.HashPassword(password ?? "Doctor@123"),
                         Role = "Doctor", 
                         DoctorId = doctor.Id,
                         IsActive = true 
@@ -422,6 +629,32 @@ namespace HMS.Core.AppLogic.Services
         public static void SaveUsers() { 
             using (var uow = CreateUnitOfWork())
             {
+                // Deduplicate in-memory list before saving
+                var groups = Users
+                    .Where(u => !string.IsNullOrEmpty(u.Email))
+                    .GroupBy(u => u.Email.ToLower().Trim())
+                    .ToList();
+
+                var uniqueUsers = new List<User>();
+                var toRemoveFromDb = new List<User>();
+
+                foreach (var group in groups)
+                {
+                    var sorted = group.OrderByDescending(u => u.Id).ToList();
+                    uniqueUsers.Add(sorted.First());
+                    if (sorted.Count > 1)
+                    {
+                        toRemoveFromDb.AddRange(sorted.Skip(1).Where(u => u.Id != 0));
+                    }
+                }
+
+                // Add any users without emails
+                uniqueUsers.AddRange(Users.Where(u => string.IsNullOrEmpty(u.Email)));
+
+                Users = uniqueUsers;
+
+                foreach (var u in toRemoveFromDb) uow.Users.Remove(u);
+                
                 foreach(var u in Users) {
                     if(u.Id == 0) uow.Users.Add(u);
                     else uow.Users.Update(u);
@@ -553,6 +786,17 @@ namespace HMS.Core.AppLogic.Services
             }
         }
 
+        public static void SaveNotifications() { 
+            using (var uow = CreateUnitOfWork())
+            {
+                foreach(var n in Notifications) {
+                    if(n.Id == 0) uow.Notifications.Add(n);
+                    else uow.Notifications.Update(n);
+                }
+                uow.Complete(); 
+            }
+        }
+
         public static void SeedPatientVitals()
         {
             if (PatientVitals.Any()) return;
@@ -600,21 +844,8 @@ namespace HMS.Core.AppLogic.Services
                 AddInventoryItem(item);
             }
         }
-
-        public static void SaveUsers() { using (var uow = CreateUnitOfWork()) { foreach(var u in Users) { if(u.Id == 0) uow.Users.Add(u); else uow.Users.Update(u); } uow.Complete(); } }
-        public static void SaveDoctors() { using (var uow = CreateUnitOfWork()) { foreach(var d in Doctors) { if(d.Id == 0) uow.Doctors.Add(d); else uow.Doctors.Update(d); } uow.Complete(); } }
-        public static void SavePatients() { using (var uow = CreateUnitOfWork()) { foreach(var p in Patients.ToList()) { if(p.Id == 0) uow.Patients.Add(p); else uow.Patients.Update(p); } uow.Complete(); } }
-        public static void SaveAppointments() { using (var uow = CreateUnitOfWork()) { foreach(var a in Appointments) { if(a.Id == 0) uow.Appointments.Add(a); else uow.Appointments.Update(a); } uow.Complete(); } }
-        public static void SaveFeedbacks() { using (var uow = CreateUnitOfWork()) { foreach(var f in Feedbacks) { if(f.Id == 0) uow.Feedbacks.Add(f); else uow.Feedbacks.Update(f); } uow.Complete(); } }
-        public static void SaveMedicalRecords() { using (var uow = CreateUnitOfWork()) { foreach(var m in MedicalRecords) { if(m.Id == 0) uow.MedicalRecords.Add(m); else uow.MedicalRecords.Update(m); } uow.Complete(); } }
-        public static void SavePrescriptions() { using (var uow = CreateUnitOfWork()) { foreach(var p in Prescriptions) { if(p.Id == 0) uow.Prescriptions.Add(p); else uow.Prescriptions.Update(p); } uow.Complete(); } }
-        public static void SaveLabTests() { using (var uow = CreateUnitOfWork()) { foreach(var l in LabTests) { if(l.Id == 0) uow.LabTests.Add(l); else uow.LabTests.Update(l); } uow.Complete(); } }
-        public static void SaveNotifications() { using (var uow = CreateUnitOfWork()) { foreach(var n in Notifications) { if(n.Id == 0) uow.Notifications.Add(n); else uow.Notifications.Update(n); } uow.Complete(); } }
-        public static void SaveNurses() { using (var uow = CreateUnitOfWork()) { foreach(var n in Nurses) { if(n.Id == 0) uow.Nurses.Add(n); else uow.Nurses.Update(n); } uow.Complete(); } }
-        public static void SavePharmacists() { using (var uow = CreateUnitOfWork()) { foreach(var p in Pharmacists) { if(p.Id == 0) uow.Pharmacists.Add(p); else uow.Pharmacists.Update(p); } uow.Complete(); } }
-        public static void SaveInventory() { using (var uow = CreateUnitOfWork()) { foreach(var i in Inventory) { if(i.Id == 0) uow.InventoryItems.Add(i); else uow.InventoryItems.Update(i); } uow.Complete(); } }
         public static void SaveLabTechnicians() { using (var uow = CreateUnitOfWork()) { foreach(var l in LabTechnicians) { if(l.Id == 0) uow.LabTechnicians.Add(l); else uow.LabTechnicians.Update(l); } uow.Complete(); } }
-        
+
         public static void SaveBills() { using (var uow = CreateUnitOfWork()) { foreach(var b in Bills) { if(b.Id == 0) uow.Bills.Add(b); else uow.Bills.Update(b); } uow.Complete(); } }
         public static void SavePayments() { using (var uow = CreateUnitOfWork()) { foreach(var p in Payments) { if(p.Id == 0) uow.Payments.Add(p); else uow.Payments.Update(p); } uow.Complete(); } }
         public static void SaveInsuranceClaims() { using (var uow = CreateUnitOfWork()) { foreach(var c in InsuranceClaims) { if(c.Id == 0) uow.InsuranceClaims.Add(c); else uow.InsuranceClaims.Update(c); } uow.Complete(); } }

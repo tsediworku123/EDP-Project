@@ -86,7 +86,7 @@
             <DropShadowEffect Color="Black" BlurRadius="25" ShadowDepth="5" Opacity="0.15" />
         </Border.Effect>
 
-        <materialDesign:DialogHost Identifier="LabDialogHost" CloseOnClickAway="True" DialogTheme="Inherit">
+        <materialDesign:DialogHost Identifier="MainDialogHost" CloseOnClickAway="True" DialogTheme="Inherit">
             <!-- Ensure CornerRadius clips internal content perfectly -->
             <Border CornerRadius="20" ClipToBounds="True">
                 <Grid>
@@ -179,9 +179,13 @@
                                     
                                     <!-- Notifications -->
                                     <ToggleButton x:Name="NotificationToggle" Style="{StaticResource MaterialDesignIconToggleButton}" 
-                                                  Foreground="#64748B" Width="40" Height="40" Margin="0,0,15,0">
+                                                  Foreground="#64748B" Width="40" Height="40" Margin="0,0,10,0">
                                         <materialDesign:PackIcon Kind="BellBadgeOutline" Width="20" Height="20" />
                                     </ToggleButton>
+
+                                    <Button Command="{Binding NavChangePasswordCommand}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Change Password" Width="40" Height="40" Padding="0" Margin="0,0,15,0">
+                                        <materialDesign:PackIcon Kind="KeyVariant" Foreground="#64748B" Width="20" Height="20" />
+                                    </Button>
 
                                     <Popup IsOpen="{Binding IsChecked, ElementName=NotificationToggle}" 
                                            StaysOpen="False" AllowsTransparency="True" PlacementTarget="{Binding ElementName=NotificationToggle}" 

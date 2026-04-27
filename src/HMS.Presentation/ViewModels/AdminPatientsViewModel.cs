@@ -63,6 +63,7 @@ namespace HMS.Core.ViewModels
 
         private async void AddPatient()
         {
+            if (DialogHost.IsDialogOpen("MainDialogHost")) return;
             var view = new AddPatientDialog { DataContext = new AddPatientViewModel() };
             await DialogHost.Show(view, "MainDialogHost");
             RefreshData();
@@ -71,6 +72,7 @@ namespace HMS.Core.ViewModels
         private async void EditPatient(Patient patient)
         {
             if (patient == null) return;
+            if (DialogHost.IsDialogOpen("MainDialogHost")) return;
             var view = new AddPatientDialog { DataContext = new AddPatientViewModel(patient) };
             await DialogHost.Show(view, "MainDialogHost");
             RefreshData();

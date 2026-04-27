@@ -13,18 +13,12 @@
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,30">
             <StackPanel>
-                <TextBlock Text="PATIENT DIRECTORY" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
-                <TextBlock Text="Comprehensive database of all registered clinic patients and their records." Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
+                <TextBlock Text="MY PATIENTS" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
+                <TextBlock Text="Patients assigned to you via appointments. Patient registration is managed by the admin." Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
             </StackPanel>
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Button Content="REFRESH" Command="{Binding RefreshCommand}" Style="{DynamicResource MaterialDesignOutlinedButton}" Margin="0,0,10,0" Foreground="#64748B" BorderBrush="#CBD5E1"/>
-                <Button Command="{Binding AddPatientCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" BorderThickness="0" Padding="20,7">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="AccountPlus" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="NEW REGISTRATION" FontWeight="Bold" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
             </StackPanel>
         </Grid>
 
@@ -40,7 +34,7 @@
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountMultiple" Foreground="#3B82F6" Margin="0,0,10,0" VerticalAlignment="Center"/>
                         <TextBlock VerticalAlignment="Center">
-                            <Run Text="Total Patients:" Foreground="#64748B" FontSize="11"/>
+                            <Run Text="My Patients:" Foreground="#64748B" FontSize="11"/>
                             <Run Text="{Binding TotalPatientsCount, Mode=OneWay}" FontWeight="Bold" FontSize="13"/>
                         </TextBlock>
                     </StackPanel>
@@ -62,7 +56,7 @@
             </Border>
         </Grid>
 
-        <!-- Patient Table -->
+        <!-- Patient Table (Read-Only) -->
         <materialDesign:Card Grid.Row="2" UniformCornerRadius="15" materialDesign:ElevationAssist.Elevation="Dp1">
             <DataGrid ItemsSource="{Binding Patients}" AutoGenerateColumns="False" IsReadOnly="True" 
                       CanUserAddRows="False" SelectionMode="Single" Background="Transparent" 
@@ -112,24 +106,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="ACTIONS" Width="120">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Command="{Binding DataContext.EditPatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                            CommandParameter="{Binding}" 
-                                            Style="{DynamicResource MaterialDesignIconButton}" Width="32" Height="32" Padding="0" ToolTip="Edit Profile">
-                                        <materialDesign:PackIcon Kind="AccountEdit" Width="16" Height="16" Foreground="#64748B"/>
-                                    </Button>
-                                    <Button Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                            CommandParameter="{Binding}" 
-                                            Style="{DynamicResource MaterialDesignIconButton}" Width="32" Height="32" Padding="0" ToolTip="Delete Record">
-                                        <materialDesign:PackIcon Kind="Delete" Width="16" Height="16" Foreground="#EF4444"/>
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="GENDER" Binding="{Binding Gender}" Width="100"/>
                 </DataGrid.Columns>
             </DataGrid>
         </materialDesign:Card>

@@ -91,7 +91,15 @@ namespace HMS.Core.ViewModels
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
                 string search = SearchText.ToLower();
-                query = query.Where(u => u.Email != null && u.Email.ToLower().Contains(search));
+                query = query.Where(u => 
+                    (u.Email != null && u.Email.ToLower().Contains(search)) ||
+                    (u.DoctorId.HasValue && DataManager.Doctors.Any(d => d.Id == u.DoctorId.Value && d.FullName.ToLower().Contains(search))) ||
+                    (u.NurseId.HasValue && DataManager.Nurses.Any(n => n.Id == u.NurseId.Value && n.FullName.ToLower().Contains(search))) ||
+                    (u.PatientId.HasValue && DataManager.Patients.Any(p => p.Id == u.PatientId.Value && p.FullName.ToLower().Contains(search))) ||
+                    (u.PharmacistId.HasValue && DataManager.Pharmacists.Any(ph => ph.Id == u.PharmacistId.Value && ph.FullName.ToLower().Contains(search))) ||
+                    (u.LabTechnicianId.HasValue && DataManager.LabTechnicians.Any(lt => lt.Id == u.LabTechnicianId.Value && lt.FullName.ToLower().Contains(search))) ||
+                    (u.BillingStaffId.HasValue && DataManager.BillingStaff.Any(bs => bs.Id == u.BillingStaffId.Value && bs.FullName.ToLower().Contains(search)))
+                );
             }
 
             FilteredUsers = new ObservableCollection<User>(query.OrderBy(u => u.Email));

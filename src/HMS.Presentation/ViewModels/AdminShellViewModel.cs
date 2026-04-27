@@ -5,6 +5,8 @@ using HMS.Core.Views.Auth;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using HMS.Core.ViewModels.Auth;
+using MaterialDesignThemes.Wpf;
 
 namespace HMS.Core.ViewModels
 {
@@ -24,6 +26,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavPatientsCommand { get; }
         public ICommand NavAppointmentsCommand { get; }
         public ICommand NavReportsCommand { get; }
+        public ICommand NavChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public AdminShellViewModel()
@@ -62,6 +65,11 @@ namespace HMS.Core.ViewModels
             NavReportsCommand = new RelayCommand(() => {
                 ActivePageTitle = "REPORTS & EXPORT";
                 CurrentView = new AdminReportsView();
+            });
+
+            NavChangePasswordCommand = new RelayCommand(async () => {
+                var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
             });
 
             LogoutCommand = new RelayCommand(() => {

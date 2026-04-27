@@ -12,7 +12,7 @@ namespace HMS.Core.ViewModels
     public class DoctorDashboardViewModel : ObservableObject
     {
         public ObservableCollection<object> TodayAppointments { get; } = new ObservableCollection<object>();
-        public int TotalPatientCount => DataManager.Patients.Count;
+        public int TotalPatientCount { get; private set; }
         public int AppointmentsTodayCount { get; private set; }
 
         // Event to request a view change in the shell
@@ -53,6 +53,15 @@ namespace HMS.Core.ViewModels
                 .OrderBy(a => a.AppointmentDate);
 
             AppointmentsTodayCount = appointments.Count();
+
+            var uniquePatientIds = DataManager.Appointments
+                .Where(a => a.DoctorId == currentDoctor.Id)
+                .Select(a => a.PatientId)
+                .Distinct()
+                .ToList();
+
+            TotalPatientCount = uniquePatientIds.Count;
+            OnPropertyChanged(nameof(TotalPatientCount));
 
             foreach (var app in appointments)
             {

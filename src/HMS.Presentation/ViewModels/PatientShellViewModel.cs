@@ -1,8 +1,11 @@
 using HMS.Core.AppLogic.Services;
 using HMS.Core.Common.Utils;
 using HMS.Core.Views;
+using HMS.Core.Views.Auth;
+using MaterialDesignThemes.Wpf;
 using System.Windows;
 using System.Windows.Input;
+using HMS.Core.ViewModels.Auth;
 
 namespace HMS.Core.ViewModels
 {
@@ -21,6 +24,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavAppointmentsCommand { get; }
         public ICommand NavHistoryCommand { get; }
         public ICommand NavProfileCommand { get; }
+        public ICommand NavChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
         public ICommand ToggleSidebarCommand { get; }
 
@@ -48,6 +52,10 @@ namespace HMS.Core.ViewModels
             NavProfileCommand = new RelayCommand(() => {
                 CurrentView = new MyProfileView();
                 ActivePageTitle = "MY PROFILE";
+            });
+            NavChangePasswordCommand = new RelayCommand(async () => {
+                var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
             });
             LogoutCommand = new RelayCommand(() => {
                 CurrentSession.Instance.EndSession();
