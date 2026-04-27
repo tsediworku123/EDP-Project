@@ -48,7 +48,9 @@
                 </Grid>
             </materialDesign:Card>
  
-            <Button Grid.Column="1" Style="{StaticResource MaterialDesignRaisedButton}" 
+            <Button Grid.Column="1" 
+                    Command="{Binding DataContext.NavBookingCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    Style="{StaticResource MaterialDesignRaisedButton}" 
                     Background="#3B82F6" BorderBrush="#3B82F6"
                     materialDesign:ButtonAssist.CornerRadius="12" Margin="15,0,0,0" Height="50" Padding="25,0">
                 <StackPanel Orientation="Horizontal">
@@ -109,6 +111,8 @@
                                                 <TextBlock Text="CONFIRMED" Foreground="#1D4ED8" FontWeight="Black" FontSize="10" />
                                             </Border>
                                             <Button Content="DETAILS" Background="#EFF6FF" Foreground="#3B82F6" BorderBrush="#3B82F6" 
+                                                    Command="{Binding DataContext.ViewDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
                                                     Style="{StaticResource MaterialDesignOutlinedButton}" Height="34" Padding="20,0" materialDesign:ButtonAssist.CornerRadius="10" />
                                         </StackPanel>
                                     </Grid>

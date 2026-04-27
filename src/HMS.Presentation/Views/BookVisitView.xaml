@@ -43,7 +43,7 @@
                 <TextBlock Text="FILTER BY SPECIALTY" Style="{StaticResource MaterialDesignOverlineTextBlock}" 
                            FontWeight="Bold" Foreground="#1E293B" Opacity="0.6" Margin="5,0,0,15" />
                 <ListBox ItemsSource="{Binding Specialties}" SelectedItem="{Binding SelectedSpecialty}" 
-                         Style="{StaticResource MaterialDesignChoiceChipPrimaryOutlineListBox}" Padding="0">
+                         Style="{StaticResource MaterialDesignChoiceChipPrimaryListBox}" Padding="0">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                             <Setter Property="Margin" Value="0,0,12,12" />
@@ -248,7 +248,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <RadioButton Style="{StaticResource MaterialDesignOutlineButtonRadioButton}" 
+                                        <RadioButton Style="{StaticResource MaterialDesignChoiceChipRadioButton}" 
                                                      Content="{Binding Time, StringFormat='hh:mm tt'}" 
                                                      Height="48" Margin="6" Padding="0" Cursor="Hand"
                                                      BorderBrush="#2196F3" Foreground="#2196F3"

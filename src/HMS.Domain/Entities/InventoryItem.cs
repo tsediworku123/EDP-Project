@@ -1,7 +1,9 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HMS.Core.Domain.Entities
 {
+    [Table("InventoryItems")]
     public class InventoryItem
     {
         public int Id { get; set; }

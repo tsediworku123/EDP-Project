@@ -55,13 +55,25 @@ namespace HMS.Core.AppLogic.Services
             if (isInitialized) return;
             isInitialized = true;
 
-            using (var context = DatabaseFactory.CreateContext())
+            try 
             {
-                context.Database.EnsureCreated();
-                RunMigrations(context);
-            }
+                using (var context = DatabaseFactory.CreateContext())
+                {
+                    System.Diagnostics.Debug.WriteLine("DEBUG: Calling EnsureCreated...");
+                    context.Database.EnsureCreated();
+                    
+                    System.Diagnostics.Debug.WriteLine("DEBUG: Calling RunMigrations...");
+                    RunMigrations(context);
+                }
 
-            ReloadAllData();
+                System.Diagnostics.Debug.WriteLine("DEBUG: Calling ReloadAllData...");
+                ReloadAllData();
+            }
+            catch (Exception ex)
+            {
+                System.IO.File.AppendAllText("crashlog.txt", $"\nDEBUG TRACE: Error in EnsureLoaded. Step failed. Message: {ex.Message}");
+                throw;
+            }
 
             if (Doctors.Count < 5) SeedClinicalData();
             if (!Nurses.Any()) SeedNurses();
@@ -78,10 +90,81 @@ namespace HMS.Core.AppLogic.Services
         {
             try
             {
+                // Fix: rename legacy 'Inventory' table to 'InventoryItems' if it exists under the old name.
+                // This happened because EF used the class name before the [Table("InventoryItems")] attribute was added.
+                context.Database.ExecuteSqlRaw(@"
+                    IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Inventory')
+                    AND NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'InventoryItems')
+                    EXEC sp_rename 'Inventory', 'InventoryItems'");
+
+                // Ensure DashboardActivities table (registered in DbContext but never in manual migrations)
+                context.Database.ExecuteSqlRaw(@"
+                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'DashboardActivities')
+                    CREATE TABLE DashboardActivities (
+                        Id INT PRIMARY KEY IDENTITY(1,1),
+                        Title NVARCHAR(MAX),
+                        Summary NVARCHAR(MAX),
+                        Date DATETIME2 NOT NULL,
+                        Icon NVARCHAR(MAX)
+                    )");
+
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'NurseId') ALTER TABLE Users ADD NurseId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'PharmacistId') ALTER TABLE Users ADD PharmacistId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'LabTechnicianId') ALTER TABLE Users ADD LabTechnicianId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'BillingStaffId') ALTER TABLE Users ADD BillingStaffId INT NULL");
+
+                // Ensure Doctors table columns (many were added recently)
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'SlotDurationMinutes') ALTER TABLE Doctors ADD SlotDurationMinutes INT NOT NULL DEFAULT 30");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'BufferMinutes') ALTER TABLE Doctors ADD BufferMinutes INT NOT NULL DEFAULT 5");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'SlotStepMinutes') ALTER TABLE Doctors ADD SlotStepMinutes INT NOT NULL DEFAULT 15");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'WorkingHoursStart') ALTER TABLE Doctors ADD WorkingHoursStart TIME NOT NULL DEFAULT '08:00:00'");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'WorkingHoursEnd') ALTER TABLE Doctors ADD WorkingHoursEnd TIME NOT NULL DEFAULT '16:00:00'");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'MaxPatientsPerSlot') ALTER TABLE Doctors ADD MaxPatientsPerSlot INT NOT NULL DEFAULT 1");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'AssignedShift') ALTER TABLE Doctors ADD AssignedShift NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'BreakTimeStart') ALTER TABLE Doctors ADD BreakTimeStart TIME NOT NULL DEFAULT '12:00:00'");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'BreakTimeEnd') ALTER TABLE Doctors ADD BreakTimeEnd TIME NOT NULL DEFAULT '13:00:00'");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'WorkingShifts') ALTER TABLE Doctors ADD WorkingShifts NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'WorkingDays') ALTER TABLE Doctors ADD WorkingDays NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'CalendarColor') ALTER TABLE Doctors ADD CalendarColor NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'PhotoPath') ALTER TABLE Doctors ADD PhotoPath NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'IsOnLeave') ALTER TABLE Doctors ADD IsOnLeave BIT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'CurrentStatus') ALTER TABLE Doctors ADD CurrentStatus NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'BlockedTimes') ALTER TABLE Doctors ADD BlockedTimes NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'Gender') ALTER TABLE Doctors ADD Gender NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'DateOfBirth') ALTER TABLE Doctors ADD DateOfBirth DATETIME2 NOT NULL DEFAULT '1980-01-01'");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'Address') ALTER TABLE Doctors ADD Address NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'PhoneNumber') ALTER TABLE Doctors ADD PhoneNumber NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Doctors') AND name = 'Email') ALTER TABLE Doctors ADD Email NVARCHAR(MAX) NULL");
+
+                // Ensure Patients table columns
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'GrandfatherName') ALTER TABLE Patients ADD GrandfatherName NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'Phone') ALTER TABLE Patients ADD Phone NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'Address') ALTER TABLE Patients ADD Address NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'Gender') ALTER TABLE Patients ADD Gender NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'IsActive') ALTER TABLE Patients ADD IsActive BIT NOT NULL DEFAULT 1");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'AssignedDoctorName') ALTER TABLE Patients ADD AssignedDoctorName NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'NationalIdOrPassport') ALTER TABLE Patients ADD NationalIdOrPassport NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'Email') ALTER TABLE Patients ADD Email NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'AllergiesOrChronicConditions') ALTER TABLE Patients ADD AllergiesOrChronicConditions NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'EmergencyContactName') ALTER TABLE Patients ADD EmergencyContactName NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'EmergencyContactPhone') ALTER TABLE Patients ADD EmergencyContactPhone NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'EmergencyContact') ALTER TABLE Patients ADD EmergencyContact NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'MedicalNotes') ALTER TABLE Patients ADD MedicalNotes NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'BloodGroup') ALTER TABLE Patients ADD BloodGroup NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'CurrentMedications') ALTER TABLE Patients ADD CurrentMedications NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'ChronicConditions') ALTER TABLE Patients ADD ChronicConditions NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'PreferredLanguage') ALTER TABLE Patients ADD PreferredLanguage NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'PhotoPath') ALTER TABLE Patients ADD PhotoPath NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'InsuranceNumber') ALTER TABLE Patients ADD InsuranceNumber NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Patients') AND name = 'PatientCode') ALTER TABLE Patients ADD PatientCode NVARCHAR(MAX) NULL");
+
+                // Ensure Users table columns
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'Password') ALTER TABLE Users ADD Password NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'Role') ALTER TABLE Users ADD Role NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'Email') ALTER TABLE Users ADD Email NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'PatientId') ALTER TABLE Users ADD PatientId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'DoctorId') ALTER TABLE Users ADD DoctorId INT NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'IsActive') ALTER TABLE Users ADD IsActive BIT NOT NULL DEFAULT 1");
 
                 // Ensure Nurses table
                 context.Database.ExecuteSqlRaw(@"
@@ -504,22 +587,45 @@ namespace HMS.Core.AppLogic.Services
 
         public static bool IsSlotAvailable(int doctorId, DateTime slotTime)
         {
-            if (slotTime.TimeOfDay < ClinicOpStart || slotTime.TimeOfDay >= ClinicOpEnd) return false;
-            return !Appointments.Any(a => a.DoctorId == doctorId && a.AppointmentDate == slotTime && a.Status != "Cancelled");
+            var doctor = Doctors.FirstOrDefault(d => d.Id == doctorId);
+            if (doctor == null || !doctor.IsActive || doctor.IsOnLeave) return false;
+
+            // 1. Check Working Days
+            string dayShort = slotTime.ToString("ddd");
+            if (doctor.WorkingDays != null && !doctor.WorkingDays.Contains(dayShort)) return false;
+
+            // 2. Check Working Hours
+            var timeOfDay = slotTime.TimeOfDay;
+            if (timeOfDay < doctor.WorkingHoursStart || timeOfDay >= doctor.WorkingHoursEnd) return false;
+
+            // 3. Check Break Times
+            if (timeOfDay >= doctor.BreakTimeStart && timeOfDay < doctor.BreakTimeEnd) return false;
+
+            // 4. Check Existing Appointments against MaxPatientsPerSlot
+            int currentlyBooked = Appointments.Count(a => a.DoctorId == doctorId && 
+                                                      a.AppointmentDate == slotTime && 
+                                                      a.Status != "Cancelled" && 
+                                                      a.Status != "No Show");
+            
+            return currentlyBooked < doctor.MaxPatientsPerSlot;
         }
 
         public static List<DateTime> GetAvailableTimeSlots(int doctorId, DateTime date)
         {
             var slots = new List<DateTime>();
             var doc = Doctors.FirstOrDefault(d => d.Id == doctorId);
-            if (doc == null || !doc.IsActive) return slots;
-            string dayShort = date.ToString("ddd");
-            if (doc.WorkingDays != null && !doc.WorkingDays.Contains(dayShort)) return slots;
+            if (doc == null || !doc.IsActive || doc.IsOnLeave) return slots;
+
             DateTime current = date.Date.Add(doc.WorkingHoursStart);
             DateTime end = date.Date.Add(doc.WorkingHoursEnd);
+            int interval = doc.SlotDurationMinutes > 0 ? doc.SlotDurationMinutes : 30;
+
             while (current < end) {
-                if (IsSlotAvailable(doctorId, current)) slots.Add(current);
-                current = current.AddMinutes(30);
+                if (IsSlotAvailable(doctorId, current)) 
+                {
+                    slots.Add(current);
+                }
+                current = current.AddMinutes(interval);
             }
             return slots;
         }
@@ -745,6 +851,16 @@ namespace HMS.Core.AppLogic.Services
         public static List<MedicalRecord> GetPatientMedicalRecords(int patientId) => MedicalRecords.Where(r => r.PatientId == patientId).ToList();
         public static List<Notification> GetPatientNotifications(int patientId) => Notifications.Where(n => n.PatientId == patientId).ToList();
         public static List<Feedback> GetDoctorFeedback(int doctorId) => Feedbacks.Where(f => f.DoctorId == doctorId).ToList();
+        public static List<Prescription> GetPatientPrescriptions(int patientId) => Prescriptions.Where(p => p.PatientId == patientId).ToList();
+        public static List<LabTest> GetPatientLabTests(int patientId) => LabTests.Where(t => t.PatientId == patientId).ToList();
+        public static List<Bill> GetPatientBills(int patientId) => Bills.Where(b => b.PatientId == patientId).ToList();
+        public static void UpdateBill(Bill bill) { SaveBills(); } 
+        public static Doctor GetDoctorById(int doctorId) => Doctors.FirstOrDefault(d => d.Id == doctorId);
+        public static List<PrescriptionItem> GetItemsForPrescription(int prescriptionId)
+        {
+            var p = Prescriptions.FirstOrDefault(x => x.Id == prescriptionId);
+            return p?.Items ?? new List<PrescriptionItem>();
+        }
 
         public static Appointment GetLastPatientVisit(int patientId)
         {
@@ -818,7 +934,7 @@ namespace HMS.Core.AppLogic.Services
                     if(d.Id == 0) uow.Doctors.Add(d);
                     else uow.Doctors.Update(d);
                 }
-                uow.Complete(); 
+                uow.Complete();
             }
         }
 
@@ -1006,6 +1122,7 @@ namespace HMS.Core.AppLogic.Services
         public static void SavePayments() { using (var uow = CreateUnitOfWork()) { foreach(var p in Payments) { if(p.Id == 0) uow.Payments.Add(p); else uow.Payments.Update(p); } uow.Complete(); } }
         public static void SaveInsuranceClaims() { using (var uow = CreateUnitOfWork()) { foreach(var c in InsuranceClaims) { if(c.Id == 0) uow.InsuranceClaims.Add(c); else uow.InsuranceClaims.Update(c); } uow.Complete(); } }
         public static void SaveBillingStaff() { using (var uow = CreateUnitOfWork()) { foreach(var s in BillingStaff) { if(s.Id == 0) uow.BillingStaff.Add(s); else uow.BillingStaff.Update(s); } uow.Complete(); } }
+
 
         public static void BackupData() { LastBackupTime = DateTime.Now; }
     }

@@ -4,4 +4,8 @@
     <RootNamespace>HMS.Core.Domain</RootNamespace>
     <AssemblyName>HMS.Core.Domain</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+  </ItemGroup>
 </Project>

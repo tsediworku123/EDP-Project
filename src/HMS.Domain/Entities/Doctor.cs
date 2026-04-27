@@ -19,6 +19,7 @@ namespace HMS.Core.Domain.Entities
         public int SlotStepMinutes { get; set; } = 15;
         public TimeSpan WorkingHoursStart { get; set; } = new TimeSpan(8, 0, 0); 
         public TimeSpan WorkingHoursEnd { get; set; } = new TimeSpan(16, 0, 0); 
+        public int MaxPatientsPerSlot { get; set; } = 1; 
         
         public string AssignedShift { get; set; } = "Morning";
         public TimeSpan BreakTimeStart { get; set; } = new TimeSpan(12, 0, 0);

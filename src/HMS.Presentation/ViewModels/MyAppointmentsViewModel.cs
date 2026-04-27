@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace HMS.Core.ViewModels
 {
@@ -24,9 +25,25 @@ namespace HMS.Core.ViewModels
 
         private List<Appointment> _allAppointments = new List<Appointment>();
 
+        public ICommand ViewDetailsCommand { get; }
+
         public MyAppointmentsViewModel()
         {
+            ViewDetailsCommand = new RelayCommand<AppointmentDisplay>(ExecuteViewDetails);
             LoadData();
+        }
+
+        private void ExecuteViewDetails(AppointmentDisplay appt)
+        {
+            if (appt == null) return;
+            
+            string message = $"Appointment Details:\n\n" +
+                             $"Date: {appt.AppointmentDate.ToString("f")}\n" +
+                             $"Doctor: {appt.DoctorName} ({appt.DoctorSpecialty})\n" +
+                             $"Status: {appt.Status}\n" +
+                             $"Reason: {appt.Reason}";
+                             
+            MessageBox.Show(message, "Appointment Details", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LoadData()

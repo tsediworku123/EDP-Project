@@ -70,6 +70,16 @@ This document outlines the architecture, actors, and current implementation stat
 *   [ ] Manage users (doctors, nurses, staff) and permissions.
 *   [ ] Monitor system usage and audit logs.
 
+### 8. 👤 Patient (🟢 Fully Integrated)
+**Role:** The center of the healthcare system, empowered with self-service tools.
+**Key Functionalities:**
+*   [x] **Intelligent Dashboard**: Real-time statistics on pending medications, unpaid bills, and upcoming clinical events.
+*   [x] **Combined Activity Feed**: Unified timeline of diagnoses, test results, and prescriptions.
+*   [x] **Smart Booking**: Real-world appointment scheduling with doctor specialty filtering and slot validation.
+*   [x] **Medication Tracking**: Live status updates for prescribed vs. dispensed medicines.
+*   [x] **Lab Results Portal**: Instant access to diagnostic findings, reference ranges, and clinical notes.
+*   [x] **Financial Management**: Integrated billing view with simulated payment processing to settle clinic invoices.
+
 ---
 
 ## 🧩 Core Modules Integration Flow

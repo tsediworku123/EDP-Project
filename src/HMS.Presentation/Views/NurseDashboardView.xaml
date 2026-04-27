@@ -54,25 +54,28 @@
                     </Grid.RowDefinitions>
                     <TextBlock Text="TODAY'S CARE SCHEDULE" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,20"/>
                     
-                    <ItemsControl Grid.Row="1">
-                        <!-- Placeholder for schedule items -->
-                        <Border Background="#F8FAFC" Padding="15" CornerRadius="10" Margin="0,0,0,10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Border Width="40" Height="40" Background="#DBEAFE" CornerRadius="20">
-                                    <materialDesign:PackIcon Kind="ClipboardFileOutline" Foreground="#3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding CareSchedule}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8FAFC" Padding="15" CornerRadius="10" Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Width="40" Height="40" Background="#DBEAFE" CornerRadius="20">
+                                            <materialDesign:PackIcon Kind="ClipboardFileOutline" Foreground="#3B82F6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Margin="15,0">
+                                            <TextBlock Text="{Binding PatientName, StringFormat='Checkup: {0}'}" FontWeight="Bold" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding Description}" FontSize="12" Foreground="#64748B" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding Time}" Foreground="#94A3B8" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                    </Grid>
                                 </Border>
-                                <StackPanel Grid.Column="1" Margin="15,0">
-                                    <TextBlock Text="Vitals Check: Room 204 (John Doe)" FontWeight="Bold" Foreground="#1E293B"/>
-                                    <TextBlock Text="Routine morning monitoring" FontSize="12" Foreground="#64748B"/>
-                                </StackPanel>
-                                <TextBlock Grid.Column="2" Text="09:00 AM" Foreground="#94A3B8" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                            </Grid>
-                        </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </Grid>
             </materialDesign:Card>
