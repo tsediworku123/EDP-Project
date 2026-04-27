@@ -84,5 +84,11 @@ namespace HMS.Core.Infrastructure.Repositories.Json
 
         public List<string> LoadDepartments() => LoadData<string>("departments.json");
         public void SaveDepartments(List<string> departments) => SaveData(departments, "departments.json");
+
+        public List<Prescription> LoadPrescriptions() => LoadData<Prescription>("prescriptions.json");
+        public void SavePrescriptions(List<Prescription> prescriptions) => SaveData(prescriptions, "prescriptions.json");
+
+        public List<LabTest> LoadLabTests() => LoadData<LabTest>("labtests.json");
+        public void SaveLabTests(List<LabTest> labTests) => SaveData(labTests, "labtests.json");
     }
 }

@@ -1,0 +1,36 @@
+<UserControl x:Class="HMS.Core.Views.BillingPaymentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,25">
+            <TextBlock Text="TRANSACTION HISTORY" FontSize="22" FontWeight="ExtraBold" Foreground="#0F172A"/>
+            <TextBlock Text="Log of all payments received and processed." FontSize="14" Foreground="#64748B" Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <materialDesign:Card Grid.Row="1" Style="{StaticResource PremiumCard}" Background="White">
+            <DataGrid ItemsSource="{Binding Payments}" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                      Background="Transparent" BorderThickness="0" HeadersVisibility="Column" RowHeight="55">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="TXN ID" Binding="{Binding TransactionId}" Width="1.5*" />
+                    <DataGridTextColumn Header="BILL ID" Binding="{Binding BillId}" Width="0.8*" />
+                    <DataGridTextColumn Header="DATE &amp; TIME" Binding="{Binding PaymentDate, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}" Width="1.5*" />
+                    <DataGridTextColumn Header="AMOUNT" Binding="{Binding Amount, StringFormat='{}{0:C}'}" Width="1*" FontWeight="Bold" Foreground="#10B981"/>
+                    <DataGridTextColumn Header="METHOD" Binding="{Binding PaymentMethod}" Width="1*" />
+                    <DataGridTextColumn Header="STATUS" Binding="{Binding Status}" Width="1*" />
+                    <DataGridTextColumn Header="HANDLED BY" Binding="{Binding HandledBy}" Width="1*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

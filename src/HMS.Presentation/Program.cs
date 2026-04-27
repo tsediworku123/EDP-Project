@@ -11,6 +11,9 @@ namespace HMS.Core
         {
             try 
             {
+                // Initialize Data and Database
+                HMS.Core.AppLogic.Services.DataManager.EnsureLoaded();
+
                 var app = new App();
                 app.ShutdownMode = ShutdownMode.OnLastWindowClose;
                 

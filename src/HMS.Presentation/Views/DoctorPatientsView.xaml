@@ -1,32 +1,137 @@
 <UserControl x:Class="HMS.Core.Views.DoctorPatientsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Background="White">
-    <Grid Margin="40">
-        <StackPanel>
-            <TextBlock Text="MY PATIENTS" FontSize="24" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,20"/>
-            <ItemsControl ItemsSource="{Binding Patients}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding FullName}" FontWeight="Bold" FontSize="16"/>
-                                    <TextBlock Text="{Binding Email}" Opacity="0.6"/>
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Background="#F1F5F9">
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,30">
+            <StackPanel>
+                <TextBlock Text="PATIENT DIRECTORY" Style="{DynamicResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
+                <TextBlock Text="Comprehensive database of all registered clinic patients and their records." Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" />
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button Content="REFRESH" Command="{Binding RefreshCommand}" Style="{DynamicResource MaterialDesignOutlinedButton}" Margin="0,0,10,0" Foreground="#64748B" BorderBrush="#CBD5E1"/>
+                <Button Command="{Binding AddPatientCommand}" Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}" Background="#10B981" BorderThickness="0" Padding="20,7">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="AccountPlus" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="NEW REGISTRATION" FontWeight="Bold" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Stats & Search -->
+        <Grid Grid.Row="1" Margin="0,0,0,25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="400" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+                <Border Background="White" CornerRadius="8" Padding="15,10" Margin="0,0,15,0" materialDesign:ElevationAssist.Elevation="Dp1">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="AccountMultiple" Foreground="#3B82F6" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="Total Patients:" Foreground="#64748B" FontSize="11"/>
+                            <Run Text="{Binding TotalPatientsCount, Mode=OneWay}" FontWeight="Bold" FontSize="13"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <Border Grid.Column="1" Background="White" CornerRadius="20" Padding="15,0" materialDesign:ElevationAssist.Elevation="Dp1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="Search" VerticalAlignment="Center" Foreground="#94A3B8" Width="18" Height="18"/>
+                    <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             materialDesign:TextFieldAssist.DecorationVisibility="Collapsed" 
+                             BorderThickness="0" VerticalAlignment="Center" Margin="10,0,0,0" 
+                             materialDesign:HintAssist.Hint="Search by name or patient code..." />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Patient Table -->
+        <materialDesign:Card Grid.Row="2" UniformCornerRadius="15" materialDesign:ElevationAssist.Elevation="Dp1">
+            <DataGrid ItemsSource="{Binding Patients}" AutoGenerateColumns="False" IsReadOnly="True" 
+                      CanUserAddRows="False" SelectionMode="Single" Background="Transparent" 
+                      BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="None">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource MaterialDesignDataGridColumnHeader}">
+                        <Setter Property="Background" Value="#F8FAFC"/>
+                        <Setter Property="Height" Value="50"/>
+                        <Setter Property="Padding" Value="15,0"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Foreground" Value="#475569"/>
+                    </Style>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                        <Setter Property="Height" Value="60"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F1F5F9"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="NAME" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Width="32" Height="32" CornerRadius="16" Background="#E2E8F0" Margin="0,0,12,0">
+                                        <materialDesign:PackIcon Kind="Account" Foreground="#64748B" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding FullName}" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#1E293B"/>
                                 </StackPanel>
-                                <Button Grid.Column="1" Content="DETAILS" Margin="10,0,0,0" Padding="15,5" Height="30"
-                                        Background="#3B82F6" Foreground="White" BorderThickness="0"
-                                        Command="{Binding DataContext.ViewPatientDetailsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                        CommandParameter="{Binding}" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="ID CODE" Binding="{Binding PatientCode}" Width="130"/>
+                    <DataGridTextColumn Header="PHONE" Binding="{Binding Phone}" Width="150"/>
+                    
+                    <DataGridTemplateColumn Header="BLOOD GROUP" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#FEF2F2" CornerRadius="4" Padding="8,4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding BloodGroup}" Foreground="#EF4444" FontWeight="Bold" FontSize="11"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="ACTIONS" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Command="{Binding DataContext.EditPatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                            CommandParameter="{Binding}" 
+                                            Style="{DynamicResource MaterialDesignIconButton}" Width="32" Height="32" Padding="0" ToolTip="Edit Profile">
+                                        <materialDesign:PackIcon Kind="AccountEdit" Width="16" Height="16" Foreground="#64748B"/>
+                                    </Button>
+                                    <Button Command="{Binding DataContext.DeletePatientCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                            CommandParameter="{Binding}" 
+                                            Style="{DynamicResource MaterialDesignIconButton}" Width="32" Height="32" Padding="0" ToolTip="Delete Record">
+                                        <materialDesign:PackIcon Kind="Delete" Width="16" Height="16" Foreground="#EF4444"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:Card>
     </Grid>
 </UserControl>

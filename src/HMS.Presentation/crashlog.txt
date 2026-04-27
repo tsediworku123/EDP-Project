@@ -1,0 +1,7 @@
+CRITICAL STARTUP ERROR:
+The type initializer for 'HMS.Core.AppLogic.Services.DataManager' threw an exception.
+
+   at HMS.Core.AppLogic.Services.DataManager.EnsureLoaded()
+   at HMS.Core.Program.Main() in C:\Users\Yasino\OneDrive\Desktop\Our_project\EDP-Project\src\HMS.Presentation\Program.cs:line 15
+
+Inner: Invalid object name 'Inventory'.

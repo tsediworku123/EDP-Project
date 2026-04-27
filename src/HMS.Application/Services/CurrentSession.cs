@@ -14,20 +14,32 @@ namespace HMS.Core.AppLogic.Services
         public User   LoggedInUser   { get; private set; }
         public Doctor LoggedInDoctor { get; private set; }
         public Patient LoggedInPatient { get; private set; }
+        public Nurse LoggedInNurse { get; private set; }
+        public Pharmacist LoggedInPharmacist { get; private set; }
+        public LabTechnician LoggedInLabTechnician { get; private set; }
+        public BillingStaff LoggedInBillingStaff { get; private set; }
 
         public bool IsLoggedIn => LoggedInUser != null;
         public bool IsAdmin    => LoggedInUser?.Role == UserRole.Admin.ToString();
         public bool IsDoctor   => LoggedInUser?.Role == UserRole.Doctor.ToString();
         public bool IsPatient  => LoggedInUser?.Role == UserRole.Patient.ToString();
+        public bool IsNurse    => LoggedInUser?.Role == UserRole.Nurse.ToString();
+        public bool IsPharmacist => LoggedInUser?.Role == UserRole.Pharmacist.ToString();
+        public bool IsLabTechnician => LoggedInUser?.Role == UserRole.LabTechnician.ToString();
+        public bool IsBilling => LoggedInUser?.Role == UserRole.Billing.ToString();
 
         public event EventHandler SessionStarted;
         public event EventHandler SessionEnded;
 
-        public void StartSession(User user, Doctor doctor = null, Patient patient = null)
+        public void StartSession(User user, Doctor doctor = null, Patient patient = null, Nurse nurse = null, Pharmacist pharmacist = null, LabTechnician labTechnician = null, BillingStaff billingStaff = null)
         {
             LoggedInUser    = user;
             LoggedInDoctor  = doctor;
             LoggedInPatient = patient;
+            LoggedInNurse   = nurse;
+            LoggedInPharmacist = pharmacist;
+            LoggedInLabTechnician = labTechnician;
+            LoggedInBillingStaff = billingStaff;
             SessionStarted?.Invoke(this, EventArgs.Empty);
         }
 
@@ -36,6 +48,10 @@ namespace HMS.Core.AppLogic.Services
             LoggedInUser    = null;
             LoggedInDoctor  = null;
             LoggedInPatient = null;
+            LoggedInNurse   = null;
+            LoggedInPharmacist = null;
+            LoggedInLabTechnician = null;
+            LoggedInBillingStaff = null;
             SessionEnded?.Invoke(this, EventArgs.Empty);
         }
     }

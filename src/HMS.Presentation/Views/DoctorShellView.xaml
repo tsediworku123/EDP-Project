@@ -82,9 +82,18 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="NavBtnProfile" TargetType="Button" BasedOn="{StaticResource DoctorNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY PROFILE">
+                    <Setter Property="Background" Value="#3B82F6" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
-    <Grid>
+    <materialDesign:DialogHost Identifier="MainDialogHost" CloseOnClickAway="True">
+        <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="240" />
             <ColumnDefinition Width="*" />
@@ -115,6 +124,7 @@
                     <Button Command="{Binding NavAppointmentsCommand}" Style="{StaticResource NavBtnAppointments}" Tag="CalendarRange" Content="APPOINTMENTS" />
                     <Button Command="{Binding NavPatientsCommand}" Style="{StaticResource NavBtnPatients}" Tag="AccountGroup" Content="MY PATIENTS" />
                     <Button Command="{Binding NavRecordsCommand}" Style="{StaticResource NavBtnRecords}" Tag="ClipboardFileOutline" Content="MEDICAL RECORDS" />
+                    <Button Command="{Binding NavProfileCommand}" Style="{StaticResource NavBtnProfile}" Tag="AccountCircleOutline" Content="MY PROFILE" />
                 </StackPanel>
 
                 <Button Grid.Row="2" Command="{Binding LogoutCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="Logout" Margin="10,0,10,30">
@@ -150,5 +160,6 @@
 
             <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
         </Grid>
-    </Grid>
+        </Grid>
+    </materialDesign:DialogHost>
 </Window>

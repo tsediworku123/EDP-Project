@@ -1,7 +1,9 @@
-using HMS.Core.AppLogic.Services;
-using HMS.Core.Domain.Enums;
+using HMS.Core.Persistence;
+using HMS.Core.Persistence.Repositories;
+using HMS.Core.Persistence.Services;
 using HMS.Core.Domain.Entities;
-using HMS.Core.Infrastructure.Repositories.Json;
+using HMS.Core.Domain.Enums;
+using HMS.Core.AppLogic.Services;
 using HMS.Core.Common.Utils;
 using HMS.Core.ViewModels.Base;
 using System.Windows;
@@ -12,11 +14,10 @@ namespace HMS.Core.ViewModels.Auth
 {
     public class LoginViewModel : BaseViewModel
     {
-        private readonly AuthService    _authService;
-        private readonly JsonDataService _dataService;
+        private readonly AuthService _authService;
 
-        private string _username;
-        public string Username { get => _username; set => SetProperty(ref _username, value); }
+        private string _email;
+        public string Email { get => _email; set => SetProperty(ref _email, value); }
 
         private string _errorMessage;
         public string ErrorMessage { get => _errorMessage; set => SetProperty(ref _errorMessage, value); }
@@ -31,8 +32,8 @@ namespace HMS.Core.ViewModels.Auth
 
         public LoginViewModel()
         {
-            _dataService = new JsonDataService();
-            _authService = new AuthService(_dataService);
+            var unitOfWork = new UnitOfWork(DatabaseFactory.CreateContext());
+            _authService = new AuthService(unitOfWork);
             LoginCommand = new RelayCommand(ExecuteLogin);
         }
 
@@ -41,9 +42,9 @@ namespace HMS.Core.ViewModels.Auth
             HasError     = false;
             ErrorMessage = "";
 
-            if (string.IsNullOrWhiteSpace(Username))
+            if (string.IsNullOrWhiteSpace(Email))
             {
-                ShowError("Please enter your username.");
+                ShowError("Please enter your email.");
                 return;
             }
             if (string.IsNullOrWhiteSpace(password))
@@ -53,18 +54,23 @@ namespace HMS.Core.ViewModels.Auth
             }
 
             IsLoading = true;
-            var user  = _authService.Login(Username, password);
+            var user  = _authService.Login(Email, password);
             IsLoading = false;
 
             if (user == null)
             {
-                ShowError("Invalid username or password. Please try again.");
+                ShowError("Invalid email or password. Please try again.");
                 return;
             }
 
-            var doctor  = user.Role == UserRole.Doctor.ToString()  ? _dataService.LoadDoctors().Find(d => d.Id == user.DoctorId) : null;
-            var patient = user.Role == UserRole.Patient.ToString() ? _dataService.LoadPatients().Find(p => p.Id == user.PatientId) : null;
-            CurrentSession.Instance.StartSession(user, doctor, patient);
+            DataManager.EnsureLoaded();
+            var doctor  = user.Role == UserRole.Doctor.ToString()  ? DataManager.Doctors.FirstOrDefault(d => d.Id == user.DoctorId) : null;
+            var patient = user.Role == UserRole.Patient.ToString() ? DataManager.Patients.FirstOrDefault(p => p.Id == user.PatientId) : null;
+            var nurse   = user.Role == UserRole.Nurse.ToString()   ? DataManager.Nurses.FirstOrDefault(n => n.Id == user.NurseId) : null;
+            var pharmacist = user.Role == UserRole.Pharmacist.ToString() ? DataManager.Pharmacists.FirstOrDefault(p => p.Id == user.PharmacistId) : null;
+            var labTech = user.Role == UserRole.LabTechnician.ToString() ? DataManager.LabTechnicians.FirstOrDefault(l => l.Id == user.LabTechnicianId) : null;
+            var billingStaff = user.Role == UserRole.Billing.ToString() ? DataManager.BillingStaff.FirstOrDefault(s => s.Id == user.BillingStaffId) : null;
+            CurrentSession.Instance.StartSession(user, doctor, patient, nurse, pharmacist, labTech, billingStaff);
 
             OpenShellForRole(user.Role);
         }
@@ -93,6 +99,18 @@ namespace HMS.Core.ViewModels.Auth
                         break;
                     case "Patient":
                         shell = new Views.PatientShellView();
+                        break;
+                    case "Nurse":
+                        shell = new Views.NurseShellView();
+                        break;
+                    case "Pharmacist":
+                        shell = new Views.PharmacistShellView();
+                        break;
+                    case "LabTechnician":
+                        shell = new Views.LabTechnicianShellView();
+                        break;
+                    case "Billing":
+                        shell = new Views.BillingShellView();
                         break;
                     default:
                         ShowError("Unknown role.");

@@ -23,13 +23,14 @@ namespace HMS.Core.ViewModels
         public ICommand NavAppointmentsCommand { get; }
         public ICommand NavPatientsCommand { get; }
         public ICommand NavRecordsCommand { get; }
+        public ICommand NavProfileCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public DoctorShellViewModel()
         {
             DataManager.EnsureLoaded();
             var doctor = CurrentSession.Instance.LoggedInDoctor;
-            DoctorName = doctor != null ? $"DR. {doctor.FullName.ToUpper()}" : "DOCTOR";
+            DoctorName = doctor != null ? doctor.FullName.ToUpper() : "DOCTOR";
 
             // Set initial view
             ActivePageTitle = "DASHBOARD";
@@ -53,6 +54,11 @@ namespace HMS.Core.ViewModels
             NavRecordsCommand = new RelayCommand(() => {
                 ActivePageTitle = "MEDICAL RECORDS";
                 CurrentView = new DoctorRecordsView();
+            });
+
+            NavProfileCommand = new RelayCommand(() => {
+                ActivePageTitle = "MY PROFILE";
+                CurrentView = new DoctorProfileView();
             });
 
             LogoutCommand = new RelayCommand(() => {

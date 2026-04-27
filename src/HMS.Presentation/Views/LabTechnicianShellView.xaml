@@ -1,0 +1,214 @@
+<Window x:Class="HMS.Core.Views.LabTechnicianShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:HMS.Core.ViewModels"
+        xmlns:Views="clr-namespace:HMS.Core.Views"
+        Title="ALPHA CLINIC | Lab Portal" Height="850" Width="1400"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" AllowsTransparency="True" ResizeMode="CanResizeWithGrip"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="Transparent">
+
+    <Window.Resources>
+        <!-- Nav Button Style for Premium Slate/Blue Aesthetic -->
+        <Style x:Key="LabNavButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#94A3B8" />   <!-- Slate 400 -->
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Height" Value="54" />
+            <Setter Property="Margin" Value="15,6" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="RootBorder" Background="{TemplateBinding Background}" CornerRadius="12">
+                            <Grid Margin="15,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <materialDesign:PackIcon x:Name="NavIcon" Kind="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                                                       Width="24" Height="24" VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                       Foreground="{TemplateBinding Foreground}" />
+                                <TextBlock Grid.Column="1" Text="{TemplateBinding Content}" VerticalAlignment="Center"
+                                           FontWeight="SemiBold" FontSize="14"
+                                           Foreground="{TemplateBinding Foreground}" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RootBorder" Property="Background" Value="#1E293B" /> <!-- Slate 800 -->
+                                <Setter Property="Foreground" Value="#E2E8F0" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="RootBorder" Property="Background" Value="#0F172A" /> <!-- Slate 900 -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Active States -->
+        <Style x:Key="NavBtnLabDashboard" TargetType="Button" BasedOn="{StaticResource LabNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="LAB DASHBOARD">
+                    <Setter Property="Background" Value="#2563EB" /> <!-- Blue 600 -->
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnLabQueue" TargetType="Button" BasedOn="{StaticResource LabNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="TEST QUEUE">
+                    <Setter Property="Background" Value="#2563EB" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="NavBtnLabHistory" TargetType="Button" BasedOn="{StaticResource LabNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ActivePageTitle}" Value="TEST HISTORY">
+                    <Setter Property="Background" Value="#2563EB" />
+                    <Setter Property="Foreground" Value="White" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Container with Drop Shadow for transparency -->
+    <Border CornerRadius="20" Background="#F8FAFC" Margin="15" 
+            BorderBrush="#E2E8F0" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect Color="Black" BlurRadius="25" ShadowDepth="5" Opacity="0.15" />
+        </Border.Effect>
+
+        <materialDesign:DialogHost Identifier="LabDialogHost" CloseOnClickAway="True" DialogTheme="Inherit">
+            <!-- Ensure CornerRadius clips internal content perfectly -->
+            <Border CornerRadius="20" ClipToBounds="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Sidebar -->
+                    <Border Grid.Column="0" Background="#0F172A"> <!-- Slate 900 -->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Branding -->
+                            <StackPanel Margin="30,40,20,30">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="HospitalBox" Foreground="#3B82F6" Width="36" Height="36" />
+                                    <TextBlock Text="ALPHA" Foreground="White" FontSize="28" FontWeight="ExtraBold" Margin="10,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <TextBlock Text="LABORATORY PORTAL" Foreground="#94A3B8" FontSize="11" FontWeight="Bold" Margin="46,-2,0,0" />
+                            </StackPanel>
+
+                            <!-- Navigation Lists -->
+                            <StackPanel Grid.Row="1" Margin="0,10">
+                                <TextBlock Text="MAIN MENU" Foreground="#475569" FontSize="11" FontWeight="Bold" Margin="30,0,0,10" />
+                                
+                                <Button Command="{Binding NavDashboardCommand}" Style="{StaticResource NavBtnLabDashboard}" Tag="ViewDashboard" Content="Dashboard" />
+                                <Button Command="{Binding NavQueueCommand}" Style="{StaticResource NavBtnLabQueue}" Tag="FlaskOutline" Content="Test Queue" />
+                                <Button Command="{Binding NavHistoryCommand}" Style="{StaticResource NavBtnLabHistory}" Tag="History" Content="Test History" />
+                            </StackPanel>
+
+                            <!-- User Footer -->
+                            <StackPanel Grid.Row="2" Margin="15,0,15,30">
+                                <Border Background="#1E293B" CornerRadius="12" Padding="15">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Border Width="40" Height="40" CornerRadius="20" Background="#3B82F6" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding LabTechName, Converter={StaticResource FirstLetterConverter}}" 
+                                                       Foreground="White" FontWeight="Bold" FontSize="18" 
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,0,0">
+                                            <TextBlock Text="{Binding LabTechName}" Foreground="White" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Text="Technician" Foreground="#94A3B8" FontSize="11" />
+                                        </StackPanel>
+                                        
+                                        <Button Grid.Column="2" Command="{Binding NavLogoutCommand}" Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                                                Foreground="#EF4444" Width="32" Height="32" Padding="0" ToolTip="Log out">
+                                            <materialDesign:PackIcon Kind="Logout" Width="18" Height="18" />
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Main Content Area -->
+                    <Grid Grid.Column="1" Background="#F1F5F9"> <!-- Slate 100 -->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="80" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Header Bar -->
+                        <Border Grid.Row="0" Background="White" MouseLeftButtonDown="DragWindow"
+                                BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                            <Grid Margin="30,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Page Title -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+                                    <TextBlock Text="{Binding ActivePageTitle}" FontSize="20" FontWeight="ExtraBold" Foreground="#0F172A" />
+                                </StackPanel>
+
+                                <!-- Global Actions & Window Controls -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    
+                                    <!-- Notifications -->
+                                    <ToggleButton x:Name="NotificationToggle" Style="{StaticResource MaterialDesignIconToggleButton}" 
+                                                  Foreground="#64748B" Width="40" Height="40" Margin="0,0,15,0">
+                                        <materialDesign:PackIcon Kind="BellBadgeOutline" Width="20" Height="20" />
+                                    </ToggleButton>
+
+                                    <Popup IsOpen="{Binding IsChecked, ElementName=NotificationToggle}" 
+                                           StaysOpen="False" AllowsTransparency="True" PlacementTarget="{Binding ElementName=NotificationToggle}" 
+                                           Placement="Bottom" PopupAnimation="Slide" HorizontalOffset="-340" VerticalOffset="10">
+                                        <Views:NotificationCenterView DataContext="{Binding NotificationCenterVM}" />
+                                    </Popup>
+
+                                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="0,10,15,10" Background="#E2E8F0" />
+
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MinimizeWindow" Width="34" Height="34" Padding="0" Margin="0,0,4,0" Foreground="#64748B">
+                                        <materialDesign:PackIcon Kind="Minus" Width="20" Height="20" />
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Click="MaximizeWindow" Width="34" Height="34" Padding="0" Margin="0,0,4,0" Foreground="#64748B">
+                                        <materialDesign:PackIcon Kind="CheckboxBlankOutline" Width="16" Height="16" />
+                                    </Button>
+                                    <Button Style="{StaticResource MaterialDesignFlatButton}" Click="CloseWindow" Width="34" Height="34" Padding="0" Foreground="#EF4444">
+                                        <materialDesign:PackIcon Kind="Close" Width="20" Height="20" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Active View injected via ContentControl -->
+                        <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+                    </Grid>
+                </Grid>
+            </Border>
+        </materialDesign:DialogHost>
+    </Border>
+</Window>

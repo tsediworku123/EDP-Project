@@ -1,0 +1,195 @@
+<UserControl x:Class="HMS.Core.Views.PrintPrescriptionDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Width="800" MaxHeight="900" Background="White">
+    <Border BorderBrush="#CBD5E1" BorderThickness="1" Padding="40">
+        <StackPanel>
+            <!-- Header -->
+            <TextBlock Text="PRESCRIPTION PAPER" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,20" Foreground="Black"/>
+
+            <!-- Patient Information -->
+            <StackPanel Margin="0,0,0,5">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Patient's full Name:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding PatientName}" IsReadOnly="True" Width="300" BorderThickness="0,0,0,1" BorderBrush="Black" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Sex:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Sex}" IsReadOnly="True" Width="80" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Age:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Age}" IsReadOnly="True" Width="60" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Weight:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Weight}" IsReadOnly="True" Width="80" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Card No." VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding CardNo}" IsReadOnly="True" Width="120" BorderThickness="0,0,0,1" BorderBrush="Black" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Region:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Region}" IsReadOnly="True" Width="100" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Town:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Town}" IsReadOnly="True" Width="100" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Woreda:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Woreda}" IsReadOnly="True" Width="100" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Kebele:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Kebele}" IsReadOnly="True" Width="80" BorderThickness="0,0,0,1" BorderBrush="Black" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="House No." VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding HouseNo}" IsReadOnly="True" Width="80" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,15,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <TextBlock Text="Tel. No:" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding TelNo}" IsReadOnly="True" Width="150" BorderThickness="0,0,0,1" BorderBrush="Black" Margin="0,0,30,0" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                    
+                    <CheckBox Content="Inpatient" IsChecked="{Binding IsInpatient}" IsHitTestVisible="False" Margin="0,0,15,0" Foreground="Black"/>
+                    <CheckBox Content="Outpatient" IsChecked="{Binding IsOutpatient}" IsHitTestVisible="False" Foreground="Black"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
+                    <TextBlock Text="Diagnosis, if not ICD" VerticalAlignment="Bottom" Margin="0,0,5,0" Foreground="Black"/>
+                    <TextBox Text="{Binding Diagnosis}" IsReadOnly="True" Width="400" BorderThickness="0,0,0,1" BorderBrush="Black" Padding="0,0,0,2" Background="Transparent" Foreground="Black"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Rx and Table -->
+            <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <Border Grid.Row="0" BorderBrush="Black" BorderThickness="0,0,0,1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Drug Name, Strength, Dosage Form, Dose, Frequency,&#x0a;Duration, Quantity, How to use &amp; other information" 
+                                       Padding="5" TextWrapping="Wrap" Foreground="Black"/>
+                            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1,0,0,0" Padding="5">
+                                <TextBlock Text="Price&#x0a;(dispensers&#x0a;use only)" TextAlignment="Center" Foreground="Black"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+                    
+                    <Grid Grid.Row="1" MinHeight="250">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Rx" FontFamily="Arial" FontSize="28" FontWeight="Bold" Margin="10,10,0,0" Foreground="Black"/>
+                        
+                        <ItemsControl ItemsSource="{Binding PrescriptionItems}" Margin="10,50,10,10">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,0,10">
+                                        <TextBlock Text="{Binding DrugDetails}" TextWrapping="Wrap" Foreground="Black"/>
+                                        <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="20" Margin="0,0,0,5"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1,0,0,0">
+                            <ItemsControl ItemsSource="{Binding PrescriptionItems}" Margin="5,50,5,10">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="{Binding Price}" TextAlignment="Right" Foreground="Black"/>
+                                            <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="20" Margin="0,0,0,5"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Total Price -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,20">
+                <TextBlock Text="Total Price" Margin="0,0,10,0" VerticalAlignment="Bottom" Foreground="Black"/>
+                <TextBox Text="{Binding TotalPrice}" Width="100" BorderThickness="0,0,0,1" BorderBrush="Black" IsReadOnly="True" Background="Transparent" Foreground="Black"/>
+            </StackPanel>
+
+            <!-- Footers -->
+            <Grid Margin="0,10,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                    <TextBlock Text="Prescriber's" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="Black"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Full name" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding PrescriberName}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Qualification" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding PrescriberQual}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Registration #" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding PrescriberReg}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Signature" Width="80" Foreground="Black"/>
+                        <TextBox IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Date" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding PrescriberDate}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="20,0,0,0">
+                    <TextBlock Text="Dispenser's" HorizontalAlignment="Center" Margin="0,0,0,10" Foreground="Black"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Full name" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding DispenserName}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Qualification" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding DispenserQual}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Registration #" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding DispenserReg}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Signature" Width="80" Foreground="Black"/>
+                        <TextBox IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBlock Text="Date" Width="80" Foreground="Black"/>
+                        <TextBox Text="{Binding DispenserDate}" IsReadOnly="True" Width="200" BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent" Foreground="Black"/>
+                    </StackPanel>
+                    <TextBlock Text="See overleaf" HorizontalAlignment="Right" FontSize="10" Margin="0,10,20,0" Foreground="Black"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Action Buttons (Hidden when printing ideally) -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Content="CLOSE" 
+                        Style="{DynamicResource MaterialDesignOutlinedButton}"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                        Width="120" Height="40" Margin="0,0,15,0"/>
+                <Button Content="PRINT" 
+                        Style="{DynamicResource MaterialDesignFlatMidPrimaryButton}"
+                        Background="#8B5CF6" BorderThickness="0" Foreground="White"
+                        Width="120" Height="40"/>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

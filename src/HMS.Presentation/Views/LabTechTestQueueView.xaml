@@ -1,0 +1,240 @@
+<UserControl x:Class="HMS.Core.Views.LabTechTestQueueView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1100">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,25">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="PENDING TEST QUEUE" FontSize="22" FontWeight="ExtraBold" Foreground="#0F172A" />
+                <TextBlock Text="Manage active test requests and process samples." FontSize="14" Foreground="#64748B" Margin="0,4,0,0"/>
+            </StackPanel>
+            
+            <ComboBox Grid.Column="1" 
+                      ItemsSource="{Binding Categories}" 
+                      SelectedItem="{Binding SelectedCategory}"
+                      materialDesign:HintAssist.Hint="Filter by Category"
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                      VerticalAlignment="Bottom" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="380" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Queue List -->
+            <materialDesign:Card Grid.Column="0" Margin="0,0,25,0" Padding="0" Style="{StaticResource PremiumCard}" Background="White">
+                <DataGrid ItemsSource="{Binding PendingTests}" SelectedItem="{Binding SelectedTest}" 
+                          AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                          Background="Transparent" BorderThickness="0"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
+                          RowHeight="65" BorderBrush="Transparent" Margin="0">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="Foreground" Value="#94A3B8" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="Padding" Value="20,15" />
+                            <Setter Property="BorderThickness" Value="0,0,0,2" />
+                            <Setter Property="BorderBrush" Value="#F1F5F9" />
+                        </Style>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="20,0" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#EFF6FF" />
+                                    <Setter Property="Foreground" Value="#0F172A" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+                    
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="PATIENT" Width="1.5*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding PatientName}" FontWeight="Bold" FontSize="14" Foreground="#1E293B" />
+                                        <TextBlock Text="{Binding PatientId, StringFormat='ID: {0}'}" FontSize="11" Foreground="#64748B" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="TEST NAME" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding TestName}" FontWeight="Bold" FontSize="14" Foreground="#1E293B" />
+                                            <Border Background="#FEE2E2" Margin="10,0,0,0" Padding="6,2" CornerRadius="4" 
+                                                    Visibility="{Binding IsUrgent, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="URGENT" Foreground="#991B1B" FontSize="9" FontWeight="Black" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding TestCategory}" FontSize="12" Foreground="#64748B" Margin="0,2,0,0" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="REQUESTED" Binding="{Binding RequestedDate, StringFormat='{}{0:MMM dd, HH:mm}'}" Width="1.2*" Foreground="#334155" />
+                        
+                        <DataGridTemplateColumn Header="STATUS" Width="1.2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="6" Padding="10,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Requested">
+                                                        <Setter Property="Background" Value="#FEE2E2" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Sample Collected">
+                                                        <Setter Property="Background" Value="#E0E7FF" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="In Progress">
+                                                        <Setter Property="Background" Value="#FEF3C7" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="Bold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Requested">
+                                                            <Setter Property="Foreground" Value="#991B1B" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Sample Collected">
+                                                            <Setter Property="Foreground" Value="#3730A3" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="In Progress">
+                                                            <Setter Property="Foreground" Value="#92400E" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </materialDesign:Card>
+
+            <!-- Actions Panel -->
+            <materialDesign:Card Grid.Column="1" Style="{StaticResource PremiumCard}" Background="White">
+                <StackPanel>
+                    <TextBlock Text="TEST DETAILS &amp; ACTIONS" FontWeight="ExtraBold" FontSize="15" Foreground="#334155" Margin="0,0,0,25" />
+                    
+                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="20" Margin="0,0,0,30" 
+                            Visibility="{Binding SelectedTest, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="TEST TYPE" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" />
+                                    <TextBlock Text="{Binding SelectedTest.TestName}" FontWeight="ExtraBold" FontSize="18" Foreground="#0F172A" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding SelectedTest.TestCategory}" FontSize="13" Foreground="#3B82F6" FontWeight="SemiBold" Margin="0,2,0,0" />
+                                </StackPanel>
+                                
+                                <materialDesign:PackIcon Kind="FlaskEmptyOutline" Foreground="#CBD5E1" Width="36" Height="36" Grid.Column="1" VerticalAlignment="Top" />
+                            </Grid>
+                            
+                            <Separator Margin="0,5,0,15" Background="#E2E8F0" />
+                            
+                            <TextBlock Text="CURRENT STATUS" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" />
+                            <TextBlock Text="{Binding SelectedTest.Status}" FontWeight="Bold" FontSize="15" Foreground="#1E293B" Margin="0,3,0,0" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Interactive Buttons based on selected item -->
+                    <StackPanel Visibility="{Binding SelectedTest, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                        <Button Command="{Binding CollectSampleCommand}" 
+                                Style="{StaticResource MaterialDesignRaisedButton}" 
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                Background="White" BorderBrush="#3B82F6" BorderThickness="2" Foreground="#3B82F6" 
+                                Height="50" Margin="0,0,0,15" FontWeight="Bold" FontSize="14">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="TestTube" Margin="0,0,8,0" Width="20" Height="20" />
+                                <TextBlock Text="MARK SAMPLE COLLECTED" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Command="{Binding StartTestingCommand}" 
+                                Style="{StaticResource MaterialDesignRaisedButton}" 
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                Background="White" BorderBrush="#F59E0B" BorderThickness="2" Foreground="#D97706" 
+                                Height="50" Margin="0,0,0,15" FontWeight="Bold" FontSize="14">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="PlayCircleOutline" Margin="0,0,8,0" Width="20" Height="20" />
+                                <TextBlock Text="START TESTING" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+
+                        <Button Command="{Binding RejectSampleCommand}" 
+                                Style="{StaticResource MaterialDesignRaisedButton}" 
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                Background="White" BorderBrush="#EF4444" BorderThickness="2" Foreground="#EF4444" 
+                                Height="50" Margin="0,0,0,15" FontWeight="Bold" FontSize="14">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="CloseCircleOutline" Margin="0,0,8,0" Width="20" Height="20" />
+                                <TextBlock Text="REJECT SAMPLE" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Command="{Binding CompleteTestCommand}" 
+                                Style="{StaticResource MaterialDesignRaisedButton}" 
+                                materialDesign:ButtonAssist.CornerRadius="8"
+                                Background="#10B981" BorderBrush="#10B981" BorderThickness="2" Foreground="White" 
+                                Height="50" FontWeight="Bold" FontSize="14">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ClipboardCheckOutline" Margin="0,0,8,0" Width="20" Height="20" />
+                                <TextBlock Text="ENTER RESULTS" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Empty State Placeholder -->
+                    <StackPanel Margin="0,40,0,0" HorizontalAlignment="Center" 
+                                Visibility="{Binding SelectedTest, Converter={StaticResource NullToVisibilityConverter}}">
+                        <materialDesign:PackIcon Kind="CursorDefaultClick" Width="48" Height="48" Foreground="#CBD5E1" HorizontalAlignment="Center" Margin="0,0,0,15" />
+                        <TextBlock Text="Select a test from the queue to view details and perform actions." 
+                                   TextWrapping="Wrap" FontSize="13" Foreground="#94A3B8" 
+                                   TextAlignment="Center" LineHeight="20" />
+                    </StackPanel>
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</UserControl>

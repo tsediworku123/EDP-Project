@@ -192,6 +192,58 @@
                 </Grid>
             </materialDesign:Card>
         </Grid>
+
+        <!-- Visual Analytics Section -->
+        <Grid Grid.Row="4" Margin="0,30,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Revenue Trend Chart Placeholder -->
+            <materialDesign:Card Grid.Column="0" Margin="0,0,20,0" UniformCornerRadius="16" Padding="25" Background="White">
+                <StackPanel>
+                    <Grid>
+                        <TextBlock Text="REVENUE TRENDS (6 MONTHS)" FontSize="16" FontWeight="Bold" Foreground="#1E293B" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Border Width="12" Height="12" Background="#3B82F6" CornerRadius="3" Margin="0,0,6,0" />
+                            <TextBlock Text="Current Year" FontSize="11" Foreground="#64748B" Margin="0,0,15,0" />
+                            <Border Width="12" Height="12" Background="#E2E8F0" CornerRadius="3" Margin="0,0,6,0" />
+                            <TextBlock Text="Previous Year" FontSize="11" Foreground="#64748B" />
+                        </StackPanel>
+                    </Grid>
+                    
+                    <!-- Mock Chart Visuals -->
+                    <Grid Height="200" Margin="0,20,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                             <Border Width="40" Height="80" Background="#3B82F6" CornerRadius="4,4,0,0" Margin="10,0" Opacity="0.8" />
+                             <Border Width="40" Height="120" Background="#3B82F6" CornerRadius="4,4,0,0" Margin="10,0" />
+                             <Border Width="40" Height="100" Background="#3B82F6" CornerRadius="4,4,0,0" Margin="10,0" Opacity="0.9" />
+                             <Border Width="40" Height="160" Background="#3B82F6" CornerRadius="4,4,0,0" Margin="10,0" />
+                             <Border Width="40" Height="140" Background="#3B82F6" CornerRadius="4,4,0,0" Margin="10,0" />
+                             <Border Width="40" Height="190" Background="#3B82F6" CornerRadius="4,4,0,0" Margin="10,0" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Departmental Distribution -->
+            <materialDesign:Card Grid.Column="1" UniformCornerRadius="16" Padding="25" Background="White">
+                 <StackPanel>
+                    <TextBlock Text="DEPT. WORKLOAD" FontSize="16" FontWeight="Bold" Foreground="#1E293B" />
+                    <StackPanel Margin="0,20,0,0">
+                        <TextBlock Text="Cardiology" FontSize="12" Foreground="#64748B" />
+                        <ProgressBar Value="75" Height="8" Margin="0,8,0,15" Background="#F1F5F9" Foreground="#3B82F6" />
+                        
+                        <TextBlock Text="Pediatrics" FontSize="12" Foreground="#64748B" />
+                        <ProgressBar Value="45" Height="8" Margin="0,8,0,15" Background="#F1F5F9" Foreground="#10B981" />
+                        
+                        <TextBlock Text="Radiology" FontSize="12" Foreground="#64748B" />
+                        <ProgressBar Value="90" Height="8" Margin="0,8,0,15" Background="#F1F5F9" Foreground="#F59E0B" />
+                    </StackPanel>
+                 </StackPanel>
+            </materialDesign:Card>
+        </Grid>
     </Grid>
 </UserControl>
 

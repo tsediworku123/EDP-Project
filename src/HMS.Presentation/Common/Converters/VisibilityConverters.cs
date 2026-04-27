@@ -11,13 +11,33 @@ namespace HMS.Core.Common.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool val = (bool)value;
-            if (IsInverted || (parameter != null && parameter.ToString() == "Inverse"))
+            if (value is bool val)
             {
-                val = !val;
+                if (IsInverted || (parameter != null && parameter.ToString() == "Inverse"))
+                {
+                    val = !val;
+                }
+                return val ? Visibility.Visible : Visibility.Collapsed;
             }
+            return Visibility.Collapsed;
+        }
 
-            return val ? Visibility.Visible : Visibility.Collapsed;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NullToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool isNull = value == null;
+            if (parameter != null && parameter.ToString() == "Inverse")
+            {
+                isNull = !isNull;
+            }
+            return isNull ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
