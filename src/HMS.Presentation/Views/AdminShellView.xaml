@@ -61,6 +61,9 @@
                                 <Button Command="{Binding NavStaffCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountTie">
                                     <TextBlock Text="Manage Staff" Foreground="White"/>
                                 </Button>
+                                <Button Command="{Binding NavAvailabilityCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountClock">
+                                    <TextBlock Text="Staff Availability" Foreground="White"/>
+                                </Button>
                                 <Button Command="{Binding NavPatientsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountGroup">
                                     <TextBlock Text="Patient Directory" Foreground="White"/>
                                 </Button>

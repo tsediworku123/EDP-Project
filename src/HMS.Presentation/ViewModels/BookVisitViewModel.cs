@@ -62,18 +62,22 @@ namespace HMS.Core.ViewModels
                 var dayName = SelectedDate.DayOfWeek.ToString().Substring(0, 3);
                 bool worksToday = d.WorkingDays != null && d.WorkingDays.Contains(dayName);
 
-                // Count booked appointments for this doctor on selected date
-                int bookedToday = DataManager.Appointments.Count(a =>
-                    a.DoctorId == d.Id &&
-                    a.AppointmentDate.Date == SelectedDate.Date &&
-                    a.Status != "Cancelled");
-
-                // Calculate total possible slots
+                // Calculate total possible slots for the day
                 var totalMinutes = (d.WorkingHoursEnd - d.WorkingHoursStart).TotalMinutes;
                 var breakMinutes = (d.BreakTimeEnd - d.BreakTimeStart).TotalMinutes;
-                int totalSlots = (int)((totalMinutes - breakMinutes) / (d.SlotDurationMinutes > 0 ? d.SlotDurationMinutes : 30));
-                if (totalSlots < 1) totalSlots = 1;
-                int slotsRemaining = Math.Max(0, totalSlots - bookedToday);
+                int baseSlots = (int)((totalMinutes - breakMinutes) / (d.SlotDurationMinutes > 0 ? d.SlotDurationMinutes : 30));
+                if (baseSlots < 1) baseSlots = 1;
+                
+                // Total capacity = slots * patients per slot
+                int totalCapacity = baseSlots * (d.MaxPatientsPerSlot > 0 ? d.MaxPatientsPerSlot : 1);
+
+                // Count booked appointments for this doctor on selected date
+                int currentlyBooked = DataManager.Appointments.Count(a =>
+                    a.DoctorId == d.Id &&
+                    a.AppointmentDate.Date == SelectedDate.Date &&
+                    a.Status != "Cancelled" && a.Status != "No Show");
+
+                int slotsRemaining = Math.Max(0, totalCapacity - currentlyBooked);
 
                 // Next available date if fully booked or not working today
                 string nextAvailDate = "";
@@ -88,8 +92,8 @@ namespace HMS.Core.ViewModels
                             int booked = DataManager.Appointments.Count(a =>
                                 a.DoctorId == d.Id &&
                                 a.AppointmentDate.Date == checkDate.Date &&
-                                a.Status != "Cancelled");
-                            if (booked < totalSlots)
+                                a.Status != "Cancelled" && a.Status != "No Show");
+                            if (booked < totalCapacity)
                             {
                                 nextAvailDate = checkDate.ToString("MMM dd, yyyy");
                                 break;
@@ -106,14 +110,14 @@ namespace HMS.Core.ViewModels
                     Specialty = d.Specialization,
                     WorkingHours = $"{d.WorkingHoursStart:hh\\:mm} - {d.WorkingHoursEnd:hh\\:mm}",
                     WorksOnSelectedDate = worksToday,
-                    BookedSlots = bookedToday,
-                    TotalSlots = totalSlots,
+                    BookedSlots = currentlyBooked,
+                    TotalSlots = totalCapacity,
                     SlotsRemaining = slotsRemaining,
                     IsFull = worksToday && slotsRemaining == 0,
                     NextAvailableDate = nextAvailDate,
                     AvailabilityText = !worksToday ? "Not working this day"
                                      : slotsRemaining == 0 ? "FULLY BOOKED"
-                                     : $"{slotsRemaining}/{totalSlots} slots open"
+                                     : $"{slotsRemaining} spots left"
                 });
             }
         }
@@ -139,8 +143,24 @@ namespace HMS.Core.ViewModels
 
         private void ConfirmBooking()
         {
+            if (SelectedDoctorInfo == null) {
+                MessageBox.Show("Please select a physician first.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (SelectedTime == DateTime.MinValue) {
+                MessageBox.Show("Please select an available timeslot.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(Reason)) {
+                MessageBox.Show("Please provide a reason for your visit.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             var patient = DataManager.GetCurrentPatient();
-            if (patient == null) return;
+            if (patient == null) {
+                MessageBox.Show("User session expired. Please log in again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             var success = DataManager.AddAppointment(new Appointment {
                 PatientId = patient.Id,
@@ -151,11 +171,13 @@ namespace HMS.Core.ViewModels
             });
 
             if (success) {
-                MessageBox.Show("Visit successfully scheduled!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                UpdateDoctors(); // Refresh availability after booking
+                MessageBox.Show($"Appointment secured with {SelectedDoctorInfo.FullName} for {SelectedTime:MMM dd, hh:mm tt}!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                Reason = ""; // Clear reason
+                UpdateDoctors(); 
                 LoadSlots();
             } else {
-                MessageBox.Show("Could not schedule visit. Please try another slot.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("This slot has just been taken. Please select another one.", "Slot Unavailable", MessageBoxButton.OK, MessageBoxImage.Error);
+                LoadSlots(); // Refresh slots
             }
         }
     }

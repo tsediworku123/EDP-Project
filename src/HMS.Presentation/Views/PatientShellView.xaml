@@ -191,6 +191,84 @@
                                 </Border>
                             </Grid>
                         </Button>
+
+                        <!-- Prescriptions -->
+                        <Button Command="{Binding NavPrescriptionsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="MY PRESCRIPTIONS" Margin="0,4">
+                            <Grid HorizontalAlignment="Stretch">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Pill" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="PRESCRIPTIONS" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY PRESCRIPTIONS">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                            </Grid>
+                        </Button>
+
+                        <!-- Lab Results -->
+                        <Button Command="{Binding NavLabResultsCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="LAB RESULTS" Margin="0,4">
+                            <Grid HorizontalAlignment="Stretch">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Flask" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="LAB RESULTS" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActivePageTitle}" Value="LAB RESULTS">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                            </Grid>
+                        </Button>
+
+                        <!-- Billing -->
+                        <Button Command="{Binding NavBillingCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="MY BILLS &amp; PAYMENTS" Margin="0,4">
+                            <Grid HorizontalAlignment="Stretch">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="CashMultiple" Width="22" Height="22" Margin="5,0,20,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="BILLING" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="13">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource SidebarTextStyle}"/>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                                <Border Width="4" Height="24" Background="#3B82F6" HorizontalAlignment="Left" Margin="-15,0,0,0" CornerRadius="0,2,2,0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ActivePageTitle}" Value="MY BILLS &amp; PAYMENTS">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+                            </Grid>
+                        </Button>
      
                         <!-- Profile -->
                         <Button Command="{Binding NavProfileCommand}" Style="{StaticResource MaterialDesignNavButton}" Tag="MY PROFILE" Margin="0,4">

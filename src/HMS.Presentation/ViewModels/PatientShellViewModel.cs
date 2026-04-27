@@ -23,6 +23,9 @@ namespace HMS.Core.ViewModels
         public ICommand NavBookingCommand { get; }
         public ICommand NavAppointmentsCommand { get; }
         public ICommand NavHistoryCommand { get; }
+        public ICommand NavPrescriptionsCommand { get; }
+        public ICommand NavLabResultsCommand { get; }
+        public ICommand NavBillingCommand { get; }
         public ICommand NavProfileCommand { get; }
         public ICommand NavChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
@@ -48,6 +51,18 @@ namespace HMS.Core.ViewModels
             NavHistoryCommand = new RelayCommand(() => {
                 CurrentView = new MedicalHistoryView();
                 ActivePageTitle = "MEDICAL RECORDS";
+            });
+            NavPrescriptionsCommand = new RelayCommand(() => {
+                CurrentView = new PatientPrescriptionsView();
+                ActivePageTitle = "MY PRESCRIPTIONS";
+            });
+            NavLabResultsCommand = new RelayCommand(() => {
+                CurrentView = new PatientLabResultsView();
+                ActivePageTitle = "LAB RESULTS";
+            });
+            NavBillingCommand = new RelayCommand(() => {
+                CurrentView = new PatientBillingView();
+                ActivePageTitle = "MY BILLS & PAYMENTS";
             });
             NavProfileCommand = new RelayCommand(() => {
                 CurrentView = new MyProfileView();

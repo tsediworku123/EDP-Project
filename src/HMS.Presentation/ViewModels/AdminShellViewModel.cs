@@ -25,6 +25,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavUsersCommand { get; }
         public ICommand NavPatientsCommand { get; }
         public ICommand NavAppointmentsCommand { get; }
+        public ICommand NavAvailabilityCommand { get; }
         public ICommand NavReportsCommand { get; }
         public ICommand NavChangePasswordCommand { get; }
         public ICommand LogoutCommand { get; }
@@ -45,6 +46,11 @@ namespace HMS.Core.ViewModels
             NavStaffCommand = new RelayCommand(() => {
                 ActivePageTitle = "MANAGE STAFF";
                 CurrentView = new AdminStaffView(); 
+            });
+
+            NavAvailabilityCommand = new RelayCommand(() => {
+                ActivePageTitle = "STAFF AVAILABILITY";
+                CurrentView = new AdminAvailabilityView();
             });
 
             NavUsersCommand = new RelayCommand(() => {

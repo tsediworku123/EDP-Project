@@ -1,0 +1,178 @@
+<UserControl x:Class="HMS.Core.Views.AdminAvailabilityView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:HMS.Core.ViewModels"
+             xmlns:utils="clr-namespace:HMS.Core.Utils"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1100"
+             Background="#F8FAFC">
+
+    <UserControl.DataContext>
+        <vm:AdminAvailabilityViewModel />
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <utils:TimeSpanToDateTimeConverter x:Key="TimeSpanToDateTimeConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
+
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,30">
+            <TextBlock Text="STAFF AVAILABILITY MANAGEMENT" Style="{StaticResource MaterialDesignHeadline4TextBlock}" FontWeight="Bold" Foreground="#1E293B" />
+            <TextBlock Text="Configure working hours, breaks, and patient capacity for medical personnel." Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.6" Margin="0,5,0,0" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="350" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Doctor List Card -->
+            <materialDesign:Card Grid.Column="0" UniformCornerRadius="15" materialDesign:ElevationAssist.Elevation="Dp2" Margin="0,0,30,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1" Padding="15">
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                 materialDesign:HintAssist.Hint="Search Staff..." 
+                                 materialDesign:TextFieldAssist.HasClearButton="True"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                    </Border>
+
+                    <ListBox Grid.Row="1" ItemsSource="{Binding FilteredDoctors}" SelectedItem="{Binding SelectedDoctor}"
+                             BorderThickness="0" HorizontalContentAlignment="Stretch">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding FullName}" FontWeight="Bold" FontSize="14" />
+                                        <TextBlock Text="{Binding Specialization}" FontSize="12" Opacity="0.7" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Availability Settings Card -->
+            <materialDesign:Card Grid.Column="1" UniformCornerRadius="15" materialDesign:ElevationAssist.Elevation="Dp3" Padding="30">
+                <Grid>
+                    <!-- Placeholder when nothing is selected -->
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=Inverse}">
+                        <materialDesign:PackIcon Kind="AccountClock" Width="80" Height="80" Opacity="0.1" HorizontalAlignment="Center" />
+                        <TextBlock Text="Select a staff member to manage their availability" Style="{StaticResource MaterialDesignHeadline6TextBlock}" Opacity="0.3" Margin="0,20,0,0" />
+                    </StackPanel>
+
+                    <!-- Edit Form -->
+                    <ScrollViewer Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel>
+                            <TextBlock Text="{Binding SelectedDoctor.FullName, StringFormat='AVAILABILITY SETTINGS: {0}'}" 
+                                       Style="{StaticResource MaterialDesignHeadline5TextBlock}" FontWeight="Bold" Foreground="#3B82F6" Margin="0,0,0,30" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Working Hours -->
+                                <GroupBox Grid.Row="0" Grid.ColumnSpan="2" Header="OFFICE HOURS" Margin="0,0,0,20" Style="{StaticResource MaterialDesignCardGroupBox}">
+                                    <StackPanel Orientation="Horizontal" Margin="10">
+                                        <materialDesign:TimePicker materialDesign:HintAssist.Hint="Start Time" 
+                                                                   SelectedTime="{Binding SelectedDoctor.WorkingHoursStart, Converter={StaticResource TimeSpanToDateTimeConverter}}" 
+                                                                   Width="150" Margin="0,0,30,0" />
+                                        <materialDesign:TimePicker materialDesign:HintAssist.Hint="End Time" 
+                                                                   SelectedTime="{Binding SelectedDoctor.WorkingHoursEnd, Converter={StaticResource TimeSpanToDateTimeConverter}}" 
+                                                                   Width="150" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Break Times -->
+                                <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="BREAK TIME" Margin="0,0,0,20" Style="{StaticResource MaterialDesignCardGroupBox}">
+                                    <StackPanel Orientation="Horizontal" Margin="10">
+                                        <materialDesign:TimePicker materialDesign:HintAssist.Hint="Break Start" 
+                                                                   SelectedTime="{Binding SelectedDoctor.BreakTimeStart, Converter={StaticResource TimeSpanToDateTimeConverter}}" 
+                                                                   Width="150" Margin="0,0,30,0" />
+                                        <materialDesign:TimePicker materialDesign:HintAssist.Hint="Break End" 
+                                                                   SelectedTime="{Binding SelectedDoctor.BreakTimeEnd, Converter={StaticResource TimeSpanToDateTimeConverter}}" 
+                                                                   Width="150" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Capacity & Slots -->
+                                <GroupBox Grid.Row="2" Grid.Column="0" Header="CAPACITY" Margin="0,0,10,20" Style="{StaticResource MaterialDesignCardGroupBox}">
+                                    <StackPanel Margin="10">
+                                        <TextBox Text="{Binding SelectedDoctor.MaxPatientsPerSlot}" 
+                                                 materialDesign:HintAssist.Hint="Max Patients Per Slot" 
+                                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                        <TextBlock Text="Concurrent patients allowed per timeslot." FontSize="10" Opacity="0.5" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <GroupBox Grid.Row="2" Grid.Column="1" Header="SLOT DURATION" Margin="10,0,0,20" Style="{StaticResource MaterialDesignCardGroupBox}">
+                                    <StackPanel Margin="10">
+                                        <TextBox Text="{Binding SelectedDoctor.SlotDurationMinutes}" 
+                                                 materialDesign:HintAssist.Hint="Duration (Minutes)" 
+                                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                                        <TextBlock Text="Length of a single consultation slot." FontSize="10" Opacity="0.5" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Working Days -->
+                                <GroupBox Grid.Row="3" Grid.ColumnSpan="2" Header="WORKING DAYS" Margin="0,0,0,30" Style="{StaticResource MaterialDesignCardGroupBox}">
+                                    <StackPanel Margin="10">
+                                        <TextBox Text="{Binding SelectedDoctor.WorkingDays}" 
+                                                 materialDesign:HintAssist.Hint="Days (e.g., Mon, Tue, Wed...)" 
+                                                 Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+                                        <TextBlock Text="Separate days with commas." FontSize="10" Opacity="0.5" Margin="0,5,0,0" />
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <!-- Status Toggles -->
+                                <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding SelectedDoctor.IsActive}" Margin="0,0,20,0" />
+                                    <TextBlock Text="ACTIVE STATUS" VerticalAlignment="Center" Margin="0,0,40,0" FontWeight="Bold" />
+
+                                    <ToggleButton Style="{StaticResource MaterialDesignSwitchToggleButton}" IsChecked="{Binding SelectedDoctor.IsOnLeave}" Margin="0,0,20,0" />
+                                    <TextBlock Text="ON LEAVE" VerticalAlignment="Center" FontWeight="Bold" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Margin="0,40" Opacity="0.1" />
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Command="{Binding ResetCommand}" Content="CANCEL" Style="{StaticResource MaterialDesignFlatButton}" Margin="0,0,15,0" />
+                                <Button Command="{Binding SaveCommand}" Content="SAVE AVAILABILITY" 
+                                        Style="{StaticResource MaterialDesignRaisedButton}" 
+                                        Background="#3B82F6" BorderBrush="#3B82F6" Width="200" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+    </Grid>
+</UserControl>
