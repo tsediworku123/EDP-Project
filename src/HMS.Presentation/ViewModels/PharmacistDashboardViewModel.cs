@@ -13,6 +13,12 @@ namespace HMS.Core.ViewModels
         private int _lowStockItemsCount;
         public int LowStockItemsCount { get => _lowStockItemsCount; set => SetProperty(ref _lowStockItemsCount, value); }
 
+        private int _expiredItemsCount;
+        public int ExpiredItemsCount { get => _expiredItemsCount; set => SetProperty(ref _expiredItemsCount, value); }
+
+        private int _expiringSoonCount;
+        public int ExpiringSoonCount { get => _expiringSoonCount; set => SetProperty(ref _expiringSoonCount, value); }
+
         private int _medicinesDispensedToday;
         public int MedicinesDispensedToday { get => _medicinesDispensedToday; set => SetProperty(ref _medicinesDispensedToday, value); }
         
@@ -27,17 +33,25 @@ namespace HMS.Core.ViewModels
  
         private void LoadStats()
         {
-            var pending = DataManager.Prescriptions.Where(p => p.Status == "Pending").ToList();
+            DataManager.ReloadAllData();
+
+            var pending = DataManager.Prescriptions.Where(p => p.Status == "Pending" || p.Status == "Partial").ToList();
             PendingPrescriptionsCount = pending.Count;
 
-            LowStockItemsCount = DataManager.Inventory.Count(i => i.StockQuantity <= i.ReorderLevel);
+            LowStockItemsCount = DataManager.Inventory.Count(i => i.StockQuantity <= i.ReorderLevel && i.IsActive);
+            ExpiredItemsCount = DataManager.Inventory.Count(i => i.IsExpired && i.IsActive);
+            ExpiringSoonCount = DataManager.Inventory.Count(i => i.IsExpiringSoon && i.IsActive);
 
-            // Assuming dispensed today logic (using Audit logs or just random for now if not tracked)
-            MedicinesDispensedToday = DataManager.Prescriptions.Count(p => p.Status == "Dispensed" && p.PrescribedDate.Date == System.DateTime.Today);
-            if (MedicinesDispensedToday == 0) MedicinesDispensedToday = 14; // Fallback so dashboard doesn't look empty for the demo
+            MedicinesDispensedToday = DataManager.Prescriptions.Count(p => 
+                p.DispensedDate.HasValue && p.DispensedDate.Value.Date == System.DateTime.Today);
 
             RecentActivities.Clear();
-            foreach (var activity in DataManager.AuditLogs.Take(10))
+            var logs = DataManager.AuditLogs
+                .Where(l => l.Module == "Pharmacy" || l.Module == "Inventory" || l.Module == "Laboratory")
+                .OrderByDescending(l => l.Timestamp)
+                .Take(8);
+
+            foreach (var activity in logs)
             {
                 RecentActivities.Add(new PharmacistActivityItem 
                 { 
@@ -48,7 +62,7 @@ namespace HMS.Core.ViewModels
             }
 
             RecentPrescriptions.Clear();
-            foreach (var pres in pending.OrderByDescending(p => p.PrescribedDate).Take(4))
+            foreach (var pres in pending.OrderByDescending(p => p.PrescribedDate).Take(5))
             {
                 var patient = DataManager.Patients.FirstOrDefault(p => p.Id == pres.PatientId);
                 var doctor = DataManager.Doctors.FirstOrDefault(d => d.Id == pres.DoctorId);

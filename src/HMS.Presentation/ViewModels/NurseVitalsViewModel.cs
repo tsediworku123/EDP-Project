@@ -92,7 +92,7 @@ namespace HMS.Core.ViewModels
             object result = null;
             try
             {
-                result = await DialogHost.Show(dialog, "NurseDialogHost");
+                result = await DialogHost.Show(dialog, "MainDialogHost");
             }
             catch
             {

@@ -1,0 +1,141 @@
+<UserControl x:Class="HMS.Core.Views.DoctorPrescriptionsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:HMS.Core.ViewModels"
+             Background="#F8FAFC">
+
+    <UserControl.DataContext>
+        <vm:DoctorPrescriptionsViewModel/>
+    </UserControl.DataContext>
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,25">
+            <TextBlock Text="MY PRESCRIPTIONS" FontSize="28" FontWeight="Black" Foreground="#1E293B" />
+            <TextBlock Text="View the status of medications you have prescribed for patients." FontSize="14" Foreground="#64748B" Margin="0,5,0,0" />
+        </StackPanel>
+
+        <!-- Filters -->
+        <materialDesign:Card Grid.Row="1" UniformCornerRadius="12" Padding="20,15" Margin="0,0,0,20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         materialDesign:HintAssist.Hint="Search by patient or medicine..."
+                         materialDesign:TextFieldAssist.HasClearButton="True"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         materialDesign:TextFieldAssist.PrefixText="🔎  "
+                         Margin="0,0,15,0" />
+
+                <Button Grid.Column="1" Command="{Binding RefreshCommand}" 
+                        Style="{StaticResource MaterialDesignFlatButton}" Foreground="#3B82F6">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Refresh" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="REFRESH" VerticalAlignment="Center" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- List -->
+        <materialDesign:Card Grid.Row="2" UniformCornerRadius="12" Padding="0" VerticalAlignment="Stretch">
+            <Grid>
+                <DataGrid ItemsSource="{Binding FilteredPrescriptions}" 
+                          SelectedItem="{Binding SelectedPrescription}"
+                          AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
+                          Background="Transparent" BorderThickness="0"
+                          HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F1F5F9"
+                          RowHeight="60">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="PATIENT" Width="1.8*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="15,0,0,0">
+                                        <Border Width="34" Height="34" CornerRadius="17" Background="#EDE9FE" Margin="0,0,10,0">
+                                            <materialDesign:PackIcon Kind="Account" Foreground="#8B5CF6" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding PatientName}" FontWeight="SemiBold" Foreground="#1E293B" FontSize="13"/>
+                                            <TextBlock Text="{Binding Source.Id, StringFormat='Prescription #{0}'}" FontSize="11" Foreground="#94A3B8"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="DATE" Binding="{Binding DateDisplay}" Width="120" />
+                        
+                        <DataGridTemplateColumn Header="MEDICINES" Width="2*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding MedicineSummary}" VerticalAlignment="Center" 
+                                               TextTrimming="CharacterEllipsis" Foreground="#64748B" FontSize="12"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="STATUS" Width="130">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="#F59E0B"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Dispensed">
+                                                        <Setter Property="Background" Value="#10B981"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                        <Setter Property="Background" Value="#EF4444"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding Status}" Foreground="White" FontWeight="Bold" FontSize="11"/>
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTemplateColumn Header="ACTION" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.ViewDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            Style="{StaticResource MaterialDesignIconButton}" Width="32" Height="32">
+                                        <materialDesign:PackIcon Kind="Eye" Width="18" Height="18" Foreground="#3B82F6"/>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Empty State -->
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasNoResults}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <materialDesign:PackIcon Kind="ClipboardTextOffOutline" Width="50" Height="50" Foreground="#CBD5E1" HorizontalAlignment="Center"/>
+                    <TextBlock Text="No prescriptions found" Foreground="#94A3B8" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

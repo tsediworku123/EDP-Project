@@ -66,7 +66,7 @@ namespace HMS.Core.ViewModels
         {
             var vm = new GenerateBillViewModel();
             var dialog = new HMS.Core.Views.GenerateBillDialog { DataContext = vm };
-            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "PharmacistDialogHost");
+            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "MainDialogHost");
 
             if (result is bool success && success)
             {

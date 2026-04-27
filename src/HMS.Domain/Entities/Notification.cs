@@ -13,5 +13,6 @@ namespace HMS.Core.Domain.Entities
         public DateTime Timestamp { get; set; } = DateTime.Now;
         public bool IsRead { get; set; } = false;
         public string Type { get; set; } = "General"; // Appointment, Result, System, Laboratory
+        public string TargetRole { get; set; } // Pharmacist, LabTechnician, etc.
     }
 }

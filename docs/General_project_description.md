@@ -1,196 +1,95 @@
-Designing a **Hospital Management System (HMS)** starts with identifying the *actors (users or systems interacting with it)* and their *core functionalities*. Think of actors as roles that interact with the system, each with specific responsibilities.
+# 🏥 Hospital Management System (HMS) - Project Documentation
 
-Here’s a clear, practical breakdown 
+This document outlines the architecture, actors, and current implementation status of the Hospital Management System built with **C# WPF**, **Entity Framework Core**, and **SQL Server**.
 
 ---
 
-# 🏥 Main Actors in a Hospital Management System
+## 🏗️ System Architecture Highlights
 
-## 1. 👨‍⚕️ Doctor
+*   **Presentation Layer**: Built with **WPF** using **MaterialDesignInXaml** for a modern, responsive, and professional UI. Follows the MVVM (Model-View-ViewModel) pattern.
+*   **Application Layer**: Uses a centralized `DataManager` for in-memory caching and data synchronization to ensure high performance and data freshness across different departmental views.
+*   **Persistence Layer**: Entity Framework Core (`HMSDbContext`) with a generic Unit of Work / Repository pattern for database operations and automatic migrations.
 
-**Role:** Provides medical care to patients
+---
 
+## 👥 Actors & Implementation Status
+
+### 1. 👨‍⚕️ Doctor (🟢 Largely Implemented)
+**Role:** Provides medical care and drives clinical workflows.
 **Key Functionalities:**
+*   [x] View patient records & medical history.
+*   [x] Request lab tests.
+*   [x] View detailed test results (numerical values, reference ranges, clinical notes).
+*   [x] Create detailed prescriptions (medicines, dosages, durations).
+*   [ ] Manage appointments (Pending polish).
+*   [ ] Write discharge summaries.
 
-* View patient records & medical history
-* Diagnose illnesses
-* Prescribe medications
-* Request lab tests
-* View test results
-* Manage appointments
-* Write discharge summaries
-
----
-
-## 2. 👩‍⚕️ Nurse
-
-**Role:** Assists doctors and cares for patients
-
+### 2. 💊 Pharmacist (🟢 Highly Developed)
+**Role:** Manages medications, inventory safety, and dispensing workflows.
 **Key Functionalities:**
+*   [x] View prescriptions issued by doctors (with medicine summaries).
+*   [x] Professional Dispensing Workflow: Real-time inventory validation against prescribed quantities.
+*   [x] Clinical Counseling: Add pharmacist-specific instructions to dispensed items.
+*   [x] Cross-Department Integration: Automatically generate billing records (`Bill` & `BillItem`) upon dispensing.
+*   [x] Inventory Safety: Dashboard alerts for **Expired** and **Expiring Soon** (30 days) medications.
 
-* Monitor patient vitals (BP, temperature, etc.)
-* Update patient records
-* Administer medications
-* Assist during procedures
-* Manage patient admissions/discharges
-
----
-
-## 3. 🧑‍💼 Receptionist / Front Desk Staff
-
-**Role:** First point of contact for patients
-
+### 3. 🧪 Lab Technician (🟢 Implemented)
+**Role:** Handles medical tests and diagnostic reporting.
 **Key Functionalities:**
+*   [x] Receive and view pending test requests from doctors.
+*   [x] Conduct tests and upload detailed results (Actual values, Reference Ranges, Comments).
+*   [x] Maintain lab records.
 
-* Register new patients
-* Schedule and manage appointments
-* Handle patient check-in/check-out
-* Provide basic information
-* Manage queues
-
----
-
-## 4. 🧾 Administrator (Admin)
-
-**Role:** System controller and manager
-
+### 4. 👩‍⚕️ Nurse (🟡 Partially Implemented)
+**Role:** Assists doctors and monitors patient status.
 **Key Functionalities:**
+*   [x] Monitor and record patient vitals (BP, temperature, heart rate).
+*   [x] Persistent vitals tracking.
+*   [ ] Administer medications (track administration vs. dispensing).
+*   [ ] Manage patient admissions/discharges.
 
-* Manage users (doctors, nurses, staff)
-* Assign roles and permissions
-* Monitor system usage
-* Generate reports (financial, operational)
-* Configure system settings
-
----
-
-## 5. 💊 Pharmacist
-
-**Role:** Manages medications and prescriptions
-
+### 5. 💰 Billing/Accounts Staff (🟡 Partially Implemented)
+**Role:** Handles financial operations and patient invoicing.
 **Key Functionalities:**
+*   [x] Receive automated bill generation from Pharmacy actions.
+*   [x] Track unit prices and total costs.
+*   [ ] Process payments and generate receipts.
+*   [ ] Manage insurance claims.
 
-* View prescriptions from doctors
-* Dispense medicines
-* Manage drug inventory
-* Track expiry dates
-* Generate pharmacy bills
-
----
-
-## 6. 🧪 Lab Technician
-
-**Role:** Handles medical tests
-
+### 6. 🧑‍💼 Receptionist / Front Desk (🟡 Partially Implemented)
+**Role:** First point of contact and patient management.
 **Key Functionalities:**
+*   [x] Register new patients.
+*   [ ] Handle patient check-in/check-out.
+*   [ ] Manage queues and schedule appointments.
 
-* Receive test requests
-* Conduct lab tests
-* Upload test results
-* Maintain lab records
-
----
-
-## 7. 🧑‍⚕️ Patient
-
-**Role:** Receives healthcare services
-
+### 7. 🧾 Administrator (Admin) (⚪ Pending)
+**Role:** System controller and manager.
 **Key Functionalities:**
-
-* Register/login
-* Book appointments
-* View prescriptions & reports
-* View medical history
-* Make payments
-* Receive notifications
+*   [x] Basic identity/auth flow.
+*   [ ] Manage users (doctors, nurses, staff) and permissions.
+*   [ ] Monitor system usage and audit logs.
 
 ---
 
-## 8. 💰 Billing/Accounts Staff
+## 🧩 Core Modules Integration Flow
 
-**Role:** Handles financial operations
-
-**Key Functionalities:**
-
-* Generate invoices
-* Process payments
-* Manage insurance claims
-* Track hospital revenue
-* Handle refunds
-
----
-
-## 9. 🏥 Hospital Management (Owner/Manager)
-
-**Role:** Oversees entire hospital operations
-
-**Key Functionalities:**
-
-* View analytics & dashboards
-* Monitor staff performance
-* Financial overview
-* Decision-making reports
+The system is designed to have interconnected modules rather than isolated silos. 
+**Current Active Flow Example:**
+1.  **Doctor** prescribes medication to a Patient.
+2.  **Pharmacist** views the pending prescription.
+3.  Pharmacist reviews real-time stock levels.
+4.  Pharmacist dispenses the medicine, which:
+    *   Deducts stock from the **Inventory Module**.
+    *   Updates the **Prescription Module** status.
+    *   Automatically creates a pending charge in the **Billing Module**.
 
 ---
 
-# ⚙️ Optional / Advanced Actors
+## 📋 To-Do / Pending Tasks (Next Steps)
 
-Depending on how advanced your system is:
-
-### 📦 Inventory Manager
-
-* Manage medical supplies
-* Track stock levels
-* Handle supplier orders
-
-### 🚑 Emergency Staff
-
-* Quick patient registration
-* Emergency case handling
-
-### 🏢 Insurance Company (External Actor)
-
-* Verify patient insurance
-* Approve/reject claims
-
----
-
-# 🧩 Core Modules (System Features)
-
-Instead of thinking only in actors, also think in **modules**:
-
-* Patient Management
-* Appointment System
-* Electronic Medical Records (EMR)
-* Billing & Payments
-* Pharmacy Management
-* Laboratory Management
-* Inventory Management
-* Reporting & Analytics
-
----
-
-# 🧠 Simple System Flow (Example)
-
-1. Patient books appointment
-2. Receptionist confirms
-3. Doctor examines patient
-4. Doctor prescribes medicine/tests
-5. Lab technician uploads results
-6. Pharmacist gives medicine
-7. Billing generates invoice
-
----
-
-# ✅ Tip for Your Project
-
-Start simple:
-
-👉 Begin with **5 main actors**:
-
-* Admin
-* Doctor
-* Patient
-* Receptionist
-* Pharmacist
-
+*   **Robust Registration**: Improve patient registration to handle edge cases (e.g., prompting for manual entry if email is missing).
+*   **Audit Logging**: Verify that the `AuditLogs` table correctly captures critical actions like "DispensedBy" to complete the accountability loop.
+*   **Billing UI Sync**: Ensure the Billing portal live-updates when new bills are generated by the pharmacy.
+*   **UI Polish**: Further enhance data grids (e.g., color-coding expired items in red within the inventory view).
+*   **Reporting**: Build out the analytics dashboard for hospital management.

@@ -1,21 +1,21 @@
 using System.Windows;
+using System.Windows.Controls;
 using HMS.Core.ViewModels;
 
 namespace HMS.Core.Views
 {
-    public partial class AddNewUserWindow : Window
+    public partial class AddStaffDialog : UserControl
     {
-        public AddNewUserWindow()
+        public AddStaffDialog()
         {
             InitializeComponent();
-            DataContext = new AddNewUserViewModel(this);
+            DataContext = new AddNewStaffViewModel();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            var vm = (AddNewUserViewModel)DataContext;
+            var vm = (AddNewStaffViewModel)DataContext;
             vm.Password = PassBox.Password;
-            vm.ConfirmPassword = ConfirmPassBox.Password;
             vm.SaveCommand.Execute(null);
         }
     }

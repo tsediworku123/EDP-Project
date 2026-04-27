@@ -87,7 +87,7 @@ namespace HMS.Core.ViewModels
             if (SelectedTest == null) return;
             
             var view = new Views.RejectionReasonDialog();
-            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(view, "LabDialogHost");
+            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(view, "MainDialogHost");
 
             if (result is string reason && !string.IsNullOrWhiteSpace(reason))
             {
@@ -131,7 +131,7 @@ namespace HMS.Core.ViewModels
             if (SelectedTest == null) return;
             
             var view = new Views.LabTechResultsView(SelectedTest);
-            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(view, "LabDialogHost");
+            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(view, "MainDialogHost");
             
             if (result is bool b && b)
             {

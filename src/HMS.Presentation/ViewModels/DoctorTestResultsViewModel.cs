@@ -58,20 +58,24 @@ namespace HMS.Core.ViewModels
             _doctor = CurrentSession.Instance.LoggedInDoctor;
             FilterStatus = "All";
             RefreshCommand = new RelayCommand(LoadResults);
-            MarkCompletedCommand = new RelayCommand(MarkCompleted);
-            ViewDetailsCommand = new RelayCommand(ExecuteViewDetails);
+            MarkCompletedCommand = new RelayCommand<LabTestResultItem>(MarkCompleted);
+            ViewDetailsCommand = new RelayCommand<LabTestResultItem>(ExecuteViewDetails);
             LoadResults();
         }
 
-        private async void ExecuteViewDetails()
+        private async void ExecuteViewDetails(LabTestResultItem item)
         {
-            if (SelectedResult == null) return;
-            var view = new Views.LabTestDetailDialog(SelectedResult.Source);
+            var target = item ?? SelectedResult;
+            if (target == null) return;
+            var view = new Views.LabTestDetailDialog(target.Source);
             await MaterialDesignThemes.Wpf.DialogHost.Show(view, "MainDialogHost");
         }
 
         private void LoadResults()
         {
+            // Always reload from DB to get the latest lab results submitted by lab technicians
+            DataManager.ReloadLabTests();
+
             AllResults.Clear();
             if (_doctor == null) return;
 
@@ -115,11 +119,12 @@ namespace HMS.Core.ViewModels
             OnPropertyChanged(nameof(HasNoResults));
         }
 
-        private void MarkCompleted()
+        private void MarkCompleted(LabTestResultItem item)
         {
-            if (_selectedResult == null) return;
-            _selectedResult.Source.Status = "Completed";
-            _selectedResult.Source.CompletedDate = DateTime.Now;
+            var target = item ?? SelectedResult;
+            if (target == null) return;
+            target.Source.Status = "Completed";
+            target.Source.CompletedDate = DateTime.Now;
             DataManager.SaveLabTests();
             LoadResults();
         }

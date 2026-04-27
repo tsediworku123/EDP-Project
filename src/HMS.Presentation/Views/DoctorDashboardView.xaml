@@ -44,7 +44,13 @@
                                 <TextBlock Text="Prescribe Medications" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Command="{Binding RequestLabTestsCommand}" Background="#FDF4FF" Foreground="#C026D3" BorderThickness="0" Height="60" Margin="0,0,0,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                        <Button Command="{Binding ViewPrescriptionsHistoryCommand}" Background="#F0FDF4" Foreground="#16A34A" BorderThickness="0" Height="60" Margin="0,0,0,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
+                                <materialDesign:PackIcon Kind="ClipboardTextClockOutline" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="View My Prescriptions" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Command="{Binding RequestLabTestsCommand}" Background="#FDF4FF" Foreground="#C026D3" BorderThickness="0" Height="60" Margin="0,0,10,10" materialDesign:ThemeAssist.Theme="Light" materialDesign:ButtonAssist.CornerRadius="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="240" Margin="10,0,0,0">
                                 <materialDesign:PackIcon Kind="FlaskEmptyOutline" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Request Lab Tests" FontWeight="SemiBold" FontSize="13" VerticalAlignment="Center" />

@@ -77,7 +77,7 @@ namespace HMS.Core.ViewModels
             {
                 var vm = new AddInventoryItemViewModel();
                 var dialog = new HMS.Core.Views.AddInventoryItemDialog { DataContext = vm };
-                var result = await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "PharmacistDialogHost");
+                var result = await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "MainDialogHost");
 
                 if (result is bool success && success)
                 {
@@ -120,7 +120,7 @@ namespace HMS.Core.ViewModels
             try
             {
                 var dialog = new HMS.Core.Views.BulkImportInventoryDialog();
-                await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "PharmacistDialogHost");
+                await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "MainDialogHost");
                 // After dialog closes, reload inventory
                 LoadInventory();
             }

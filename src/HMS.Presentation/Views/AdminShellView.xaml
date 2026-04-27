@@ -58,8 +58,8 @@
                                 <Button Command="{Binding NavDashboardCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="ViewDashboard">
                                     <TextBlock Text="Dashboard" Foreground="White"/>
                                 </Button>
-                                <Button Command="{Binding NavDoctorsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="Doctor">
-                                    <TextBlock Text="Manage Doctors" Foreground="White"/>
+                                <Button Command="{Binding NavStaffCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountTie">
+                                    <TextBlock Text="Manage Staff" Foreground="White"/>
                                 </Button>
                                 <Button Command="{Binding NavPatientsCommand}" Style="{DynamicResource MaterialDesignNavButton}" Tag="AccountGroup">
                                     <TextBlock Text="Patient Directory" Foreground="White"/>

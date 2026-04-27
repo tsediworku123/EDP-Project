@@ -233,14 +233,25 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="ACTION" Width="220">
-                            <DataGridTemplateColumn.CellTemplate>
+                                <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
                                         <Button Height="30" FontSize="10" FontWeight="Bold"
                                                 Command="{Binding DataContext.ViewDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
                                                 materialDesign:ButtonAssist.CornerRadius="8"
-                                                Background="#3B82F6" BorderBrush="#3B82F6" Foreground="White"
-                                                Margin="4,0"
-                                                Visibility="{Binding Source.Status, Converter={StaticResource NullToVisibilityConverter}}">
+                                                Background="#16A34A" BorderBrush="#16A34A" Foreground="White"
+                                                Margin="4,0">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Source.Status}" Value="Completed">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
                                             <StackPanel Orientation="Horizontal">
                                                 <materialDesign:PackIcon Kind="Eye" Width="14" Height="14" Margin="0,0,4,0" />
                                                 <TextBlock Text="RESULTS"/>
@@ -249,6 +260,7 @@
                                         
                                         <Button Height="30" FontSize="10" FontWeight="Bold"
                                                 Command="{Binding DataContext.MarkCompletedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
                                                 materialDesign:ButtonAssist.CornerRadius="8"
                                                 Margin="4,0">
                                             <Button.Style>
@@ -267,6 +279,7 @@
                                             <TextBlock Text="Mark Done"/>
                                         </Button>
                                     </StackPanel>
+                                </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>

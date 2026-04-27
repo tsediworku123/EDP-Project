@@ -36,22 +36,70 @@ namespace HMS.Core.ViewModels
         }
 
         private Doctor _selectedDoctor;
-        public Doctor SelectedDoctor { get => _selectedDoctor; set => SetProperty(ref _selectedDoctor, value); }
+        public Doctor SelectedDoctor 
+        { 
+            get => _selectedDoctor; 
+            set 
+            {
+                if (SetProperty(ref _selectedDoctor, value))
+                    Email = (value != null && !string.IsNullOrWhiteSpace(value.Email)) ? value.Email : string.Empty;
+            } 
+        }
 
         private Patient _selectedPatient;
-        public Patient SelectedPatient { get => _selectedPatient; set => SetProperty(ref _selectedPatient, value); }
+        public Patient SelectedPatient 
+        { 
+            get => _selectedPatient; 
+            set 
+            {
+                if (SetProperty(ref _selectedPatient, value))
+                    Email = (value != null && !string.IsNullOrWhiteSpace(value.Email)) ? value.Email : string.Empty;
+            } 
+        }
 
         private Nurse _selectedNurse;
-        public Nurse SelectedNurse { get => _selectedNurse; set => SetProperty(ref _selectedNurse, value); }
+        public Nurse SelectedNurse 
+        { 
+            get => _selectedNurse; 
+            set 
+            {
+                if (SetProperty(ref _selectedNurse, value))
+                    Email = (value != null && !string.IsNullOrWhiteSpace(value.Email)) ? value.Email : string.Empty;
+            } 
+        }
 
         private Pharmacist _selectedPharmacist;
-        public Pharmacist SelectedPharmacist { get => _selectedPharmacist; set => SetProperty(ref _selectedPharmacist, value); }
+        public Pharmacist SelectedPharmacist 
+        { 
+            get => _selectedPharmacist; 
+            set 
+            {
+                if (SetProperty(ref _selectedPharmacist, value))
+                    Email = (value != null && !string.IsNullOrWhiteSpace(value.Email)) ? value.Email : string.Empty;
+            } 
+        }
 
         private LabTechnician _selectedLabTech;
-        public LabTechnician SelectedLabTech { get => _selectedLabTech; set => SetProperty(ref _selectedLabTech, value); }
+        public LabTechnician SelectedLabTech 
+        { 
+            get => _selectedLabTech; 
+            set 
+            {
+                if (SetProperty(ref _selectedLabTech, value))
+                    Email = (value != null && !string.IsNullOrWhiteSpace(value.Email)) ? value.Email : string.Empty;
+            } 
+        }
 
         private BillingStaff _selectedBillingStaff;
-        public BillingStaff SelectedBillingStaff { get => _selectedBillingStaff; set => SetProperty(ref _selectedBillingStaff, value); }
+        public BillingStaff SelectedBillingStaff 
+        { 
+            get => _selectedBillingStaff; 
+            set 
+            {
+                if (SetProperty(ref _selectedBillingStaff, value))
+                    Email = (value != null && !string.IsNullOrWhiteSpace(value.Email)) ? value.Email : string.Empty;
+            } 
+        }
 
         public ObservableCollection<string> Roles { get; } = new ObservableCollection<string> 
         { 
@@ -108,6 +156,24 @@ namespace HMS.Core.ViewModels
             IsPharmacistRoleSelected = value == User.Pharmacist;
             IsLabTechRoleSelected = value == User.LabTechnician;
             IsReceptionistRoleSelected = value == User.Receptionist;
+            
+            // Clear selections and email when role changes
+            _selectedDoctor = null;
+            _selectedPatient = null;
+            _selectedNurse = null;
+            _selectedPharmacist = null;
+            _selectedLabTech = null;
+            _selectedBillingStaff = null;
+            
+            // Notify property changes for the backing fields we just cleared manually
+            OnPropertyChanged(nameof(SelectedDoctor));
+            OnPropertyChanged(nameof(SelectedPatient));
+            OnPropertyChanged(nameof(SelectedNurse));
+            OnPropertyChanged(nameof(SelectedPharmacist));
+            OnPropertyChanged(nameof(SelectedLabTech));
+            OnPropertyChanged(nameof(SelectedBillingStaff));
+            
+            Email = string.Empty;
             
             // Clear passwords when role changes
             Password = string.Empty;
@@ -183,9 +249,26 @@ namespace HMS.Core.ViewModels
             }
 
             var users = DataManager.Users;
+            
+            // Check if this specific profile already has an account linked to it
+            User existingLink = null;
+            if (SelectedRole == "Doctor") existingLink = users.FirstOrDefault(u => u.DoctorId == SelectedDoctor.Id);
+            else if (SelectedRole == "Nurse") existingLink = users.FirstOrDefault(u => u.NurseId == SelectedNurse.Id);
+            else if (SelectedRole == "Pharmacist") existingLink = users.FirstOrDefault(u => u.PharmacistId == SelectedPharmacist.Id);
+            else if (SelectedRole == "LabTechnician") existingLink = users.FirstOrDefault(u => u.LabTechnicianId == SelectedLabTech.Id);
+            else if (SelectedRole == "Receptionist") existingLink = users.FirstOrDefault(u => u.BillingStaffId == SelectedBillingStaff.Id);
+            else if (SelectedRole == "Patient") existingLink = users.FirstOrDefault(u => u.PatientId == SelectedPatient.Id);
+
+            if (existingLink != null)
+            {
+                MessageBox.Show($"This {SelectedRole} already has a user account linked to them (Email: {existingLink.Email}).\n\nYou don't need to create a new one.", "Duplicate Account", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            // Check if the email is used by someone else
             if (users.Any(u => u.Email != null && u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase)))
             {
-                MessageBox.Show("Email already exists.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"The email '{Email}' is already in use by another account. Please use a different email or check the existing accounts.", "Email Already Exists", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

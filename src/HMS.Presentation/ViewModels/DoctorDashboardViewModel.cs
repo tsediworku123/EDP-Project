@@ -26,6 +26,7 @@ namespace HMS.Core.ViewModels
         public ICommand ViewTestResultsCommand { get; }
         public ICommand ManageAppointmentsCommand { get; }
         public ICommand WriteDischargeSummariesCommand { get; }
+        public ICommand ViewPrescriptionsHistoryCommand { get; }
 
         public DoctorDashboardViewModel()
         {
@@ -39,6 +40,7 @@ namespace HMS.Core.ViewModels
             PrescribeMedicationsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorPrescribeView(), "PRESCRIPTIONS"));
             RequestLabTestsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorLabTestsView(), "REQUEST LABS"));
             ViewTestResultsCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorTestResultsView(), "TEST RESULTS"));
+            ViewPrescriptionsHistoryCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorPrescriptionsView(), "PRESCRIPTION HISTORY"));
             WriteDischargeSummariesCommand = new RelayCommand(() => RequestViewChange?.Invoke(new DoctorDischargeView(), "DISCHARGE SUMMARY"));
         }
 

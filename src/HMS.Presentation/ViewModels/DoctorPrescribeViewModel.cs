@@ -164,8 +164,19 @@ namespace HMS.Core.ViewModels
                 MedicineItems.Select(m => $"{m.MedicineName} {m.Dosage} – {m.Frequency}"));
 
             DataManager.Prescriptions.Add(prescription);
+            
+            // Notify Pharmacists
+            DataManager.Notifications.Add(new Notification
+            {
+                Title = "NEW PRESCRIPTION",
+                Message = $"New prescription for {_selectedAppointment.PatientName} from Dr. {_doctor.FullName}",
+                Type = "Prescription",
+                TargetRole = User.Pharmacist
+            });
+
             DataManager.SavePrescriptions();
             DataManager.SaveAppointments();
+            DataManager.SaveNotifications();
 
             MedicineItems.Clear();
             PrescriptionNotes = string.Empty;

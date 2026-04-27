@@ -135,6 +135,9 @@
                         <TextBlock Text="{Binding ActivePageTitle}" Style="{StaticResource MaterialDesignHeadline6TextBlock}" FontWeight="ExtraBold" Foreground="#1E293B" VerticalAlignment="Center" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <TextBlock Text="{Binding NurseName}" Foreground="#1E293B" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <Button Command="{Binding NavNotificationsCommand}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Notifications" Width="30" Height="30" Padding="0" Margin="0,0,10,0">
+                                <materialDesign:PackIcon Kind="BellOutline" Foreground="#64748B" Width="18" Height="18" />
+                            </Button>
                             <Button Command="{Binding NavChangePasswordCommand}" Style="{StaticResource MaterialDesignFlatButton}" ToolTip="Change Password" Width="30" Height="30" Padding="0" Margin="0,0,10,0">
                                 <materialDesign:PackIcon Kind="KeyVariant" Foreground="#64748B" Width="16" Height="16" />
                             </Button>

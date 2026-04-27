@@ -155,7 +155,17 @@ namespace HMS.Core.ViewModels
                 });
             }
 
+            // Notify Lab Technicians
+            DataManager.Notifications.Add(new Notification
+            {
+                Title = "NEW LAB REQUEST",
+                Message = $"{RequestedTests.Count} test(s) requested for {_selectedAppointment.PatientName} by Dr. {_doctor.FullName}",
+                Type = "Laboratory",
+                TargetRole = User.LabTechnician
+            });
+
             DataManager.SaveLabTests();
+            DataManager.SaveNotifications();
             int count = RequestedTests.Count;
             RequestedTests.Clear();
             ClinicalNotes = string.Empty;

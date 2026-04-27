@@ -26,6 +26,7 @@ namespace HMS.Core.ViewModels
         public ICommand NavPatientsCommand { get; }
         public ICommand NavAdmissionsCommand { get; }
         public ICommand NavChangePasswordCommand { get; }
+        public ICommand NavNotificationsCommand { get; }
         public ICommand NavLogoutCommand { get; }
 
         public NurseShellViewModel()
@@ -68,6 +69,11 @@ namespace HMS.Core.ViewModels
 
             NavChangePasswordCommand = new RelayCommand(async () => {
                 var view = new ChangePasswordDialog { DataContext = new ChangePasswordViewModel() };
+                await DialogHost.Show(view, "MainDialogHost");
+            });
+
+            NavNotificationsCommand = new RelayCommand(async () => {
+                var view = new NotificationCenterView { DataContext = new NotificationCenterViewModel() };
                 await DialogHost.Show(view, "MainDialogHost");
             });
 

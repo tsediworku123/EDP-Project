@@ -22,18 +22,24 @@ namespace HMS.Core.ViewModels
             var user = CurrentSession.Instance.LoggedInUser;
             if (user == null) return;
 
-            // In a real app we'd fetch from DB, here we mock some for the UI
-            Notifications.Add(new Notification { Title = "Welcome", Message = $"Hello {user.Email}, welcome back to the HMS portal.", Timestamp = System.DateTime.Now.AddMinutes(-5) });
+            DataManager.EnsureLoaded();
             
-            if (user.Role == "Doctor")
-            {
-                Notifications.Add(new Notification { Title = "Lab Result Ready", Message = "Urgent: Complete Blood Count results for John Doe are now available.", Timestamp = System.DateTime.Now.AddMinutes(-20) });
-            }
-            else if (user.Role == "LabTechnician")
-            {
-                Notifications.Add(new Notification { Title = "New Test Priority", Message = "A new urgent Cardiology test has been requested for Room 402.", Timestamp = System.DateTime.Now.AddMinutes(-2) });
-            }
+            // Get relevant notifications for this user
+            var relevant = DataManager.Notifications
+                .Where(n => n.TargetRole == user.Role 
+                          || n.UserId == user.Id
+                          || (user.Role == User.Doctor && n.DoctorId == CurrentSession.Instance.LoggedInDoctor?.Id)
+                          || (user.Role == User.Patient && n.PatientId == CurrentSession.Instance.LoggedInPatient?.Id)
+                          || (user.Role == User.Nurse && n.UserId == user.Id) // Extend as needed
+                          )
+                .OrderByDescending(n => n.Timestamp)
+                .ToList();
 
+            foreach (var n in relevant)
+            {
+                Notifications.Add(n);
+            }
+            
             OnPropertyChanged(nameof(StatusText));
         }
     }

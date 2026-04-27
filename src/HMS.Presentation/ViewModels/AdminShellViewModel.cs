@@ -21,7 +21,7 @@ namespace HMS.Core.ViewModels
         public string TodayDate { get => _todayDate; set => SetProperty(ref _todayDate, value); }
 
         public ICommand NavDashboardCommand { get; }
-        public ICommand NavDoctorsCommand { get; }
+        public ICommand NavStaffCommand { get; }
         public ICommand NavUsersCommand { get; }
         public ICommand NavPatientsCommand { get; }
         public ICommand NavAppointmentsCommand { get; }
@@ -42,9 +42,9 @@ namespace HMS.Core.ViewModels
                 CurrentView = new AdminDashboardView();
             });
 
-            NavDoctorsCommand = new RelayCommand(() => {
-                ActivePageTitle = "MANAGE DOCTORS";
-                CurrentView = new AdminDoctorsView(); 
+            NavStaffCommand = new RelayCommand(() => {
+                ActivePageTitle = "MANAGE STAFF";
+                CurrentView = new AdminStaffView(); 
             });
 
             NavUsersCommand = new RelayCommand(() => {

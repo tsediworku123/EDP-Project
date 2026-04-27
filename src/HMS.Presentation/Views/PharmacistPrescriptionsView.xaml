@@ -100,6 +100,16 @@
                     <!-- Doctor -->
                     <DataGridTextColumn Header="PRESCRIBED BY" Binding="{Binding DoctorName}" Width="1.4*"/>
                     <DataGridTextColumn Header="DATE" Binding="{Binding Date}" Width="110"/>
+                    
+                    <DataGridTemplateColumn Header="MEDICINES" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding MedicinesSummary}" VerticalAlignment="Center" 
+                                           TextTrimming="CharacterEllipsis" Foreground="#64748B" FontSize="12"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
                     <DataGridTextColumn Header="ITEMS" Binding="{Binding ItemsCount}" Width="65"/>
 
                     <!-- Drug Availability -->

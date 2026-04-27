@@ -52,7 +52,7 @@ namespace HMS.Core.ViewModels
         private async void ExecuteCreateInvoice()
         {
             var view = new Views.CreateInvoiceView { DataContext = new CreateInvoiceViewModel() };
-            await MaterialDesignThemes.Wpf.DialogHost.Show(view, "BillingDialogHost");
+            await MaterialDesignThemes.Wpf.DialogHost.Show(view, "MainDialogHost");
             LoadInvoices();
         }
 
@@ -66,7 +66,7 @@ namespace HMS.Core.ViewModels
         {
             if (bill == null || bill.Status == "Paid") return;
             var view = new Views.ProcessPaymentView { DataContext = new ProcessPaymentViewModel(bill) };
-            await MaterialDesignThemes.Wpf.DialogHost.Show(view, "BillingDialogHost");
+            await MaterialDesignThemes.Wpf.DialogHost.Show(view, "MainDialogHost");
             LoadInvoices();
         }
     }

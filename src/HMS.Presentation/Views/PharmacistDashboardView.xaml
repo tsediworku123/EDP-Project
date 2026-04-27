@@ -9,31 +9,49 @@
         </Grid.RowDefinitions>
 
         <!-- Stats Row -->
-        <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,25">
+        <UniformGrid Grid.Row="0" Columns="5" Margin="0,0,0,25">
             <!-- Pending Prescriptions -->
-            <materialDesign:Card Margin="0,0,15,0" Padding="25" UniformCornerRadius="15">
+            <materialDesign:Card Margin="0,0,10,0" Padding="15" UniformCornerRadius="12">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="ClipboardTextOutline" Foreground="#8B5CF6" Width="32" Height="32"/>
-                    <TextBlock Text="{Binding PendingPrescriptionsCount}" FontSize="32" FontWeight="Bold" Foreground="#1E293B" Margin="0,15,0,0"/>
-                    <TextBlock Text="Pending Prescriptions" Foreground="#64748B" FontWeight="SemiBold"/>
+                    <materialDesign:PackIcon Kind="ClipboardTextOutline" Foreground="#8B5CF6" Width="24" Height="24"/>
+                    <TextBlock Text="{Binding PendingPrescriptionsCount}" FontSize="28" FontWeight="Bold" Foreground="#1E293B" Margin="0,10,0,0"/>
+                    <TextBlock Text="Pending" Foreground="#64748B" FontSize="11" FontWeight="SemiBold"/>
                 </StackPanel>
             </materialDesign:Card>
 
             <!-- Low Stock Alerts -->
-            <materialDesign:Card Margin="7,0,7,0" Padding="25" UniformCornerRadius="15">
+            <materialDesign:Card Margin="5,0,5,0" Padding="15" UniformCornerRadius="12">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="#EF4444" Width="32" Height="32"/>
-                    <TextBlock Text="{Binding LowStockItemsCount}" FontSize="32" FontWeight="Bold" Foreground="#1E293B" Margin="0,15,0,0"/>
-                    <TextBlock Text="Low Stock Items" Foreground="#64748B" FontWeight="SemiBold"/>
+                    <materialDesign:PackIcon Kind="AlertCircleOutline" Foreground="#F59E0B" Width="24" Height="24"/>
+                    <TextBlock Text="{Binding LowStockItemsCount}" FontSize="28" FontWeight="Bold" Foreground="#1E293B" Margin="0,10,0,0"/>
+                    <TextBlock Text="Low Stock" Foreground="#64748B" FontSize="11" FontWeight="SemiBold"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Expired Alerts -->
+            <materialDesign:Card Margin="5,0,5,0" Padding="15" UniformCornerRadius="12">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="CalendarRemove" Foreground="#EF4444" Width="24" Height="24"/>
+                    <TextBlock Text="{Binding ExpiredItemsCount}" FontSize="28" FontWeight="Bold" Foreground="#1E293B" Margin="0,10,0,0"/>
+                    <TextBlock Text="Expired" Foreground="#64748B" FontSize="11" FontWeight="SemiBold"/>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Expiring Soon -->
+            <materialDesign:Card Margin="5,0,5,0" Padding="15" UniformCornerRadius="12">
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="ClockAlertOutline" Foreground="#3B82F6" Width="24" Height="24"/>
+                    <TextBlock Text="{Binding ExpiringSoonCount}" FontSize="28" FontWeight="Bold" Foreground="#1E293B" Margin="0,10,0,0"/>
+                    <TextBlock Text="Expiring Soon" Foreground="#64748B" FontSize="11" FontWeight="SemiBold"/>
                 </StackPanel>
             </materialDesign:Card>
 
             <!-- Dispensed Today -->
-            <materialDesign:Card Margin="15,0,0,0" Padding="25" UniformCornerRadius="15">
+            <materialDesign:Card Margin="10,0,0,0" Padding="15" UniformCornerRadius="12">
                 <StackPanel>
-                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="#10B981" Width="32" Height="32"/>
-                    <TextBlock Text="{Binding MedicinesDispensedToday}" FontSize="32" FontWeight="Bold" Foreground="#1E293B" Margin="0,15,0,0"/>
-                    <TextBlock Text="Meds Dispensed Today" Foreground="#64748B" FontWeight="SemiBold"/>
+                    <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="#10B981" Width="24" Height="24"/>
+                    <TextBlock Text="{Binding MedicinesDispensedToday}" FontSize="28" FontWeight="Bold" Foreground="#1E293B" Margin="0,10,0,0"/>
+                    <TextBlock Text="Dispensed Today" Foreground="#64748B" FontSize="11" FontWeight="SemiBold"/>
                 </StackPanel>
             </materialDesign:Card>
         </UniformGrid>

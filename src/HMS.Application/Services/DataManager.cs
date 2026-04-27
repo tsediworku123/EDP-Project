@@ -222,11 +222,15 @@ namespace HMS.Core.AppLogic.Services
                     CREATE TABLE PrescriptionItems (
                         Id INT PRIMARY KEY IDENTITY(1,1),
                         PrescriptionId INT NOT NULL,
-                        MedicationName NVARCHAR(MAX),
+                        MedicineName NVARCHAR(MAX),
                         Dosage NVARCHAR(MAX),
                         Frequency NVARCHAR(MAX),
-                        Duration NVARCHAR(MAX),
-                        Instructions NVARCHAR(MAX)
+                        DurationDays INT NOT NULL DEFAULT 0,
+                        Quantity INT NOT NULL DEFAULT 1,
+                        Instructions NVARCHAR(MAX),
+                        PharmacistInstructions NVARCHAR(MAX),
+                        UnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0,
+                        IsDispensed BIT NOT NULL DEFAULT 0
                     )");
 
                 // Ensure PatientVitals table
@@ -287,6 +291,7 @@ namespace HMS.Core.AppLogic.Services
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'DoctorId') ALTER TABLE Notifications ADD DoctorId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'UserId') ALTER TABLE Notifications ADD UserId INT NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'Type') ALTER TABLE Notifications ADD Type NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Notifications') AND name = 'TargetRole') ALTER TABLE Notifications ADD TargetRole NVARCHAR(MAX) NULL");
 
                 // Ensure Appointments columns
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'ConsultationFee') ALTER TABLE Appointments ADD ConsultationFee DECIMAL(18,2) NOT NULL DEFAULT 0");
@@ -306,6 +311,21 @@ namespace HMS.Core.AppLogic.Services
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'Recommendation') ALTER TABLE Appointments ADD Recommendation NVARCHAR(MAX) NULL");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'PatientRating') ALTER TABLE Appointments ADD PatientRating INT NOT NULL DEFAULT 0");
                 context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Appointments') AND name = 'PatientFeedback') ALTER TABLE Appointments ADD PatientFeedback NVARCHAR(MAX) NULL");
+
+                // Ensure new Pharmacy/Prescription columns
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Prescriptions') AND name = 'DispensedDate') ALTER TABLE Prescriptions ADD DispensedDate DATETIME2 NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Prescriptions') AND name = 'DispensedBy') ALTER TABLE Prescriptions ADD DispensedBy NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Prescriptions') AND name = 'DispensingNotes') ALTER TABLE Prescriptions ADD DispensingNotes NVARCHAR(MAX) NULL");
+
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'PharmacistInstructions') ALTER TABLE PrescriptionItems ADD PharmacistInstructions NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'UnitPrice') ALTER TABLE PrescriptionItems ADD UnitPrice DECIMAL(18,2) NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'IsDispensed') ALTER TABLE PrescriptionItems ADD IsDispensed BIT NOT NULL DEFAULT 0");
+
+                // Fix PrescriptionItems name mismatch if exists
+                context.Database.ExecuteSqlRaw("IF EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'MedicationName') AND NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'MedicineName') EXEC sp_rename 'PrescriptionItems.MedicationName', 'MedicineName', 'COLUMN'");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'MedicineName') ALTER TABLE PrescriptionItems ADD MedicineName NVARCHAR(MAX) NULL");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'DurationDays') ALTER TABLE PrescriptionItems ADD DurationDays INT NOT NULL DEFAULT 0");
+                context.Database.ExecuteSqlRaw("IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('PrescriptionItems') AND name = 'Quantity') ALTER TABLE PrescriptionItems ADD Quantity INT NOT NULL DEFAULT 1");
             }
             catch (Exception ex)
             {
@@ -332,7 +352,15 @@ namespace HMS.Core.AppLogic.Services
                 Appointments = uow.Appointments.GetAll().ToList();
                 Feedbacks = uow.Feedbacks.GetAll().ToList();
                 MedicalRecords = uow.MedicalRecords.GetAll().ToList();
+                
+                // Load Prescriptions with Items
                 Prescriptions = uow.Prescriptions.GetAll().ToList();
+                var prescriptionItems = uow.PrescriptionItems.GetAll().ToList();
+                foreach (var p in Prescriptions)
+                {
+                    p.Items = prescriptionItems.Where(i => i.PrescriptionId == p.Id).ToList();
+                }
+
                 LabTests = uow.LabTests.GetAll().ToList();
                 Notifications = uow.Notifications.GetAll().ToList();
                 AuditLogs = uow.AuditLogs.GetAll().ToList();
@@ -343,7 +371,15 @@ namespace HMS.Core.AppLogic.Services
                 Payments = uow.Payments.GetAll().ToList();
                 InsuranceClaims = uow.InsuranceClaims.GetAll().ToList();
                 BillingStaff = uow.BillingStaff.GetAll().ToList();
+                
+                // Load Bills with Items
                 Bills = uow.Bills.GetAll().ToList();
+                var billItems = uow.BillItems.GetAll().ToList();
+                foreach (var b in Bills)
+                {
+                    b.Items = billItems.Where(i => i.BillId == b.Id).ToList();
+                }
+
                 PatientVitals = uow.PatientVitals.GetAll().ToList();
             }
         }
@@ -592,6 +628,118 @@ namespace HMS.Core.AppLogic.Services
             }
         }
 
+        public static void RegisterNurse(Nurse nurse, string password = null)
+        {
+            try 
+            {
+                if (!Nurses.Contains(nurse)) Nurses.Add(nurse);
+                SaveNurses();
+
+                if (nurse.Id != 0 && !Users.Any(u => u.Role == "Nurse" && u.NurseId == nurse.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = string.IsNullOrWhiteSpace(nurse.Email) ? $"nurse{nurse.Id}@hospital.com" : nurse.Email,
+                        Password = PasswordHasher.HashPassword(password ?? "Nurse@123"),
+                        Role = "Nurse", 
+                        NurseId = nurse.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Nurse registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
+        public static void RegisterPharmacist(Pharmacist pharmacist, string password = null)
+        {
+            try 
+            {
+                if (!Pharmacists.Contains(pharmacist)) Pharmacists.Add(pharmacist);
+                SavePharmacists();
+
+                if (pharmacist.Id != 0 && !Users.Any(u => u.Role == "Pharmacist" && u.PharmacistId == pharmacist.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = string.IsNullOrWhiteSpace(pharmacist.Email) ? $"pharm{pharmacist.Id}@hospital.com" : pharmacist.Email,
+                        Password = PasswordHasher.HashPassword(password ?? "Pharm@123"),
+                        Role = "Pharmacist", 
+                        PharmacistId = pharmacist.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Pharmacist registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
+        public static void RegisterLabTechnician(LabTechnician tech, string password = null)
+        {
+            try 
+            {
+                if (!LabTechnicians.Contains(tech)) LabTechnicians.Add(tech);
+                SaveLabTechnicians();
+
+                if (tech.Id != 0 && !Users.Any(u => u.Role == "LabTechnician" && u.LabTechnicianId == tech.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = string.IsNullOrWhiteSpace(tech.Email) ? $"tech{tech.Id}@hospital.com" : tech.Email,
+                        Password = PasswordHasher.HashPassword(password ?? "Lab@123"),
+                        Role = "LabTechnician", 
+                        LabTechnicianId = tech.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Lab Technician registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
+        public static void RegisterBillingStaff(BillingStaff staff, string password = null)
+        {
+            try 
+            {
+                if (!BillingStaff.Contains(staff)) BillingStaff.Add(staff);
+                SaveBillingStaff();
+
+                if (staff.Id != 0 && !Users.Any(u => u.Role == "Receptionist" && u.BillingStaffId == staff.Id))
+                {
+                    var newUser = new User 
+                    { 
+                        Email = string.IsNullOrWhiteSpace(staff.Email) ? $"staff{staff.Id}@hospital.com" : staff.Email,
+                        Password = PasswordHasher.HashPassword(password ?? "Staff@123"),
+                        Role = "Receptionist", 
+                        BillingStaffId = staff.Id,
+                        IsActive = true 
+                    };
+                    Users.Add(newUser);
+                    SaveUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogAudit("System", $"Billing Staff registration failed: {ex.Message}", "Error");
+                throw;
+            }
+        }
+
         public static void AddFeedback(Feedback f) { Feedbacks.Add(f); SaveFeedbacks(); }
         public static List<Appointment> GetPatientAppointments(int patientId) => Appointments.Where(a => a.PatientId == patientId).ToList();
         public static List<MedicalRecord> GetPatientMedicalRecords(int patientId) => MedicalRecords.Where(r => r.PatientId == patientId).ToList();
@@ -739,6 +887,14 @@ namespace HMS.Core.AppLogic.Services
                     else uow.LabTests.Update(l);
                 }
                 uow.Complete(); 
+            }
+        }
+
+        public static void ReloadLabTests()
+        {
+            using (var uow = CreateUnitOfWork())
+            {
+                LabTests = uow.LabTests.GetAll().ToList();
             }
         }
  

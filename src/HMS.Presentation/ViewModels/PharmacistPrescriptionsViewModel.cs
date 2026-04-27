@@ -91,65 +91,29 @@ namespace HMS.Core.ViewModels
                     Date = pres.PrescribedDate.ToString("MMM dd, yyyy"),
                     Status = pres.Status,
                     ItemsCount = pres.Items.Count,
+                    MedicinesSummary = string.Join(", ", pres.Items.Select(i => i.MedicineName)),
                     AvailabilityStatus = availStatus,
                     AvailabilityLabel = availLabel
                 });
             }
         }
 
-        private void DispensePrescription(PrescriptionListItem item)
+        private async void DispensePrescription(PrescriptionListItem item)
         {
             if (item == null) return;
 
             var pres = DataManager.Prescriptions.FirstOrDefault(p => p.Id == item.Id);
             if (pres == null || pres.Status != "Pending") return;
 
-            // Build missing items list
-            var missingItems = new System.Text.StringBuilder();
-            bool anyMissing = false;
-
-            foreach (var pItem in pres.Items)
+            var vm = new PharmacistDispenseViewModel(pres);
+            var dialog = new HMS.Core.Views.PharmacistDispenseDialog { DataContext = vm };
+            
+            var result = await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "MainDialogHost");
+            
+            if (result is bool success && success)
             {
-                var inv = DataManager.Inventory.FirstOrDefault(i =>
-                    i.Name != null && i.Name.ToLower() == pItem.MedicineName?.ToLower());
-
-                if (inv == null || inv.StockQuantity < pItem.Quantity)
-                {
-                    anyMissing = true;
-                    int available = inv?.StockQuantity ?? 0;
-                    missingItems.AppendLine($"  • {pItem.MedicineName}  (Need: {pItem.Quantity}, Have: {available})");
-                }
+                LoadPrescriptions();
             }
-
-            if (anyMissing)
-            {
-                var result = System.Windows.MessageBox.Show(
-                    $"The following drugs are insufficient in stock:\n\n{missingItems}\n" +
-                    "Would you like to print a prescription for the patient to obtain from another pharmacy?",
-                    "Insufficient Stock",
-                    System.Windows.MessageBoxButton.YesNo,
-                    System.Windows.MessageBoxImage.Warning);
-
-                if (result == System.Windows.MessageBoxResult.Yes)
-                    ViewPrescription(item);
-
-                return;
-            }
-
-            // All available — dispense and deduct
-            pres.Status = "Dispensed";
-            foreach (var pItem in pres.Items)
-            {
-                var inv = DataManager.Inventory.FirstOrDefault(i =>
-                    i.Name != null && i.Name.ToLower() == pItem.MedicineName?.ToLower());
-                if (inv != null) inv.StockQuantity -= pItem.Quantity;
-            }
-
-            DataManager.SaveAllData();
-            LoadPrescriptions();
-            System.Windows.MessageBox.Show(
-                $"Prescription for {item.PatientName} dispensed successfully.",
-                "Dispensed", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
 
         private async void ViewPrescription(PrescriptionListItem item)
@@ -160,7 +124,7 @@ namespace HMS.Core.ViewModels
             {
                 var vm = new PrintPrescriptionViewModel(pres);
                 var dialog = new HMS.Core.Views.PrintPrescriptionDialog { DataContext = vm };
-                await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "PharmacistDialogHost");
+                await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "MainDialogHost");
             }
         }
 
@@ -172,7 +136,7 @@ namespace HMS.Core.ViewModels
             {
                 var vm = new PrintPrescriptionViewModel(pres);
                 var dialog = new HMS.Core.Views.PrintPrescriptionDialog { DataContext = vm };
-                await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "PharmacistDialogHost");
+                await MaterialDesignThemes.Wpf.DialogHost.Show(dialog, "MainDialogHost");
             }
         }
     }
@@ -186,6 +150,7 @@ namespace HMS.Core.ViewModels
         public string Date { get; set; }
         public string Status { get; set; }
         public int ItemsCount { get; set; }
+        public string MedicinesSummary { get; set; }
         public string AvailabilityStatus { get; set; } = "Available"; // Available, Partial, OutOfStock
         public string AvailabilityLabel { get; set; } = "All Available";
         public bool IsPending => Status == "Pending";
